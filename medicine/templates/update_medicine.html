@@ -47,14 +47,16 @@
                                                        name="medicine_qty" value="{{medicine.qty}}" readonly required>
                                             </div>
                                             <div class="col-lg-4 form-group">
+                                                <input type="radio" name="main_qty" onchange="check_qty(this.value)" value="add_medicine_qty">
                                                 <label for="medicine_qty" class="form-label">Add Qty</label>
-                                                <input type="number" class="form-control" id="add_medicine_qty"
-                                                       name="add_medicine_qty">
+                                                <input type="text" class="form-control" id="add_medicine_qty"
+                                                       name="add_medicine_qty" onkeypress="return isNumberKey(event)" maxlength="4" readonly>
                                             </div>
                                             <div class="col-lg-4 form-group">
+                                                <input type="radio" name="main_qty" onchange="check_qty(this.value)" value="minus_medicine_qty">
                                                 <label for="medicine_qty" class="form-label">Minus Qty</label>
-                                                <input type="number" class="form-control" id="minus_medicine_qty"
-                                                       name="minus_medicine_qty">
+                                                <input type="text" class="form-control" id="minus_medicine_qty"
+                                                       name="minus_medicine_qty" onkeypress="return isNumberKey(event)" maxlength="4" readonly>
                                             </div>
                                         </div>
                                         <div class="form-group">
@@ -72,7 +74,7 @@
                                     </div><!-- /.box-body -->
 
                                     <div class="box-footer">
-                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                        <button type="submit" class="btn btn-primary">Update</button>
                                     </div>
                                 </form>
                             </div>
@@ -123,5 +125,33 @@
           },
         });
     });
+
+
+    function check_qty(param){
+        console.log(param)
+        if(param == 'add_medicine_qty'){
+            $('#add_medicine_qty').attr('readonly', false)
+            $('#minus_medicine_qty').attr('readonly', true)
+
+            $('#add_medicine_qty').val('')
+            $('#minus_medicine_qty').val('')
+        }
+
+        else{
+            $('#add_medicine_qty').attr('readonly', true)
+            $('#minus_medicine_qty').attr('readonly', false)
+
+            $('#add_medicine_qty').val('')
+            $('#minus_medicine_qty').val('')
+        }
+
+    }
+
+    function isNumberKey(evt) {
+      var charCode = (evt.which) ? evt.which : evt.keyCode
+      if (charCode > 31 && (charCode < 48 || charCode > 57))
+        return false;
+      return true;
+    }
 </script>
 {% endblock js %}
