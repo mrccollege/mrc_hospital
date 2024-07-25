@@ -12,8 +12,7 @@
         <!-- Content Header (Page header) -->
         <section class="content-header">
             <h1>
-                Data Tables
-                <small>advanced tables</small>
+                All Mini Store Detail
             </h1>
             <ol class="breadcrumb">
                 <li><a href="/"><i class="fa fa-dashboard"></i> Home</a></li>
@@ -28,27 +27,29 @@
                 <div class="col-xs-12">
                     <div class="box">
                         <div class="box-header">
-                            <h3 class="box-title">Data Table With Full Features</h3>
+                            <h3 class="box-title">Mini Stores</h3>
                         </div><!-- /.box-header -->
                         <div class="box-body">
                             <table id="example1" class="table table-bordered table-striped">
                                 <thead>
                                 <tr>
-                                    <th>Rendering engine</th>
-                                    <th>Browser</th>
-                                    <th>Platform(s)</th>
-                                    <th>Engine version</th>
-                                    <th>CSS grade</th>
+                                    <th>Store Name</th>
+                                    <th>Type</th>
+                                    <th>Mobile</th>
+                                    <th>Phone</th>
+                                    <th>View</th>
                                 </tr>
                                 </thead>
                                 <tbody>
+                                {% for i in store %}
                                 <tr>
-                                    <td>Gecko</td>
-                                    <td>Netscape Navigator 9</td>
-                                    <td>Win 98+ / OSX.2+</td>
-                                    <td>1.8</td>
-                                    <td>A</td>
+                                    <td>{{i.user.username|title}}</td>
+                                    <td>{{i.type}}</td>
+                                    <td>{{i.user.mobile}}</td>
+                                    <td>{{i.user.phone}}</td>
+                                    <td><a><b>view</b></a></td>
                                 </tr>
+                                {% endfor %}
 
                                 </tbody>
 

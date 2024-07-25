@@ -60,12 +60,11 @@ def store_registration(request):
                                                 address=address)
             if user_obj:
                 store_id = user_obj.id
-                count_store = Store.objects.count()
-                print(count_store, '=====count_store=')
-                if count_store < 1:
-                    type = 'MAIN'
-                else:
+                is_main_store = Store.objects.filter(type='MAIN')
+                if is_main_store:
                     type = 'MINI'
+                else:
+                    type = 'MAIN'
                 Store.objects.create(user_id=store_id, type=type)
                 status = 'success'
                 msg = 'Registration successfully.'

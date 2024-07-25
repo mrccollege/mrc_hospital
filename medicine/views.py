@@ -56,3 +56,11 @@ def add_medicine(request):
         }
         return JsonResponse(context)
     return render(request, 'add_medicine.html')
+
+
+def all_medicine(request):
+    medicine = Medicine.objects.filter()
+    context = {
+        'medicine': medicine,
+    }
+    return render(request, 'all_medicine.html', context)

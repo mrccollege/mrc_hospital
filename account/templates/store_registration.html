@@ -1,56 +1,82 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Store Registration</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.css">
-</head>
-<body>
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header text-center">
-                    <h2>Store Registration</h2>
-                </div>
-                <div class="card-body">
-                    <form id="store_form">
-                        {% csrf_token %}
-                        <div class="mb-3">
-                            <label for="store_name" class="form-label">Store Name</label>
-                            <input type="text" class="form-control" id="store_name" name="store_name" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email address</label>
-                            <input type="email" class="form-control" id="email" name="email" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="mobile" class="form-label">Mobile Number</label>
-                            <input type="text" class="form-control" id="mobile" name="mobile" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="phone" class="form-label">Phone Number</label>
-                            <input type="text" class="form-control" id="phone" name="phone" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="address" class="form-label">Address</label>
-                            <textarea class="form-control" id="address" name="address" rows="3" required></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100">Register</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+{% extends 'base.html' %}
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/js/bootstrap.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.js"></script>
+{% block css %}
+{% endblock css %}
 
+
+{% block content %}
+<div class="wrapper">
+
+    <!-- Right side column. Contains the navbar and content of the page -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <h1>Add New Store</h1>
+            <ol class="breadcrumb">
+                <li><a href="/"><i class="fa fa-dashboard"></i> Home</a></li>
+                <li><a href="/">Tables</a></li>
+                <li class="active">Data tables</li>
+            </ol>
+        </section>
+
+        <!-- Main content -->
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="box">
+                        <div class="box-header">
+                            <h3 class="box-title">Fill Complete Store Details</h3>
+                        </div><!-- /.box-header -->
+                        <div class="box-body">
+                            <div class="box box-primary">
+                                <!-- form start -->
+                                <form id="store_form" role="form">{% csrf_token %}
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                            <label for="store_name" class="form-label">Store Name</label>
+                                            <input type="text" class="form-control" id="store_name"
+                                                   name="store_name" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="email" class="form-label">Email address</label>
+                                            <input type="email" class="form-control" id="email" name="email"
+                                                   required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="mobile" class="form-label">Mobile Number</label>
+                                            <input type="text" class="form-control" id="mobile" name="mobile"
+                                                   required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="phone" class="form-label">Phone Number</label>
+                                            <input type="text" class="form-control" id="phone" name="phone"
+                                                   required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="address" class="form-label">Address</label>
+                                            <textarea class="form-control" id="address" name="address" rows="3"
+                                                      required></textarea>
+                                        </div>
+                                    </div><!-- /.box-body -->
+
+                                    <div class="box-footer">
+                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                    </div>
+                                </form>
+                            </div>
+
+                        </div><!-- /.box-body -->
+                    </div><!-- /.box -->
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+        </section><!-- /.content -->
+    </div><!-- /.content-wrapper -->
+
+</div><!-- ./wrapper -->
+
+{% endblock content %}
+
+{% block js %}
 <script>
     $('#store_form').on('submit', function (e) {
         e.preventDefault();
@@ -86,5 +112,4 @@
         });
     });
 </script>
-</body>
-</html>
+{% endblock js %}
