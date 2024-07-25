@@ -7,4 +7,5 @@ urlpatterns = [
     path('transfer_medicine_from_main/', views.transfer_medicine_from_main, name='transfer_medicine_from_main'),
     path('medicine_add_transaction_history/', views.medicine_add_transaction_history, name='add_transaction_history'),
     path('mini_store/', views.mini_store, name='mini_store'),
+    path('view_mini_store_medicine/<int:id>/', views.view_mini_store_medicine, name='view_mini_store_medicine'),
 ]

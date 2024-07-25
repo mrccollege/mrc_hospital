@@ -90,3 +90,11 @@ def mini_store(request):
         'store': store
     }
     return render(request, 'mini_store_detail.html', context)
+
+
+def view_mini_store_medicine(request, id):
+    store_medicine = MainToMiniStoreMedicine.objects.filter(to_store_id=id)
+    context = {
+        'store_medicine': store_medicine
+    }
+    return render(request, 'mini_store_medicine_detail.html', context)
