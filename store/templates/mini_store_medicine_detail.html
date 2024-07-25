@@ -12,7 +12,7 @@
         <!-- Content Header (Page header) -->
         <section class="content-header">
             <h1>
-                All Mini Store Detail
+                Mini Store Detail
             </h1>
             <ol class="breadcrumb">
                 <li><a href="/"><i class="fa fa-dashboard"></i> Home</a></li>
@@ -27,30 +27,31 @@
                 <div class="col-xs-12">
                     <div class="box">
                         <div class="box-header">
-                            <h3 class="box-title">Mini Stores</h3>
+                            <h3 class="box-title">{{store_name}}</h3>
                         </div><!-- /.box-header -->
                         <div class="box-body">
                             <table id="example1" class="table table-bordered table-striped">
                                 <thead>
                                 <tr>
-                                    <th>Store Name</th>
-                                    <th>Type</th>
-                                    <th>Mobile</th>
-                                    <th>Phone</th>
-                                    <th>View</th>
+                                    <th>Medicine</th>
+                                    <th>Qty</th>
+                                    <th>Manufacturer</th>
+                                    <th>medicine_expiry</th>
+                                    <th>Record</th>
+                                    <th>Action</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 {% for i in store %}
                                 <tr>
-                                    <td>{{i.user.username|title}}</td>
-                                    <td>{{i.type}}</td>
-                                    <td>{{i.user.mobile}}</td>
-                                    <td>{{i.user.phone}}</td>
-                                    <td><a href=""><b>view</b></a></td>
+                                    <td>{{i.medicine|title}}</td>
+                                    <td>{{i.qty}}</td>
+                                    <td>{{i.medicine.medicine_manufacturer|title}}</td>
+                                    <td>{{i.medicine.medicine_expiry}}</td>
+                                    <td><a href="/medicine/view_medicine/{{i.id}}/"><b>view</b></a></td>
+                                    <td><a href="/store/transfer_medicine_detail/{{i.id}}/"><b>Transfer</b></a></td>
                                 </tr>
                                 {% endfor %}
-
                                 </tbody>
 
                             </table>

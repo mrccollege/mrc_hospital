@@ -37,7 +37,8 @@
                                     <th>Qty</th>
                                     <th>Manufacturer</th>
                                     <th>medicine_expiry</th>
-                                    <th>View</th>
+                                    <th>Record</th>
+                                    <th>Action</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -48,9 +49,9 @@
                                     <td>{{i.medicine.medicine_manufacturer|title}}</td>
                                     <td>{{i.medicine.medicine_expiry}}</td>
                                     <td><a href="/medicine/view_medicine/{{i.id}}/"><b>view</b></a></td>
+                                    <td><a href="/store/transfer_medicine_detail/{{i.id}}/"><b>Transfer</b></a></td>
                                 </tr>
                                 {% endfor %}
-
                                 </tbody>
 
                             </table>

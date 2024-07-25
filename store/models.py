@@ -46,3 +46,36 @@ class MainStoreMedicineTransaction(models.Model):
 
     class Meta:
         db_table = 'main_store_medicine_transaction'
+
+
+class MainToMiniStoreMedicine(models.Model):
+    from_store = models.ForeignKey(Store, related_name='from_store', on_delete=models.PROTECT)
+    to_store = models.ForeignKey(Store, related_name='to_store', on_delete=models.PROTECT)
+    medicine = models.ForeignKey(Medicine, on_delete=models.PROTECT)
+    qty = models.IntegerField(null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
+
+    def __str__(self):
+        return str(self.medicine.medicine_name)
+
+    class Meta:
+        db_table = 'main_to_mini_store_medicine'
+
+
+class MainToMiniStoreMedicineTransaction(models.Model):
+    from_store = models.ForeignKey(Store, related_name='main_to_mini_transaction_from_store', on_delete=models.PROTECT)
+    to_store = models.ForeignKey(Store, related_name='main_to_mini_transaction_to_store', on_delete=models.PROTECT)
+    medicine = models.ForeignKey(Medicine, on_delete=models.PROTECT)
+    medicine_name = models.CharField(max_length=500, null=True)
+    qty = models.IntegerField(null=True)
+    medicine_manufacturer = models.CharField(max_length=500, null=True)
+    medicine_expiry = models.DateField(null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
+
+    def __str__(self):
+        return str(self.medicine.medicine_name)
+
+    class Meta:
+        db_table = 'main_to_mini_store_medicine_transaction'
