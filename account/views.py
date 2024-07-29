@@ -21,6 +21,7 @@ def hospital_registration(request):
         try:
             user_obj = User.objects.create_user(username=hospital_name,
                                                 email=email,
+                                                password='12345678',
                                                 mobile=mobile,
                                                 phone=phone,
                                                 address=address)
@@ -55,6 +56,7 @@ def store_registration(request):
         try:
             user_obj = User.objects.create_user(username=store_name,
                                                 email=email,
+                                                password='12345678',
                                                 mobile=mobile,
                                                 phone=phone,
                                                 address=address)

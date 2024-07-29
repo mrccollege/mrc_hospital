@@ -64,15 +64,7 @@ def add_new_medicine(request):
     return render(request, 'add_medicine.html')
 
 
-def view_medicine(request, id):
-    medicine_record = MainStoreMedicine.objects.get(id=id)
-    context = {
-        'medicine': medicine_record
-    }
-    return render(request, 'update_medicine.html', context)
-
-
-def view_new_medicine(request, id):
+def view_main_medicine(request, id):
     medicine_record = MedicineStore.objects.get(id=id)
     context = {
         'medicine': medicine_record
@@ -162,6 +154,7 @@ def update_new_medicine(request):
 
                     if minus_medicine_qty:
                         total_qty = obj.qty - int(minus_medicine_qty)
+
                     main_store_medicine_obj = MedicineStore.objects.filter(query).update(qty=int(total_qty))
                     if main_store_medicine_obj:
                         MedicineStoreTransactionHistory.objects.create(from_store_id=to_store_id,
