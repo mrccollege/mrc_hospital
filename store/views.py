@@ -2,8 +2,7 @@ from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import render
 
-from .models import MainStoreMedicine, Store, MainStoreMedicineTransaction, MainToMiniStoreMedicine, \
-    MainToMiniStoreMedicineTransaction, MiniToMiniStoreMedicineTransaction, MedicineStore, \
+from .models import Store, MedicineStore, \
     MedicineStoreTransactionHistory
 from medicine.models import Medicine
 

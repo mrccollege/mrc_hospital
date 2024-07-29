@@ -4,9 +4,7 @@ from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import render
 
-from medicine.models import Medicine
-
-from store.models import MainStoreMedicine, MainStoreMedicineTransaction
+from .models import Medicine
 
 from store.models import Store, MedicineStore, MedicineStoreTransactionHistory
 
