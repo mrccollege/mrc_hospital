@@ -91,7 +91,7 @@
         e.preventDefault();
         var formData = $('#medicine_form').serialize();
         $.ajax({
-          url: '/store/transfer_medicine_from_main/',
+          url: '/store/transfer_new_medicine_from_main/{{recorde_id}}/',
           type: 'POST',
           data: formData,
           success: function (response) {
