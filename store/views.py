@@ -169,17 +169,17 @@ def transfer_medicine_from_mini(request):
         return JsonResponse(context)
 
 
-def medicine_add_transaction_history(request):
-    transaction = MainStoreMedicineTransaction.objects.all()
+def medicine_stock_history(request):
+    transaction = MedicineStoreTransactionHistory.objects.all().order_by('-id')
     if transaction:
-        store_name = transaction[0].store
+        store_name = transaction[0].to_store
     else:
         store_name = ''
     context = {
         'store_name': store_name,
         'transaction': transaction,
     }
-    return render(request, 'medicine_add_transaction_history.html', context)
+    return render(request, 'medicine_stock_history.html', context)
 
 
 def mini_store(request):

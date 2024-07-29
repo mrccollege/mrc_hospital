@@ -34,6 +34,8 @@
                                 <thead>
                                 <tr>
                                     <th>Medicine</th>
+                                    <th>From Store</th>
+                                    <th>To Store</th>
                                     <th>Qty</th>
                                     <th>Manufacturer</th>
                                     <th>medicine_expiry</th>
@@ -44,6 +46,8 @@
                                 {% for i in transaction %}
                                 <tr>
                                     <td>{{i.medicine_name|title}}</td>
+                                    <td>{{i.from_store|title}}</td>
+                                    <td>{{i.to_store|title}}</td>
                                     <td>{{i.qty}}</td>
                                     <td>{{i.medicine_manufacturer|title}}</td>
                                     <td>{{i.medicine_expiry}}</td>
