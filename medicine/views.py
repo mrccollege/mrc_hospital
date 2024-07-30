@@ -13,6 +13,7 @@ from store.models import Store, MedicineStore, MedicineStoreTransactionHistory
 def add_new_medicine(request):
     if request.method == 'POST':
         form = request.POST
+        store_id = int(form.get('store_id'))
         medicine_name = form.get('medicine_name')
         medicine_qty = form.get('medicine_qty')
         medicine_manufacturer = form.get('medicine_manufacturer')
@@ -21,23 +22,22 @@ def add_new_medicine(request):
         status = 'failed'
         msg = 'Something went wrong.'
         try:
-            store_obj = Store.objects.filter(type='MAIN')
+            store_obj = Store.objects.filter(id=store_id).exists()
             if store_obj:
-                main_store_id = store_obj[0].id
                 medicine_obj = Medicine.objects.create(medicine_name=medicine_name,
                                                        medicine_manufacturer=medicine_manufacturer,
                                                        medicine_expiry=medicine_expiry,
                                                        )
                 if medicine_obj:
                     medicine_id = medicine_obj.id
-                    main_store_medicine_obj = MedicineStore.objects.create(from_store_id=main_store_id,
-                                                                           to_store_id=main_store_id,
+                    main_store_medicine_obj = MedicineStore.objects.create(from_store_id=store_id,
+                                                                           to_store_id=store_id,
                                                                            medicine_id=medicine_id,
                                                                            qty=medicine_qty,
                                                                            )
                     if main_store_medicine_obj:
-                        MedicineStoreTransactionHistory.objects.create(from_store_id=main_store_id,
-                                                                       to_store_id=main_store_id,
+                        MedicineStoreTransactionHistory.objects.create(from_store_id=store_id,
+                                                                       to_store_id=store_id,
                                                                        medicine_id=medicine_id,
                                                                        medicine_name=medicine_name,
                                                                        qty=medicine_qty,
@@ -59,7 +59,12 @@ def add_new_medicine(request):
             'msg': msg,
         }
         return JsonResponse(context)
-    return render(request, 'add_medicine.html')
+    else:
+        store = Store.objects.all()
+        context = {
+            'store': store
+        }
+        return render(request, 'add_medicine.html', context)
 
 
 def view_main_medicine(request, id):
