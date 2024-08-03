@@ -30,6 +30,7 @@ def transfer_new_main_store_medicine_detail(request, id):
     store_name = store_medicine.to_store.user.username
 
     mini_store = Store.objects.filter(type='MINI')
+    print(mini_store, '=============mini_store')
     context = {
         'recorde_id': id,
         'store_name': store_name,

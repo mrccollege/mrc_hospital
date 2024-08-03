@@ -301,69 +301,7 @@
         <section class="sidebar">
             <!-- sidebar menu: : style can be found in sidebar.less -->
             <ul class="sidebar-menu">
-                <li class="header">MAIN NAVIGATION</li>
-                <li class="active treeview">
-                    <a href="/">
-                        <i class="fa fa-dashboard"></i> <span>Dashboard</span>
-                    </a>
-                </li>
-                <li class="treeview">
-                    <a href="#">
-                        <i class="fa fa-table"></i> <span>Store</span>
-                        <i class="fa fa-angle-left pull-right"></i>
-                    </a>
-                    <ul class="treeview-menu">
-                        <li><a href="/store/main_store/"><i class="fa fa-circle-o"></i> Main Store</a></li>
-                        <li><a href="/store/mini_store/"><i class="fa fa-circle-o"></i> Mini Stores</a></li>
-                        <li><a href="/account/store_registration/"><i class="fa fa-circle-o"></i> Add Store</a></li>
-                        <li><a href="/store/medicine_stock_history/"><i class="fa fa-circle-o"></i>Medicine Stock
-                            History</a></li>
-                    </ul>
-                </li>
 
-                <li class="treeview">
-                    <a href="#">
-                        <i class="fa fa-table"></i> <span>Medicine</span>
-                        <i class="fa fa-angle-left pull-right"></i>
-                    </a>
-                    <ul class="treeview-menu">
-                        <li><a href="/medicine/all_medicine/"><i class="fa fa-circle-o"></i> All Medicine</a></li>
-                        <li><a href="/medicine/add_new_medicine/"><i class="fa fa-circle-o"></i> Add Medicine</a></li>
-                    </ul>
-                </li>
-
-                <li class="treeview">
-                    <a href="#">
-                        <i class="fa fa-table"></i> <span>Appointment</span>
-                        <i class="fa fa-angle-left pull-right"></i>
-                    </a>
-                    <ul class="treeview-menu">
-                        <li><a href="/data_table/"><i class="fa fa-circle-o"></i> All Appointment</a></li>
-                        <li><a href="/data_table/"><i class="fa fa-circle-o"></i> Add Appointment</a></li>
-                    </ul>
-                </li>
-
-                <li class="treeview">
-                    <a href="#">
-                        <i class="fa fa-table"></i> <span>Doctor</span>
-                        <i class="fa fa-angle-left pull-right"></i>
-                    </a>
-                    <ul class="treeview-menu">
-                        <li><a href="/data_table/"><i class="fa fa-circle-o"></i> All Doctor</a></li>
-                        <li><a href="/data_table/"><i class="fa fa-circle-o"></i> Add Doctor</a></li>
-                    </ul>
-                </li>
-
-                <li class="treeview">
-                    <a href="#">
-                        <i class="fa fa-table"></i> <span>Patient</span>
-                        <i class="fa fa-angle-left pull-right"></i>
-                    </a>
-                    <ul class="treeview-menu">
-                        <li><a href="/data_table/"><i class="fa fa-circle-o"></i> All Patient</a></li>
-                        <li><a href="/data_table/"><i class="fa fa-circle-o"></i> Add Patient</a></li>
-                    </ul>
-                </li>
             </ul>
         </section>
         <!-- /.sidebar -->
@@ -429,6 +367,47 @@
 <script src="/static/plugins/datatables/jquery.dataTables.js" type="text/javascript"></script>
 <script src="/static/plugins/datatables/dataTables.bootstrap.js" type="text/javascript"></script>
 <script src="/static/common_scripts/sweetalert2.min.js"></script>
+<script>
+    $(document).ready(function(){
+        $.ajax({
+            url: '/get_menus/',
+            type: 'GET',
+            success: function(data) {
+                $('.sidebar-menu').html('');
+                var html = '';
+                html += '<li class="header">MAIN NAVIGATION</li>';
+                html += '<li class="active treeview">';
+                html += '<a href="/">';
+                html += '<i class="fa fa-dashboard"></i> <span>Dashboard</span>';
+                html += '</a>';
+                html += '</li>';
+                var categoryMenuList = data.category_menu_list;
+                $.each(categoryMenuList, function(index, item){
+
+                    html += '<li class="treeview">';
+                    html += '<a href="#">';
+                    html += '<i class="fa fa-table"></i> <span>'+item.category+'</span>';
+                    html += '<i class="fa fa-angle-left pull-right"></i>';
+                    html += '</a>';
+                    html += '<ul class="treeview-menu">';
+
+                    $.each(item.menus, function(index, item){
+                        html += '<li><a href="'+item.url+'"><i class="fa fa-circle-o"></i>'+item.title+'</a></li>';
+                    });
+
+                    html += '</ul>';
+                    html += '</li>';
+
+                });
+
+                $('.sidebar-menu').append(html);
+            },
+            error: function(error) {
+                console.log(error);
+            }
+        });
+    })
+</script>
 {% block js %}
 {% endblock js %}
 </body>
