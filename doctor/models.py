@@ -4,13 +4,10 @@ from account.models import User
 
 
 # Create your models here.
-class Patient(models.Model):
+class Doctor(models.Model):
     user = models.ForeignKey(User, on_delete=models.PROTECT, null=True)
-    patient_diseases = models.TextField(null=True, blank=True)
-    patient_bp_min = models.IntegerField(null=True, blank=True)
-    patient_bp_max = models.IntegerField(null=True, blank=True)
-    patient_weight = models.IntegerField(null=True, blank=True)
-    patient_age = models.IntegerField(null=True, blank=True)
+    specialist = models.CharField(max_length=100, null=True)
+    degree = models.TextField(null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 
@@ -18,4 +15,4 @@ class Patient(models.Model):
         return str(self.user.username)
 
     class Meta:
-        db_table = 'patient'
+        db_table = 'doctor'

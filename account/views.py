@@ -7,6 +7,10 @@ from hospital_detail.models import Hospital
 
 from store.models import Store
 
+from doctor.models import Doctor
+
+from patient.models import Patient
+
 
 # Create your views here.
 def hospital_registration(request):
@@ -83,6 +87,95 @@ def store_registration(request):
         }
         return JsonResponse(context)
     return render(request, 'store_registration.html')
+
+
+def doctor_registration(request):
+    if request.method == 'POST':
+        form = request.POST
+        username = form.get('doctor_name')
+        mobile = form.get('mobile')
+        email = mobile + 'yopmail.com'
+        password = form.get('password')
+        phone = form.get('phone')
+        address = form.get('address')
+        specialist = form.get('specialist')
+        degree = form.get('degree')
+        status = 'failed'
+        msg = 'Doctor Registration failed.'
+        try:
+            user_obj = User.objects.create_user(username=username,
+                                                email=email,
+                                                password=password,
+                                                mobile=mobile,
+                                                phone=phone,
+                                                address=address)
+            if user_obj:
+                doctor_id = user_obj.id
+                Doctor.objects.create(user_id=doctor_id,
+                                      specialist=specialist.upper(),
+                                      degree=degree.upper()
+                                      )
+                status = 'success'
+                msg = 'Doctor Registration successfully.'
+
+        except Exception as e:
+            status = status
+            msg = str(e)
+
+        context = {
+            'status': status,
+            'msg': msg,
+        }
+        return JsonResponse(context)
+    return render(request, 'doctor_registration.html')
+
+
+def patient_registration(request):
+    if request.method == 'POST':
+        # User.objects.filter(username='amit').delete()
+        form = request.POST
+        username = form.get('patient_name')
+        mobile = form.get('mobile')
+        email = mobile + 'yopmail.com'
+        password = form.get('password')
+        phone = form.get('phone')
+        address = form.get('address')
+        patient_diseases = form.get('diseases')
+        patient_bp_min = form.get('patient_bp_min')
+        patient_bp_max = form.get('patient_bp_max')
+        patient_weight = form.get('patient_weight')
+        patient_age = form.get('patient_age')
+        status = 'failed'
+        msg = 'Patient Registration failed.'
+        try:
+            user_obj = User.objects.create_user(username=username,
+                                                email=email,
+                                                password=password,
+                                                mobile=mobile,
+                                                phone=phone,
+                                                address=address)
+            if user_obj:
+                patient_id = user_obj.id
+                Patient.objects.create(user_id=patient_id,
+                                       patient_diseases=patient_diseases,
+                                       patient_bp_min=patient_bp_min,
+                                       patient_bp_max=patient_bp_max,
+                                       patient_weight=patient_weight,
+                                       patient_age=patient_age
+                                       )
+                status = 'success'
+                msg = 'Patient Registration successfully.'
+
+        except Exception as e:
+            status = status
+            msg = str(e)
+
+        context = {
+            'status': status,
+            'msg': msg,
+        }
+        return JsonResponse(context)
+    return render(request, 'patient_registration.html')
 
 
 def user_login(request):
