@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.contrib.auth import authenticate, login, logout
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
@@ -132,7 +134,7 @@ def doctor_registration(request):
 
 def patient_registration(request):
     if request.method == 'POST':
-        # User.objects.filter(username='amit').delete()
+        # User.objects.filter(username='rajat').delete()
         form = request.POST
         username = form.get('patient_name')
         mobile = form.get('mobile')
@@ -145,6 +147,7 @@ def patient_registration(request):
         patient_bp_max = form.get('patient_bp_max')
         patient_weight = form.get('patient_weight')
         patient_age = form.get('patient_age')
+        patient_code = datetime.now().strftime("%Y%d%H%M%S")
         status = 'failed'
         msg = 'Patient Registration failed.'
         try:
@@ -157,6 +160,7 @@ def patient_registration(request):
             if user_obj:
                 patient_id = user_obj.id
                 Patient.objects.create(user_id=patient_id,
+                                       patient_code=patient_code,
                                        patient_diseases=patient_diseases,
                                        patient_bp_min=patient_bp_min,
                                        patient_bp_max=patient_bp_max,

@@ -33,6 +33,7 @@
                             <table id="example1" class="table table-bordered table-striped">
                                 <thead>
                                 <tr>
+                                    <th>Patient Id</th>
                                     <th>Name</th>
                                     <th>Mobile</th>
                                     <th>Diseases</th>
@@ -43,6 +44,7 @@
                                 <tbody>
                                 {% for i in patient %}
                                 <tr>
+                                    <td>{{i.patient_code}}</td>
                                     <td>{{i.user.username|title}}</td>
                                     <td>{{i.user.mobile}}</td>
                                     <td>{{i.patient_diseases|title}}</td>

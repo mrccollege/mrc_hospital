@@ -6,6 +6,7 @@ from account.models import User
 # Create your models here.
 class Patient(models.Model):
     user = models.ForeignKey(User, on_delete=models.PROTECT, null=True)
+    patient_code = models.CharField(max_length=20, null=True, blank=True)
     patient_diseases = models.TextField(null=True, blank=True)
     patient_bp_min = models.IntegerField(null=True, blank=True)
     patient_bp_max = models.IntegerField(null=True, blank=True)

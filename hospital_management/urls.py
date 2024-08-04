@@ -13,6 +13,7 @@ urlpatterns = [
     path('store/', include('store.urls')),
     path('doctor/', include('doctor.urls')),
     path('patient/', include('patient.urls')),
+    path('appointment/', include('appointment.urls')),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
