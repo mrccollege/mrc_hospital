@@ -35,32 +35,31 @@
                                         <div class="form-group">
                                             <label for="patient_name" class="form-label">Patient Name</label>
                                             <input type="text" class="form-control" id="patient_name"
-                                                   name="patient_name" required>
+                                                   name="patient_name" value="{{patient.user.username}}" required>
                                         </div>
 
                                         <div class="form-group">
                                             <label for="mobile" class="form-label">Mobile Number</label>
                                             <input type="text" class="form-control" id="mobile" name="mobile"
-                                                   onkeypress="return isNumberKey(event)"
-                                                   required maxlength="10" autocomplete="off">
+                                                   onkeypress="return isNumberKey(event)" value="{{patient.user.mobile}}"
+                                                   required maxlength="10">
                                         </div>
                                         <div class="form-group">
                                             <label for="password" class="form-label">Create Password </label>
                                             <i id="show_pass" class="fa fa-eye-slash pointer"></i>
                                             <input type="password" class="form-control" id="password" name="password"
-                                                   required maxlength="16" autocomplete="off">
+                                                   maxlength="16">
                                         </div>
                                         <div class="form-group">
                                             <label for="address" class="form-label">Address</label>
                                             <textarea class="form-control" id="address" name="address" rows="3"
-                                                      required></textarea>
+                                                      required>{{patient.user.address}}</textarea>
                                         </div>
 
                                         <div class="form-group">
                                             <label for="diseases" class="form-label">Diseases</label>
-                                            <textarea class="form-control" id="diseases" name="diseases" rows="3"
-                                                      required
-                                                      placeholder="Diseases Like : Acute cholecystitis, Bipolar disorder"></textarea>
+                                            <textarea class="form-control" id="diseases" name="diseases" rows="3" required
+                                                      placeholder="Diseases Like : Acute cholecystitis, Bipolar disorder">{{patient.patient_diseases}}</textarea>
                                         </div>
 
                                     </div><!-- /.box-body -->
@@ -73,7 +72,7 @@
                                                             Min</label>
                                                         <input type="text" class="form-control" id="patient_bp_min"
                                                                name="patient_bp_min"
-                                                               onkeypress="return isNumberKey(event)"
+                                                               onkeypress="return isNumberKey(event)" value="{{patient.patient_bp_min}}"
                                                                required maxlength="3" placeholder="Enter BP Like : 80">
                                                     </div>
                                                 </div>
@@ -83,7 +82,7 @@
                                                             Max</label>
                                                         <input type="text" class="form-control" id="patient_bp_max"
                                                                name="patient_bp_max"
-                                                               onkeypress="return isNumberKey(event)"
+                                                               onkeypress="return isNumberKey(event)" value="{{patient.patient_bp_max}}"
                                                                required maxlength="3" placeholder="Enter BP Like : 120">
                                                     </div>
                                                 </div>
@@ -94,7 +93,7 @@
                                                 <label for="patient_weight" class="form-label">Patient Weight</label>
                                                 <input type="text" class="form-control" id="patient_weight"
                                                        name="patient_weight"
-                                                       onkeypress="return isNumberKey(event)"
+                                                       onkeypress="return isNumberKey(event)" value="{{patient.patient_weight}}"
                                                        required maxlength="3">
                                             </div>
                                         </div>
@@ -103,7 +102,7 @@
                                                 <label for="patient_age" class="form-label">Patient Age</label>
                                                 <input type="text" class="form-control" id="patient_age"
                                                        name="patient_age"
-                                                       onkeypress="return isNumberKey(event)"
+                                                       onkeypress="return isNumberKey(event)" value="{{patient.patient_age}}"
                                                        required maxlength="3">
                                             </div>
                                         </div>
@@ -132,7 +131,7 @@
             e.preventDefault();
             var formData = $('#store_form').serialize();
             $.ajax({
-              url: '/account/patient_registration/',
+              url: '/patient/patient_detail/{{id}}/',
               type: 'POST',
               data: formData,
               success: function (response) {
@@ -145,7 +144,7 @@
                     confirmButtonColor: '#3085d6',
                     confirmButtonText: 'OK'
                   }).then((result) => {
-                    window.location.href = '/account/doctor_registration/';
+                    window.location.href = '/patient/patient_list/';
                   });
                 }else{
                   Swal.fire({

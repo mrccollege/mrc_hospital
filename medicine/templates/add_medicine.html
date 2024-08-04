@@ -1,6 +1,10 @@
 {% extends 'base.html' %}
 
 {% block css %}
+<!-- Datepicker -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-
+    datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css">
+
 {% endblock css %}
 
 
@@ -84,6 +88,12 @@
 
 {% block js %}
 <script>
+     $("#medicine_expiry").datepicker({
+        dateFormat: "dd/mm/yy"
+    });
+</script>
+
+<script>
     $('#medicine_form').on('submit', function (e) {
         store_id = $('#store_id').val();
         if(store_id == 0){
@@ -122,4 +132,5 @@
         });
     });
 </script>
+
 {% endblock js %}

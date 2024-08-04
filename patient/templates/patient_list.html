@@ -12,7 +12,7 @@
         <!-- Content Header (Page header) -->
         <section class="content-header">
             <h1>
-                All Medicine Detail
+                All Patient Detail
             </h1>
             <ol class="breadcrumb">
                 <li><a href="/"><i class="fa fa-dashboard"></i> Home</a></li>
@@ -27,25 +27,27 @@
                 <div class="col-xs-12">
                     <div class="box">
                         <div class="box-header">
-                            <h3 class="box-title">Medicines</h3>
+                            <h3 class="box-title">Patient List</h3>
                         </div><!-- /.box-header -->
                         <div class="box-body">
                             <table id="example1" class="table table-bordered table-striped">
                                 <thead>
                                 <tr>
-                                    <th>Medicine</th>
-                                    <th>Manufacturer</th>
-                                    <th>Expiry Date</th>
+                                    <th>Name</th>
+                                    <th>Mobile</th>
+                                    <th>Diseases</th>
+                                    <th>Age</th>
                                     <th>Action</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {% for i in medicine %}
+                                {% for i in patient %}
                                 <tr>
-                                    <td>{{i.medicine_name|title}}</td>
-                                    <td>{{i.medicine_manufacturer|title}}</td>
-                                    <td>{{i.medicine_expiry}}</td>
-                                    <td><a href="/medicine/medicine_update/{{i.id}}/">Update</a></td>
+                                    <td>{{i.user.username|title}}</td>
+                                    <td>{{i.user.mobile}}</td>
+                                    <td>{{i.patient_diseases|title}}</td>
+                                    <td>{{i.patient_age}}</td>
+                                    <td><a href="/patient/patient_detail/{{i.id}}/">View</a></td>
                                 </tr>
                                 {% endfor %}
 

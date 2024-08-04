@@ -35,22 +35,46 @@
                                         <div class="form-group">
                                             <label for="medicine_name" class="form-label">Medicine Name</label>
                                             <input type="text" class="form-control" id="medicine_name"
-                                                   name="medicine_name" value="{{medicine.medicine_name}}"
+                                                   name="medicine_name" value="{{medicine.medicine.medicine_name}}"
                                                    required>
+                                            <input type="hidden" name="medicine_id" id="medicine_id"
+                                                   value="{{medicine.medicine.id}}">
                                         </div>
-
+                                        <div class="row">
+                                            <div class="col-lg-4 form-group">
+                                                <label for="medicine_qty" class="form-label">Medicine Qty</label>
+                                                <input type="number" class="form-control" id="medicine_qty"
+                                                       name="medicine_qty" value="{{medicine.qty}}" readonly required>
+                                            </div>
+                                            <div class="col-lg-4 form-group">
+                                                <input type="radio" name="main_qty" onchange="check_qty(this.value)"
+                                                       value="add_medicine_qty">
+                                                <label for="medicine_qty" class="form-label">Add Qty</label>
+                                                <input type="text" class="form-control" id="add_medicine_qty"
+                                                       name="add_medicine_qty" onkeypress="return isNumberKey(event)"
+                                                       maxlength="4" readonly>
+                                            </div>
+                                            <div class="col-lg-4 form-group">
+                                                <input type="radio" name="main_qty" onchange="check_qty(this.value)"
+                                                       value="minus_medicine_qty">
+                                                <label for="medicine_qty" class="form-label">Minus Qty</label>
+                                                <input type="text" class="form-control" id="minus_medicine_qty"
+                                                       name="minus_medicine_qty" onkeypress="return isNumberKey(event)"
+                                                       maxlength="4" readonly>
+                                            </div>
+                                        </div>
                                         <div class="form-group">
                                             <label for="medicine_manufacturer" class="form-label">Medicine
                                                 Manufacturer</label>
                                             <input type="text" class="form-control" id="medicine_manufacturer"
                                                    name="medicine_manufacturer"
-                                                   value="{{medicine.medicine_manufacturer}}" required>
+                                                   value="{{medicine.medicine.medicine_manufacturer}}" required>
                                         </div>
                                         <div class="form-group">
                                             <label for="medicine_expiry" class="form-label">Medicine Expiry</label>
                                             <input type="text" class="form-control" id="medicine_expiry"
                                                    name="medicine_expiry"
-                                                   value="{{medicine.medicine_expiry|date:'d/m/Y'}}">
+                                                   value="{{medicine.medicine.medicine_expiry|date:'d/m/Y'}}">
                                         </div>
                                     </div><!-- /.box-body -->
 
@@ -83,7 +107,7 @@
         e.preventDefault();
         var formData = $('#medicine_form').serialize();
         $.ajax({
-          url: '/medicine/medicine_update/{{id}}/',
+          url: '/medicine/update_new_medicine/',
           type: 'POST',
           data: formData,
           success: function (response) {
@@ -96,7 +120,7 @@
                 confirmButtonColor: '#3085d6',
                 confirmButtonText: 'OK'
               }).then((result) => {
-                window.location.href = '/medicine/all_medicine/';
+                window.location.href = '/store/main_store/';
               });
             }else{
               Swal.fire({
