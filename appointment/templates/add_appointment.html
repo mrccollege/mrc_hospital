@@ -1,12 +1,33 @@
 {% extends 'base.html' %}
 
 {% block css %}
+<style>
+    #patient_search {
+        width: 100%;
+    }
+    #patient_select {
+        width: 100%;
+        box-sizing: border-box;
+        display: none; /* Initially hidden */
+        position: absolute;
+        z-index: 1000; /* Ensure it appears above other elements */
+        background-color: white;
+        border: 1px solid #ccc;
+        max-height: 150px;
+        overflow-y: auto;
+    }
+    #patient_select option {
+        padding: 8px;
+        cursor: pointer;
+    }
+    #patient_select option:hover, #patient_select option.selected {
+        background-color: #f0f0f0;
+    }
+</style>
 {% endblock css %}
-
 
 {% block content %}
 <div class="wrapper">
-
     <!-- Right side column. Contains the navbar and content of the page -->
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
@@ -36,40 +57,43 @@
                                             <div class="col-lg-6">
                                                 <div class="form-group">
                                                     <label class="form-label">Patient</label>
-                                                    <input type="text" class="form-control" id="patient_search" name="search">
-                                                    <div id="patient_suggestions"></div>
+                                                    <input type="text" class="form-control" id="patient_search" name="search" placeholder="Search Patient">
+                                                    <select id="patient_select" size="5"></select>
                                                 </div>
                                             </div>
                                             <div class="col-lg-6">
                                                 <div class="form-group">
                                                     <label class="form-label">Doctor</label>
-                                                    <input type="text" class="form-control" id="doctor_search" name="search">
+                                                    <select name="doctor" id="doctor" class="form-control">
+                                                        <option value="0">Select Doctor</option>
+                                                        {% for i in doctor %}
+                                                        <option value="{{i.id}}">{{i.user.username}}</option>
+                                                        {% endfor %}
+                                                    </select>
                                                     <div id="doctor_suggestions"></div>
                                                 </div>
                                             </div>
                                         </div>
-
                                     </div><!-- /.box-body -->
                                     <div class="box-footer">
                                         <button type="submit" class="btn btn-primary">Submit</button>
                                     </div>
                                 </form>
                             </div>
-
                         </div><!-- /.box-body -->
                     </div><!-- /.box -->
                 </div><!-- /.col -->
             </div><!-- /.row -->
         </section><!-- /.content -->
     </div><!-- /.content-wrapper -->
-
 </div><!-- ./wrapper -->
-
 {% endblock content %}
 
 {% block js %}
 <script>
     $(document).ready(function(){
+        let selectedOptionIndex = -1;
+
         $('#store_form').on('submit', function (e) {
             e.preventDefault();
             var formData = $('#store_form').serialize();
@@ -103,46 +127,64 @@
               },
             });
         });
-    })
-</script>
 
-<script>
-    $(document).ready(function() {
-        $("#patient_search").keyup(function() {
-            let query = $(this).val();
+        $('#patient_search').on('input', function() {
+            var query = $(this).val();
             if (query.length > 0) {
                 $.ajax({
-                    url: "/appointment/search_patient/",
+                    url: '/appointment/search_patient/',
                     data: {
                         'term': query
                     },
                     dataType: 'json',
                     success: function(data) {
-                        let suggestions = $("#suggestions");
-                        suggestions.empty();
-                        if (data.length > 0) {
-                            let list = $("<ul></ul>");
-                            $.each(data, function(index, value) {
-                                list.append("<li>" + value + "</li>");
-                            });
-                            suggestions.append(list);
-                        } else {
-                            suggestions.append("<p>No suggestions found</p>");
-                        }
+                        $('#patient_select').empty().show();
+                        $.each(data.data_list, function(index, item) {
+                            $('#patient_select').append('<option value="' + item.id + '">' + item.name + ' ' + '('+ item.code+ ')' + '</option>');
+                        });
+                        selectedOptionIndex = -1;
                     }
                 });
             } else {
-                $("#suggestions").empty();
+                $('#patient_select').empty().hide();
             }
         });
 
-        // Optional: Handle click on suggestion to fill the input field
-        $(document).on('click', '#suggestions ul li', function() {
-            $('#patient_search').val($(this).text());
-            $('#patient_suggestions').empty();
+        $('#patient_search').on('keydown', function(e) {
+            var options = $('#patient_select option');
+            if (options.length > 0) {
+                if (e.key === "ArrowDown") {
+                    e.preventDefault();
+                    selectedOptionIndex = (selectedOptionIndex + 1) % options.length;
+                    options.removeClass('selected').eq(selectedOptionIndex).addClass('selected');
+                } else if (e.key === "ArrowUp") {
+                    e.preventDefault();
+                    selectedOptionIndex = (selectedOptionIndex - 1 + options.length) % options.length;
+                    options.removeClass('selected').eq(selectedOptionIndex).addClass('selected');
+                } else if (e.key === "Enter") {
+                    e.preventDefault();
+                    if (selectedOptionIndex >= 0) {
+                        var selectedText = options.eq(selectedOptionIndex).text();
+                        $('#patient_search').val(selectedText);
+                        $('#patient_select').empty().hide();
+                    }
+                }
+            }
+        });
+
+        // Hide suggestions when clicking outside
+        $(document).on('click', function(event) {
+            if (!$(event.target).closest('#patient_search, #patient_select').length) {
+                $('#patient_select').empty().hide();
+            }
+        });
+
+        // Handle select option click
+        $('#patient_select').on('change', function() {
+            var selectedText = $('#patient_select option:selected').text();
+            $('#patient_search').val(selectedText);
+            $('#patient_select').empty().hide();
         });
     });
 </script>
-
-
 {% endblock js %}
