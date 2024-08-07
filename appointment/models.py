@@ -33,7 +33,8 @@ class PatientAppointment(models.Model):
     appointment_time = models.TimeField(null=True, blank=True, default=None)
     appoint_status = models.CharField(max_length=10, default='unchecked')
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(null=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
+
 
     class Meta:
         db_table = 'patient_appointment'

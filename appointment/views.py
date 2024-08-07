@@ -11,13 +11,16 @@ from appointment.models import AppointmentWard
 
 from appointment.models import PatientAppointment
 
+from common_function.date_formate import convert_date_format
+
 
 # Create your views here.
 def add_appointment(request):
     if request.method == 'POST':
         form = request.POST
+        print(form, '==============form==========')
         appoint_ward = form.get('appointment_ward')
-        patient = form.get('patient')
+        patient = form.get('patient_search_id')
         doctor = form.get('doctor')
         diseases = form.get('diseases')
         patient_bp_min = form.get('patient_bp_min')
@@ -28,23 +31,39 @@ def add_appointment(request):
         online = int(form.get('online'))
         remaining = int(form.get('remaining'))
 
-        PatientAppointment.objects.filter(appoint_ward=appoint_ward,
-                                          doctor=doctor,
-                                          patient=patient,
-                                          patient_diseases=diseases,
-                                          patient_bp_min=patient_bp_min,
-                                          patient_bp_max=patient_bp_max,
-                                          patient_weight=patient_weight,
-                                          fees=ward_fees,
-                                          paid=cash+online,
-                                          remaining=remaining,
-                                          cash=cash,
-                                          online=online,
-                                          appointment_date=appointment_date,
-                                          appointment_time=appointment_time,
-                                          appoint_status=appoint_status,)
+        appointment_date = form.get('appoint_date')
+        appointment_date = convert_date_format(appointment_date)
+        appointment_time = form.get('appoint_time')
+        appointment_time = datetime.strptime(appointment_time, '%I:%M %p').time()
+        status = 'failed!'
+        msg = 'Appointment failed.'
+        try:
+            appoint_obj = PatientAppointment.objects.create(appoint_ward_id=appoint_ward,
+                                                            doctor_id=doctor,
+                                                            patient_id=patient,
+                                                            patient_diseases=diseases,
+                                                            patient_bp_min=patient_bp_min,
+                                                            patient_bp_max=patient_bp_max,
+                                                            patient_weight=patient_weight,
+                                                            fees=ward_fees,
+                                                            paid=cash + online,
+                                                            remaining=remaining,
+                                                            cash=cash,
+                                                            online=online,
+                                                            appointment_date=appointment_date,
+                                                            appointment_time=appointment_time,
+                                                            )
+            if appoint_obj:
+                status = 'success'
+                msg = 'Appointment successfully saved.'
 
-        context = {}
+        except Exception as e:
+            msg = str(e)
+
+        context = {
+            'status': status,
+            'msg': msg,
+        }
         return JsonResponse(context)
     else:
         doctor = Doctor.objects.all()

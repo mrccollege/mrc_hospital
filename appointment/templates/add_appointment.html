@@ -77,7 +77,9 @@
                                                 <div class="form-group">
                                                     <label class="form-label">Patient</label>
                                                     <input type="text" class="form-control" id="patient_search"
-                                                           name="search" placeholder="Search Patient">
+                                                           placeholder="Search Patient">
+                                                    <input type="hidden" class="form-control" id="patient_search_id"
+                                                           name="patient_search_id" placeholder="Search Patient id">
                                                     <select id="patient_select" name="patient" size="5">
                                                         <option value="0"></option>
                                                     </select>
@@ -239,7 +241,7 @@
                     confirmButtonColor: '#3085d6',
                     confirmButtonText: 'OK'
                   }).then((result) => {
-                    window.location.href = '/account/doctor_registration/';
+                    window.location.href = '/appointment/add_appointment/';
                   });
                 }else{
                   Swal.fire({
@@ -297,6 +299,8 @@
                 e.preventDefault();
                 if (selectedOptionIndex >= 0) {
                     var selectedText = options.eq(selectedOptionIndex).text();
+                    var selected_id = options.eq(selectedOptionIndex).val()
+                    $('#patient_search_id').val(selected_id);
                     $('#patient_search').val(selectedText);
                     $('#patient_select').empty().hide();
                 }
@@ -312,6 +316,8 @@
 
     $('#patient_select').on('change', function() {
         var selectedText = $('#patient_select option:selected').text();
+        var selected_id = $('#patient_select option:selected').val()
+        $('#patient_search_id').val(selected_id);
         $('#patient_search').val(selectedText);
         $('#patient_select').empty().hide();
     });
