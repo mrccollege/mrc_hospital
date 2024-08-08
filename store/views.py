@@ -199,3 +199,7 @@ def view_mini_store_medicine(request, store_id):
         'store_name': store_name
     }
     return render(request, 'mini_store_medicine_detail.html', context)
+
+
+def create_bill(request):
+    return render(request, 'create_bill.html')

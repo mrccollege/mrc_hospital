@@ -142,11 +142,8 @@ def patient_registration(request):
         password = form.get('password')
         phone = form.get('phone')
         address = form.get('address')
-        patient_diseases = form.get('diseases')
-        patient_bp_min = form.get('patient_bp_min')
-        patient_bp_max = form.get('patient_bp_max')
-        patient_weight = form.get('patient_weight')
         patient_age = form.get('patient_age')
+        patient_diseases = form.get('diseases')
         patient_code = datetime.now().strftime("%Y%d%H%M%S")
         status = 'failed'
         msg = 'Patient Registration failed.'
@@ -161,11 +158,8 @@ def patient_registration(request):
                 patient_id = user_obj.id
                 Patient.objects.create(user_id=patient_id,
                                        patient_code=patient_code,
+                                       patient_age=patient_age,
                                        patient_diseases=patient_diseases,
-                                       patient_bp_min=patient_bp_min,
-                                       patient_bp_max=patient_bp_max,
-                                       patient_weight=patient_weight,
-                                       patient_age=patient_age
                                        )
                 status = 'success'
                 msg = 'Patient Registration successfully.'

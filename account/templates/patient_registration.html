@@ -55,6 +55,13 @@
                                             <textarea class="form-control" id="address" name="address" rows="3"
                                                       required></textarea>
                                         </div>
+                                        <div class="form-group">
+                                            <label for="patient_age" class="form-label">Patient Age</label>
+                                            <input type="text" class="form-control" id="patient_age"
+                                                   name="patient_age"
+                                                   onkeypress="return isNumberKey(event)"
+                                                   required maxlength="3">
+                                        </div>
 
                                         <div class="form-group">
                                             <label for="diseases" class="form-label">Diseases</label>
@@ -64,50 +71,6 @@
                                         </div>
 
                                     </div><!-- /.box-body -->
-                                    <div class="box-body row">
-                                        <div class="col-lg-4">
-                                            <div class="row">
-                                                <div class="col-lg-6">
-                                                    <div class="form-group">
-                                                        <label for="patient_bp_min" class="form-label">Patient BP
-                                                            Min</label>
-                                                        <input type="text" class="form-control" id="patient_bp_min"
-                                                               name="patient_bp_min"
-                                                               onkeypress="return isNumberKey(event)"
-                                                               required maxlength="3" placeholder="Enter BP Like : 80">
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-6">
-                                                    <div class="form-group">
-                                                        <label for="patient_bp_max" class="form-label">Patient BP
-                                                            Max</label>
-                                                        <input type="text" class="form-control" id="patient_bp_max"
-                                                               name="patient_bp_max"
-                                                               onkeypress="return isNumberKey(event)"
-                                                               required maxlength="3" placeholder="Enter BP Like : 120">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-4">
-                                            <div class="form-group">
-                                                <label for="patient_weight" class="form-label">Patient Weight</label>
-                                                <input type="text" class="form-control" id="patient_weight"
-                                                       name="patient_weight"
-                                                       onkeypress="return isNumberKey(event)"
-                                                       required maxlength="3">
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-4">
-                                            <div class="form-group">
-                                                <label for="patient_age" class="form-label">Patient Age</label>
-                                                <input type="text" class="form-control" id="patient_age"
-                                                       name="patient_age"
-                                                       onkeypress="return isNumberKey(event)"
-                                                       required maxlength="3">
-                                            </div>
-                                        </div>
-                                    </div>
                                     <div class="box-footer">
                                         <button type="submit" class="btn btn-primary">Submit</button>
                                     </div>

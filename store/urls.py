@@ -10,4 +10,7 @@ urlpatterns = [
     path('medicine_stock_history/', views.medicine_stock_history, name='medicine_stock_history'),
     path('mini_store/', views.mini_store, name='mini_store'),
     path('view_mini_store_medicine/<int:store_id>/', views.view_mini_store_medicine, name='view_mini_store_medicine'),
+
+
+    path('create_bill/', views.create_bill, name='create_bill'),
 ]
