@@ -17,6 +17,7 @@ def add_new_medicine(request):
         form = request.POST
         store_id = int(form.get('store_id'))
         medicine_name = form.get('medicine_name')
+        medicine_price = form.get('medicine_price')
         medicine_qty = form.get('medicine_qty')
         medicine_manufacturer = form.get('medicine_manufacturer')
         medicine_expiry = form.get('medicine_expiry')
@@ -27,6 +28,7 @@ def add_new_medicine(request):
             store_obj = Store.objects.filter(id=store_id).exists()
             if store_obj:
                 medicine_obj = Medicine.objects.create(medicine_name=medicine_name,
+                                                       medicine_price=int(medicine_price),
                                                        medicine_manufacturer=medicine_manufacturer,
                                                        medicine_expiry=medicine_expiry,
                                                        )
@@ -144,6 +146,7 @@ def medicine_update(request, id):
     if request.method == 'POST':
         form = request.POST
         medicine_name = form.get('medicine_name')
+        medicine_price = form.get('medicine_price')
         medicine_manufacturer = form.get('medicine_manufacturer')
         medicine_expiry = form.get('medicine_expiry')
         medicine_expiry = convert_date_format(medicine_expiry)
@@ -151,6 +154,7 @@ def medicine_update(request, id):
         status = 'Failed'
         try:
             medicine_obj = Medicine.objects.filter(id=id).update(medicine_name=medicine_name,
+                                                                 medicine_price=int(medicine_price),
                                                                  medicine_manufacturer=medicine_manufacturer,
                                                                  medicine_expiry=medicine_expiry,
                                                                  )

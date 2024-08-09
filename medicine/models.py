@@ -4,6 +4,7 @@ from django.db import models
 # Create your models here.
 class Medicine(models.Model):
     medicine_name = models.CharField(max_length=500, null=True)
+    medicine_price = models.IntegerField(null=True)
     medicine_manufacturer = models.CharField(max_length=500, null=True)
     medicine_expiry = models.DateField(null=True)
     created_at = models.DateTimeField(auto_now_add=True)

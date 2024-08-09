@@ -203,3 +203,24 @@ def view_mini_store_medicine(request, store_id):
 
 def create_bill(request):
     return render(request, 'create_bill.html')
+
+
+def search_medicine(request):
+    if request.method == 'GET':
+        form = request.GET
+        search_value = form.get('search_value')
+        medicine = MedicineStore.objects.filter(medicine__medicine_name__icontains=search_value)
+        data_list = []
+        for i in medicine:
+            data_dict = {}
+            data_dict['record_id'] = i.id
+            data_dict['medicine_id'] = i.medicine.id
+            data_dict['name'] = i.medicine.medicine_name.capitalize()
+            data_dict['price'] = i.medicine.medicine_price
+            data_dict['record_qty'] = i.qty
+            data_list.append(data_dict)
+        print(data_list, '=================data_list=============')
+        context = {
+            'results': data_list,
+        }
+        return JsonResponse(context)

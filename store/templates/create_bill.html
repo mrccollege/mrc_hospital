@@ -2,7 +2,7 @@
 
 {% block css %}
 <!-- Datepicker -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-
     datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css">
 
 {% endblock css %}
@@ -36,36 +36,54 @@
                                 <!-- form start -->
                                 <form id="medicine_form" role="form">{% csrf_token %}
                                     <div class="box-body">
-                                        <div class="form-group">
-                                            <label for="store_id" class="form-label">Select Store</label>
-                                            <select name="store_id" id="store_id" class="form-control">
-                                                <option value="0">Select Store</option>
-                                                {% for i in store %}
-                                                <option value="{{i.id}}">{{i.user}}</option>
-                                                {% endfor %}
+                                        <div class="row">
+                                            <div class="col-lg-4">
+                                                <div class="form-group">
+                                                    <label for="patient_name" class="form-label">Patient Name</label>
+                                                    <input type="text" class="form-control" id="patient_name"
+                                                           name="patient_name" required placeholder="Enter Patient name: ">
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <div class="form-group">
+                                                    <label for="patient_mobile" class="form-label">Patient Mobile</label>
+                                                    <input type="text" class="form-control" id="patient_mobile"
+                                                           name="patient_mobile" required placeholder="Enter patient mobile: ">
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <div class="form-group">
+                                                    <label for="patient_address" class="form-label">Patient Address (optional)</label>
+                                                    <input type="text" class="form-control" id="patient_address"
+                                                           name="patient_address" placeholder="Enter patient address: ">
+                                                </div>
+                                            </div>
+                                        </div>
 
-                                            </select>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="medicine_name" class="form-label">Medicine Name</label>
-                                            <input type="text" class="form-control" id="medicine_name"
-                                                   name="medicine_name" required>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="medicine_qty" class="form-label">Medicine Qty</label>
-                                            <input type="text" class="form-control" id="medicine_qty"
-                                                   name="medicine_qty" onkeypress="return isNumberKey(event)" required>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="medicine_manufacturer" class="form-label">Medicine
-                                                Manufacturer</label>
-                                            <input type="text" class="form-control" id="medicine_manufacturer"
-                                                   name="medicine_manufacturer" required>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="medicine_expiry" class="form-label">Medicine Expiry</label>
-                                            <input type="text" class="form-control" id="medicine_expiry"
-                                                   name="medicine_expiry">
+                                    </div><!-- /.box-body -->
+
+                                    <div class="box-body">
+                                        <div class="table-responsive">
+                                            <table class="table table-condensed">
+                                                <thead>
+                                                <tr>
+                                                    <th>SN.</th>
+                                                    <th>Medicine Name</th>
+                                                    <th colspan="1">Price</th>
+                                                    <th>Medicine Qty</th>
+                                                    <th>Sell total</th>
+                                                    <th>Final Amount</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                </tbody>
+                                            </table>
+                                            <div class="text-center">
+                                                <button type="button" class="btn btn-primary"
+                                                        onclick="add_medicine()">
+                                                    Add
+                                                </button>
+                                            </div>
                                         </div>
                                     </div><!-- /.box-body -->
 
@@ -88,9 +106,9 @@
 
 {% block js %}
 <script>
-     $("#medicine_expiry").datepicker({
-        dateFormat: "dd/mm/yy"
-     });
+    $("#medicine_expiry").datepicker({
+       dateFormat: "dd/mm/yy"
+    });
 </script>
 
 <script>
@@ -131,6 +149,75 @@
           },
         });
     });
+</script>
+
+<script>
+    var index = 1;
+    function add_medicine(){
+        var html = '';
+        html += '<tr id="medicine_tr'+index+'">';
+        html += '<td>'+index+'</td>';
+        html += '<td><input onkeyup="search_medicine('+index+');" type="text" id="medicine'+index+'" name="medicine" class="form-control" autocomplete="off" placeholder="Search medicine: " required></td>';
+        html += '<input type="hidden" name="record_id" class="form-control" id="record_id'+index+'" required>';
+        html += '<input type="hidden" name="medicine_id" class="form-control" id="medicine_id'+index+'" required>';
+        html += '<td><input readonly type="text" id="price'+index+'" class="form-control" name="price" required></td>';
+        html += '<td><input type="text" id="record_qty'+index+'" name="record_qty" class="form-control" readonly required></td>';
+        html += '<td><input type="text" id="sell_qty'+index+'" name="sell_qty" class="form-control" placeholder="Sell quantity" required></td>';
+        html += '<td><input value="0" type="text" id="total'+index+'" name="total" class="total form-control" readonly></td>';
+        html += '<td><input type="hidden" readonly></td>';
+        html += '</tr>';
+
+        // Append the new row to the table body
+        $('table tbody').append(html);
+        index +=1;
+    }
+    $(document).ready(function(){
+        add_medicine();
+    });
+
+</script>
+<script>
+    function search_medicine(indexID) {
+        $('#medicine' + indexID).autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: '/store/search_medicine/',
+                    type: 'GET',
+                    data: {
+                        search_value: request.term,
+                    },
+                    success: function (result) {
+                        console.log(result.results, '----------result')
+                        if (result.results) {
+                            var suggestedProducts = result.results.map(function (results) {
+                                return {
+                                    label: results.name,
+                                    value: results.name,
+                                    record_id: results.record_id,
+                                    medicine_id: results.medicine_id,
+                                    record_qty: results.record_qty,
+                                    price:results.price
+                                };
+                            });
+                            response(suggestedProducts);
+
+                        }
+                    },
+                    error: function (xhr, errmsg, err) {
+                        console.log(xhr.status + ": " + xhr.responseText);
+                    }
+                });
+            },
+            select: function (event, ui) {
+                $('#record_id' + indexID).val(ui.item.record_id);
+                $('#medicine_id' + indexID).val(ui.item.medicine_id);
+                $('#price' + indexID).val(ui.item.price);
+                $('#record_qty' + indexID).val(ui.item.record_qty);
+                add_medicine()
+            }
+        });
+    }
+
 </script>
 
 {% endblock js %}
