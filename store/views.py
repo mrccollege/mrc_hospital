@@ -276,7 +276,11 @@ def create_bill(request):
             record_qty = form.getlist('record_qty')
             sell_qty = form.getlist('sell_qty')
             total_sell_price = form.getlist('total_sell_price')
-            obj = PatientBill.objects.create(patient_id=obj_id, store_id=store_id,)
+            invoice_number = datetime.now().strftime("%Y%d%H%M%S")
+            obj = PatientBill.objects.create(patient_id=obj_id,
+                                             store_id=store_id,
+                                             invoice_number=invoice_number,
+                                             )
             if obj:
                 for i in range(len(medicine_id)):
                     PatientBillDetail.objects.create(patient_bill_id=obj.id,

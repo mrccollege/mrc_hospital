@@ -11,6 +11,7 @@ from store.models import Store
 class PatientBill(models.Model):
     store = models.ForeignKey(Store, on_delete=models.PROTECT, null=True)
     patient = models.ForeignKey(Patient, on_delete=models.PROTECT, null=True)
+    invoice_number = models.CharField(max_length=100, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 

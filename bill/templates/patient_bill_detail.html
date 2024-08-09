@@ -1,67 +1,89 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <title>Bill Details</title>
-    <link rel="stylesheet" href="/static/common_css/bill_detail_style.css" media="all"/>
-    <!--    https://htmlpdfapi.com/blog/free_html5_invoice_templates-->
-</head>
-<body>
-<header class="clearfix">
-    <div id="logo">
-        <img src="/static/logo/bill_logo/bill_detail_logo.png">
-    </div>
-    <h1>INVOICE 3-2-1</h1>
-    <div id="company" class="clearfix">
-        <div>Mrc Ayurveda</div>
-        <div>455 Foggy Heights,<br/> AZ 85004, US</div>
-        <div>(602) 519-0450</div>
-        <div><a href="mailto:company@example.com">mrctherapy2023@.com</a></div>
-    </div>
-    <div id="project">
-<!--        <div><span>PROJECT</span> Website development</div>-->
-        <div><span>CLIENT</span> John Doe</div>
-        <div><span>ADDRESS</span> 796 Silver Harbour, TX 79273, US</div>
-        <div><span>EMAIL</span> <a href="mailto:john@example.com">john@example.com</a></div>
-        <div><span>DATE</span> August 17, 2015</div>
-        <div><span>DUE DATE</span> September 17, 2015</div>
-    </div>
-</header>
-<main>
-    <table>
-        <thead>
-        <tr>
-            <th class="service">Medicine Name</th>
-            <th class="desc">Medicine Price</th>
-            <th>Sell QTY</th>
-            <th>Sub Total</th>
-            <th>Total</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for i in bill_details %}
-        <tr>
-            <td class="service">{{i.medicine.medicine_name}}</td>
-            <td class="service">RS.{{i.medicine_price}}</td>
-            <td class="service">{{i.medicine_sell_qty}}</td>
-            <td class="unit">Rs.{{i.medicine_sell_price}}</td>
-            <td class="unit">Rs.{{i.medicine_sell_price}}</td>
-        </tr>
-        {% endfor%}
+{% extends 'base.html' %}
 
-        <tr>
-            <td colspan="4" class="grand total">GRAND TOTAL</td>
-            <td class="grand total">Rs.{{total_sell_price}}</td>
-        </tr>
-        </tbody>
-    </table>
-    <div id="notices">
-        <div>NOTICE:</div>
-        <div class="notice">A finance charge of 1.5% will be made on unpaid balances after 30 days.</div>
-    </div>
-</main>
-<footer>
-    Invoice was created on a computer and is valid without the signature and seal.
-</footer>
-</body>
-</html>
+{% block css %}
+<link rel="stylesheet" href="/static/common_css/bill_detail_style.css" media="all"/>
+<!--    https://htmlpdfapi.com/blog/free_html5_invoice_templates-->
+{% endblock css %}
+
+
+{% block content %}
+<div class="wrapper">
+
+    <!-- Right side column. Contains the navbar and content of the page -->
+    <div class="content-wrapper">
+        <!-- Main content -->
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="box">
+                        <div class="box-header">
+                            <h3 class="text-center">Patient Bill Detail</h3>
+                        </div><!-- /.box-header -->
+                        <div class="box-body">
+                            <header class="clearfix">
+                                <div id="logo">
+                                    <img src="/static/logo/bill_logo/bill_detail_logo.png">
+                                </div>
+                                <h1>Invoice Number: {{patient_details.invoice_number}}</h1>
+                                <div id="company" class="clearfix">
+                                    <div>Mrc Ayurveda</div>
+                                    <div>Sunrakh Road Lotus Garden,<br/> Vrindavan(Mathura)</div>
+                                    <div>92 67 67 88 88</div>
+                                    <div><a href="mailto:company@example.com">mrctherapy2023@.com</a></div>
+                                </div>
+                                <div id="project">
+                                    <div><span>CLIENT</span> {{patient_details.patient.user.username}}</div>
+                                    <div><span>ADDRESS</span>{{patient_details.patient.user.address}}</div>
+                                    <div><span>EMAIL</span> {{patient_details.patient.user.email}}</div>
+                                    <div><span>DATE</span> {{patient_details.created_at}}</div>
+                                </div>
+                            </header>
+                            <main>
+                                <table>
+                                    <thead>
+                                    <tr>
+                                        <th class="service">Medicine Name</th>
+                                        <th class="desc">Medicine Price</th>
+                                        <th>Sell QTY</th>
+                                        <th>Sub Total</th>
+                                        <th>Total</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for i in bill_details %}
+                                    <tr>
+                                        <td class="service">{{i.medicine.medicine_name}}</td>
+                                        <td class="service">RS.{{i.medicine_price}}</td>
+                                        <td class="service">{{i.medicine_sell_qty}}</td>
+                                        <td class="unit">Rs.{{i.medicine_sell_price}}</td>
+                                        <td class="unit">Rs.{{i.medicine_sell_price}}</td>
+                                    </tr>
+                                    {% endfor%}
+
+                                    <tr>
+                                        <td colspan="4" class="grand total">GRAND TOTAL</td>
+                                        <td class="grand total">Rs.{{total_sell_price}}</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <div id="notices">
+                                    <div>NOTICE:</div>
+                                    <div class="notice">A finance charge of 1.5% will be made on unpaid balances
+                                        after 30 days.
+                                    </div>
+                                </div>
+                            </main>
+
+                        </div><!-- /.box-body -->
+                    </div><!-- /.box -->
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+        </section><!-- /.content -->
+    </div><!-- /.content-wrapper -->
+
+</div><!-- ./wrapper -->
+
+{% endblock content %}
+
+{% block js %}
+{% endblock js %}

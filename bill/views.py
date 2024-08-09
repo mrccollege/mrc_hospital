@@ -19,10 +19,11 @@ def bill_list(request):
 
 
 def patient_bill_detail(request, id):
+    patient_details = PatientBill.objects.get(id=id)
     bill_details = PatientBillDetail.objects.filter(patient_bill_id=id)
     total_sell_price = bill_details.aggregate(Sum('medicine_sell_price'))['medicine_sell_price__sum'] or 0
-    print(total_sell_price, '======total_sell_price')
     context = {
+        'patient_details': patient_details,
         'bill_details': bill_details,
         'total_sell_price': total_sell_price,
     }
