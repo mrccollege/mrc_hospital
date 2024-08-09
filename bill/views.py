@@ -3,15 +3,21 @@ from django.shortcuts import render
 
 from .models import PatientBill, PatientBillDetail
 from store.models import Store
-from django.db.models import Sum
+from django.db.models import Sum, Q
+
 
 # Create your views here.
 @login_required(login_url='/account/user_login/')
 def bill_list(request):
     user_id = request.session['user_id']
-    store = Store.objects.get(user_id=user_id)
-    store_id = store.id
-    patient = PatientBill.objects.filter()
+    query = Q()
+    try:
+        store = Store.objects.get(user_id=user_id)
+        store_id = store.id
+        query = Q(store_id=store_id)
+    except:
+        pass
+    patient = PatientBill.objects.filter(query)
     context = {
         'patient': patient,
     }
