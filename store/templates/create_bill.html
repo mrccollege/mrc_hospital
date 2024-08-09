@@ -164,7 +164,7 @@
         html += '<td><input type="text" id="record_qty'+index+'" name="record_qty" class="form-control" readonly required></td>';
         html += '<td><input type="text" onkeyup="sell_qty_funtion('+index+')" id="sell_qty'+index+'" name="sell_qty" class="form-control" placeholder="Sell quantity" required></td>';
         html += '<td><input value="0" type="text" id="total_sell_price'+index+'" name="total_sell_price" class="total form-control" readonly></td>';
-        html += '<td><input type="hidden" readonly></td>';
+        html += '<td><button onclick="remove_row('+index+')"><i class="fa fa-remove" style="font-size:24px"></i></button></td>';
         html += '</tr>';
 
         // Append the new row to the table body
@@ -192,6 +192,9 @@
 
         total_price = sell_qty * medicine_price
         $('#total_sell_price'+index).val(total_price)
+    }
+    function remove_row(index){
+        $('#medicine_tr'+index).remove()
     }
 </script>
 <script>
