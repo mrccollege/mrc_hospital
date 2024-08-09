@@ -32,10 +32,9 @@
                                 <!-- form start -->
                                 <form id="store_form" role="form">{% csrf_token %}
                                     <div class="box-body">
-
                                         <div class="form-group">
                                             <label for="mobile" class="form-label">Mobile Number</label>
-                                            <input type="text" class="form-control" id="mobile" name="mobile"
+                                            <input type="text" class="form-control" id="mobile" name="mobile" onkeypress="return isNumberKey(event)"
                                                    required>
                                         </div>
                                         <div class="form-group">

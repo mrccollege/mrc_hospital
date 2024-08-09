@@ -210,10 +210,16 @@ def view_mini_store_medicine(request, store_id):
 
 
 def search_medicine(request):
+    user_id = request.session['user_id']
+    store = Store.objects.get(user_id=user_id)
+    store_id = store.id
     if request.method == 'GET':
         form = request.GET
         search_value = form.get('search_value')
-        medicine = MedicineStore.objects.filter(medicine__medicine_name__icontains=search_value)
+        medicineIds = form.getlist('medicineIds[]')
+        medicine = MedicineStore.objects.filter(to_store_id=store_id,
+                                                medicine__medicine_name__icontains=search_value,
+                                                ).exclude(medicine__id__in=medicineIds)
         data_list = []
         for i in medicine:
             data_dict = {}
@@ -232,8 +238,12 @@ def search_medicine(request):
 @login_required(login_url='/account/user_login/')
 def create_bill(request):
     user_id = request.session['user_id']
-    store = Store.objects.get(user_id=user_id)
-    store_id = store.id
+    try:
+        store = Store.objects.get(user_id=user_id)
+        store_id = store.id
+    except:
+        pass
+
     if request.method == 'POST':
         # User.objects.filter(username='rajat').delete()
         form = request.POST

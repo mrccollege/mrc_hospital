@@ -196,6 +196,17 @@
 </script>
 <script>
     function search_medicine(indexID) {
+        $('#sell_qty' + indexID).val('');
+        $('#total_sell_price' + indexID).val('');
+        var medicineIds = [];
+
+        $('input[name="medicine_id"]').each(function() {
+            medicineIds.push($(this).val());
+        });
+        medicineIds = medicineIds.filter(function(id) {
+            return id.trim() !== '';
+        });
+
         $('#medicine' + indexID).autocomplete({
             source: function (request, response) {
                 $.ajax({
@@ -203,9 +214,9 @@
                     type: 'GET',
                     data: {
                         search_value: request.term,
+                        medicineIds: medicineIds,
                     },
                     success: function (result) {
-                        console.log(result.results, '----------result')
                         if (result.results) {
                             var suggestedProducts = result.results.map(function (results) {
                                 return {
@@ -218,7 +229,6 @@
                                 };
                             });
                             response(suggestedProducts);
-
                         }
                     },
                     error: function (xhr, errmsg, err) {
