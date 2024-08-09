@@ -46,16 +46,16 @@
                                             </div>
                                             <div class="col-lg-4">
                                                 <div class="form-group">
-                                                    <label for="patient_mobile" class="form-label">Patient Mobile</label>
-                                                    <input type="text" class="form-control" id="patient_mobile"
-                                                           name="patient_mobile" required placeholder="Enter patient mobile: ">
+                                                    <label for="mobile" class="form-label">Patient Mobile</label>
+                                                    <input type="text" class="form-control" id="mobile"
+                                                           name="mobile" required placeholder="Enter patient mobile: ">
                                                 </div>
                                             </div>
                                             <div class="col-lg-4">
                                                 <div class="form-group">
-                                                    <label for="patient_address" class="form-label">Patient Address (optional)</label>
-                                                    <input type="text" class="form-control" id="patient_address"
-                                                           name="patient_address" placeholder="Enter patient address: ">
+                                                    <label for="address" class="form-label">Patient Address (optional)</label>
+                                                    <input type="text" class="form-control" id="address"
+                                                           name="address" placeholder="Enter patient address: ">
                                                 </div>
                                             </div>
                                         </div>
@@ -71,7 +71,7 @@
                                                     <th>Medicine Name</th>
                                                     <th colspan="1">Price</th>
                                                     <th>Medicine Qty</th>
-                                                    <th>Sell total</th>
+                                                    <th>Sell Qty</th>
                                                     <th>Final Amount</th>
                                                 </tr>
                                                 </thead>
@@ -120,7 +120,7 @@
         e.preventDefault();
         var formData = $('#medicine_form').serialize();
         $.ajax({
-          url: '/medicine/add_new_medicine/',
+          url: '/store/create_bill/',
           type: 'POST',
           data: formData,
           success: function (response) {
@@ -133,7 +133,7 @@
                 confirmButtonColor: '#3085d6',
                 confirmButtonText: 'OK'
               }).then((result) => {
-                window.location.href = '/medicine/add_new_medicine/';
+                window.location.href = '/store/create_bill/';
               });
             }else{
               Swal.fire({
@@ -160,10 +160,10 @@
         html += '<td><input onkeyup="search_medicine('+index+');" type="text" id="medicine'+index+'" name="medicine" class="form-control" autocomplete="off" placeholder="Search medicine: " required></td>';
         html += '<input type="hidden" name="record_id" class="form-control" id="record_id'+index+'" required>';
         html += '<input type="hidden" name="medicine_id" class="form-control" id="medicine_id'+index+'" required>';
-        html += '<td><input readonly type="text" id="price'+index+'" class="form-control" name="price" required></td>';
+        html += '<td><input readonly type="text" id="medicine_price'+index+'" class="form-control" name="medicine_price" required></td>';
         html += '<td><input type="text" id="record_qty'+index+'" name="record_qty" class="form-control" readonly required></td>';
-        html += '<td><input type="text" id="sell_qty'+index+'" name="sell_qty" class="form-control" placeholder="Sell quantity" required></td>';
-        html += '<td><input value="0" type="text" id="total'+index+'" name="total" class="total form-control" readonly></td>';
+        html += '<td><input type="text" onkeyup="sell_qty_funtion('+index+')" id="sell_qty'+index+'" name="sell_qty" class="form-control" placeholder="Sell quantity" required></td>';
+        html += '<td><input value="0" type="text" id="total_sell_price'+index+'" name="total_sell_price" class="total form-control" readonly></td>';
         html += '<td><input type="hidden" readonly></td>';
         html += '</tr>';
 
@@ -175,6 +175,24 @@
         add_medicine();
     });
 
+    function sell_qty_funtion(index){
+        var sell_qty = parseInt($('#sell_qty'+index).val())
+        var medicine_price = parseInt($('#medicine_price'+index).val())
+        if(sell_qty){
+            sell_qty = sell_qty
+        }else{
+            sell_qty = 0
+        }
+
+        if(medicine_price){
+            medicine_price = medicine_price
+        }else{
+            medicine_price = 0
+        }
+
+        total_price = sell_qty * medicine_price
+        $('#total_sell_price'+index).val(total_price)
+    }
 </script>
 <script>
     function search_medicine(indexID) {
@@ -211,9 +229,9 @@
             select: function (event, ui) {
                 $('#record_id' + indexID).val(ui.item.record_id);
                 $('#medicine_id' + indexID).val(ui.item.medicine_id);
-                $('#price' + indexID).val(ui.item.price);
+                $('#medicine_price' + indexID).val(ui.item.price);
                 $('#record_qty' + indexID).val(ui.item.record_qty);
-                add_medicine()
+                //add_medicine()
             }
         });
     }

@@ -1,3 +1,6 @@
+from datetime import datetime
+
+from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import render
@@ -5,6 +8,11 @@ from django.shortcuts import render
 from .models import Store, MedicineStore, \
     MedicineStoreTransactionHistory
 from medicine.models import Medicine
+
+from account.models import User
+from patient.models import Patient
+
+from bill.models import PatientBill, PatientBillDetail
 
 
 # Create your views here.
@@ -201,10 +209,6 @@ def view_mini_store_medicine(request, store_id):
     return render(request, 'mini_store_medicine_detail.html', context)
 
 
-def create_bill(request):
-    return render(request, 'create_bill.html')
-
-
 def search_medicine(request):
     if request.method == 'GET':
         form = request.GET
@@ -219,8 +223,79 @@ def search_medicine(request):
             data_dict['price'] = i.medicine.medicine_price
             data_dict['record_qty'] = i.qty
             data_list.append(data_dict)
-        print(data_list, '=================data_list=============')
         context = {
             'results': data_list,
         }
         return JsonResponse(context)
+
+
+@login_required(login_url='/account/user_login/')
+def create_bill(request):
+    user_id = request.session['user_id']
+    store = Store.objects.get(user_id=user_id)
+    store_id = store.id
+    if request.method == 'POST':
+        # User.objects.filter(username='rajat').delete()
+        form = request.POST
+        username = form.get('patient_name')
+        mobile = form.get('mobile')
+        address = form.get('address')
+        email = mobile + 'yopmail.com'
+        password = '12345'
+        patient_code = datetime.now().strftime("%Y%d%H%M%S")
+        obj_id = 0
+        status = 'failed'
+        msg = 'Patient Registration failed.'
+
+        mobile = User.objects.filter(mobile=mobile).exists()
+        if mobile:
+            context = {
+                'status': 'failed',
+                'msg': 'this mobile number already exists.',
+            }
+            return JsonResponse(context)
+
+        user_obj = User.objects.create_user(username=username,
+                                            email=email,
+                                            password=password,
+                                            mobile=mobile,
+                                            address=address
+                                            )
+        if user_obj:
+            patient_id = user_obj.id
+            obj = Patient.objects.create(user_id=patient_id,
+                                         patient_code=patient_code,
+                                         )
+            if obj:
+                obj_id = obj.id
+
+        if obj_id != 0:
+            record_id = form.getlist('record_id')
+            medicine_id = form.getlist('medicine_id')
+            medicine_price = form.getlist('medicine_price')
+            record_qty = form.getlist('record_qty')
+            sell_qty = form.getlist('sell_qty')
+            total_sell_price = form.getlist('total_sell_price')
+            obj = PatientBill.objects.create(patient_id=obj_id, store_id=store_id,)
+            if obj:
+                for i in range(len(medicine_id)):
+                    PatientBillDetail.objects.create(patient_bill_id=obj.id,
+                                                     medicine_id=medicine_id[i],
+                                                     medicine_qty=record_qty[i],
+                                                     medicine_sell_qty=sell_qty[i],
+                                                     medicine_price=medicine_price[i],
+                                                     medicine_sell_price=total_sell_price[i],
+                                                     )
+                    remaining_qty = int(record_qty[i]) - int(sell_qty[i])
+                    MedicineStore.objects.filter(to_store_id=store_id, medicine_id=medicine_id[i]).update(qty=remaining_qty)
+
+                status = 'success'
+                msg = 'Bill Generated Successfully.'
+
+        context = {
+            'status': status,
+            'msg': msg,
+        }
+        return JsonResponse(context)
+    else:
+        return render(request, 'create_bill.html')

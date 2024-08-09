@@ -12,7 +12,7 @@
         <!-- Content Header (Page header) -->
         <section class="content-header">
             <h1>
-                All Doctor Detail
+                Patient Bill List
             </h1>
             <ol class="breadcrumb">
                 <li><a href="/"><i class="fa fa-dashboard"></i> Home</a></li>
@@ -27,7 +27,7 @@
                 <div class="col-xs-12">
                     <div class="box">
                         <div class="box-header">
-                            <h3 class="box-title">Doctors</h3>
+                            <h3 class="box-title">Patient</h3>
                         </div><!-- /.box-header -->
                         <div class="box-body">
                             <table id="example1" class="table table-bordered table-striped">
@@ -36,18 +36,16 @@
                                     <th>Name</th>
                                     <th>Mobile</th>
                                     <th>Specialist</th>
-                                    <th>Degree</th>
                                     <th>Action</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {% for i in doctor %}
+                                {% for i in patient %}
                                 <tr>
-                                    <td>{{i.user.username|title}}</td>
-                                    <td>{{i.user.mobile}}</td>
-                                    <td>{{i.specialist|title}}</td>
-                                    <td>{{i.degree}}</td>
-                                    <td><a href="/doctor/doctor_detail/{{i.id}}/">View</a></td>
+                                    <td>{{i.patient.user.username|title}}</td>
+                                    <td>{{i.patient.user.mobile}}</td>
+                                    <td>{{i.patient.user.address|title}}</td>
+                                    <td><a href="/bill/patient_bill_detail/{{i.id}}/">View</a></td>
                                 </tr>
                                 {% endfor %}
 

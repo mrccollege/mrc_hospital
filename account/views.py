@@ -159,7 +159,6 @@ def patient_registration(request):
                 Patient.objects.create(user_id=patient_id,
                                        patient_code=patient_code,
                                        patient_age=patient_age,
-                                       patient_diseases=patient_diseases,
                                        )
                 status = 'success'
                 msg = 'Patient Registration successfully.'
@@ -211,3 +210,6 @@ def user_logout(request):
     logout(request)
     request.session.flush()
     return redirect('/account/user_login/')
+
+
+

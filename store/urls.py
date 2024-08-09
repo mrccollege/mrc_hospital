@@ -14,4 +14,5 @@ urlpatterns = [
 
     path('create_bill/', views.create_bill, name='create_bill'),
     path('search_medicine/', views.search_medicine, name='search_medicine'),
+
 ]

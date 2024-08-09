@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 
@@ -5,6 +6,7 @@ from menu.models import MenuUser, MenuCategory
 
 
 # Create your views here.
+@login_required(login_url='/account/user_login/')
 def dashboard(request):
     return render(request, 'index.html')
 
