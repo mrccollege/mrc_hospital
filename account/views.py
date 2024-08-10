@@ -97,7 +97,6 @@ def doctor_registration(request):
         username = form.get('doctor_name')
         mobile = form.get('mobile')
         email = mobile + 'yopmail.com'
-        password = form.get('password')
         phone = form.get('phone')
         address = form.get('address')
         specialist = form.get('specialist')
@@ -107,7 +106,7 @@ def doctor_registration(request):
         try:
             user_obj = User.objects.create_user(username=username,
                                                 email=email,
-                                                password=password,
+                                                password='12345',
                                                 mobile=mobile,
                                                 phone=phone,
                                                 address=address)
@@ -139,18 +138,16 @@ def patient_registration(request):
         username = form.get('patient_name')
         mobile = form.get('mobile')
         email = mobile + 'yopmail.com'
-        password = form.get('password')
         phone = form.get('phone')
         address = form.get('address')
         patient_age = form.get('patient_age')
-        patient_diseases = form.get('diseases')
         patient_code = datetime.now().strftime("%Y%d%H%M%S")
         status = 'failed'
         msg = 'Patient Registration failed.'
         try:
             user_obj = User.objects.create_user(username=username,
                                                 email=email,
-                                                password=password,
+                                                password='12345',
                                                 mobile=mobile,
                                                 phone=phone,
                                                 address=address)
