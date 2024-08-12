@@ -1,4 +1,6 @@
 $(document).ready(function() {
+    $('#loader-overlay').show(); // Show overlay
+    $('#loader').show(); // Show loader
     $.ajax({
         url: '/get_menus/',
         type: 'GET',
@@ -43,6 +45,8 @@ $(document).ready(function() {
                 // Allow the default behavior (navigation to the dashboard)
                 // No preventDefault() or stopPropagation() here, so it navigates correctly
             });
+            $('#loader-overlay').hide(); // Show overlay
+            $('#loader').hide(); // Show loader
         },
         error: function(error) {
             console.log(error);

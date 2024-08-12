@@ -104,6 +104,8 @@
 
 <script>
     $('#medicine_form').on('submit', function (e) {
+        $('#loader-overlay').show(); // Show overlay
+        $('#loader').show(); // Show loader
         e.preventDefault();
         var formData = $('#medicine_form').serialize();
         $.ajax({
@@ -111,6 +113,8 @@
           type: 'POST',
           data: formData,
           success: function (response) {
+            $('#loader-overlay').hide(); // Show overlay
+            $('#loader').hide(); // Show loader
             if(response.status == 'success'){
               Swal.fire({
                 title: 'Success',

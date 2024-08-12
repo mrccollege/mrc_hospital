@@ -113,6 +113,8 @@
 
 <script>
     $('#medicine_form').on('submit', function (e) {
+        $('#loader-overlay').show(); // Show overlay
+        $('#loader').show(); // Show loader
         store_id = $('#store_id').val();
         if(store_id == 0){
             return false;
@@ -125,6 +127,9 @@
           data: formData,
           success: function (response) {
             if(response.status == 'success'){
+                $('#loader-overlay').hide(); // Show overlay
+                $('#loader').hide(); // Show loader
+
               Swal.fire({
                 title: 'Success',
                 text: response.msg,

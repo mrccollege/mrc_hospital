@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
 
 {% block css %}
+
 {% endblock css %}
 
 
 {% block content %}
 <div class="wrapper">
-
     <!-- Right side column. Contains the navbar and content of the page -->
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
@@ -34,7 +34,8 @@
                                     <div class="box-body">
                                         <div class="form-group">
                                             <label for="mobile" class="form-label">Mobile Number</label>
-                                            <input type="text" class="form-control" id="mobile" name="mobile" onkeypress="return isNumberKey(event)"
+                                            <input type="text" class="form-control" id="mobile" name="mobile"
+                                                   onkeypress="return isNumberKey(event)"
                                                    required>
                                         </div>
                                         <div class="form-group">
@@ -55,6 +56,7 @@
                 </div><!-- /.col -->
             </div><!-- /.row -->
         </section><!-- /.content -->
+
     </div><!-- /.content-wrapper -->
 
 </div><!-- ./wrapper -->
@@ -65,12 +67,18 @@
 <script>
     $('#store_form').on('submit', function (e) {
         e.preventDefault();
+        $('#loader-overlay').show(); // Show overlay
+        $('#loader').show(); // Show loader
+
         var formData = $('#store_form').serialize();
         $.ajax({
           url: '/account/user_login/',
           type: 'POST',
           data: formData,
           success: function (response) {
+            $('#loader-overlay').hide(); // Hide overlay
+            $('#loader').hide(); // Hide loader
+
             if(response.status == 'success'){
               Swal.fire({
                 title: 'Success',
@@ -82,7 +90,7 @@
               }).then((result) => {
                 window.location.href = '/';
               });
-            }else{
+            } else {
               Swal.fire({
                   title: 'Error',
                   text: response.msg,
@@ -98,3 +106,4 @@
     });
 </script>
 {% endblock js %}
+
