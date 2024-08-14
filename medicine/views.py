@@ -56,30 +56,28 @@ def add_medicine_to_store(request):
         status = 'failed'
         try:
             for i in range(len(medicine_id)):
-                medicine_id = int(medicine_id[i])
-                medicine_qty = int(medicine_qty[i])
-                is_obj = MedicineStore.objects.filter(to_store_id=store_id, medicine_id=medicine_id)
-                query = Q(to_store_id=store_id, medicine_id=medicine_id)
+                is_obj = MedicineStore.objects.filter(to_store_id=store_id, medicine_id=int(medicine_id[i]))
+                query = Q(to_store_id=store_id, medicine_id=int(medicine_id[i]))
                 if is_obj:
                     pre_qty = is_obj[0].qty
-                    total_qty = pre_qty + medicine_qty
+                    total_qty = pre_qty + int(medicine_qty[i])
                     store_obj = MedicineStore.objects.filter(query).update(qty=total_qty)
                 else:
                     store_obj = MedicineStore.objects.create(from_store_id=store_id,
                                                              to_store_id=store_id,
-                                                             medicine_id=medicine_id,
-                                                             qty=medicine_qty,
+                                                             medicine_id=int(medicine_id[i]),
+                                                             qty=int(medicine_qty[i]),
                                                              )
 
                 if store_obj:
                     store_qty = MedicineStore.objects.get(query)
-                    medicine = Medicine.objects.get(id=medicine_id)
+                    medicine = Medicine.objects.get(id=int(medicine_id[i]))
                     MedicineStoreTransactionHistory.objects.create(from_store_id=store_id,
                                                                    to_store_id=store_id,
-                                                                   medicine_id=medicine_id,
+                                                                   medicine_id=int(medicine_id[i]),
                                                                    medicine_name=medicine.medicine_name,
                                                                    available_qty=store_qty.qty,
-                                                                   add_qty=medicine_qty,
+                                                                   add_qty=int(medicine_qty[i]),
                                                                    medicine_manufacturer=medicine.medicine_manufacturer,
                                                                    medicine_expiry=medicine.medicine_expiry,
                                                                    )

@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import render
 
@@ -13,6 +14,8 @@ from appointment.models import AppointmentWard
 from appointment.models import PatientAppointment
 
 from common_function.date_formate import convert_date_format
+
+from account.models import User
 
 
 # Create your views here.
@@ -78,7 +81,13 @@ def add_appointment(request):
 @login_required(login_url='/account/user_login/')
 def all_appointment(request):
     user_id = request.session.get('user_id')
-    appointment = PatientAppointment.objects.filter(doctor__user__id=user_id)
+    is_admin = User.objects.get(id=user_id)
+    if is_admin.user_type == 'ADMIN':
+        query = Q()
+    else:
+        # query = Q(doctor__user__id=user_id, appoint_status='unchecked')
+        query = Q(doctor__user__id=user_id, appoint_status='checked')
+    appointment = PatientAppointment.objects.filter(query)
     context = {
         'appointment': appointment,
     }
