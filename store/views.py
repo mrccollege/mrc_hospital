@@ -253,15 +253,15 @@ def create_bill(request):
         username = form.get('patient_name')
         mobile = form.get('mobile')
         address = form.get('address')
-        email = mobile + 'yopmail.com'
+        email = mobile + '@yopmail.com'
         password = '12345'
         patient_code = datetime.now().strftime("%Y%d%H%M%S")
         obj_id = 0
         status = 'failed'
         msg = 'Patient Registration failed.'
 
-        mobile = User.objects.filter(mobile=mobile).exists()
-        if mobile:
+        is_registered = User.objects.filter(mobile=mobile).exists()
+        if is_registered:
             context = {
                 'status': 'failed',
                 'msg': 'this mobile number already exists.',

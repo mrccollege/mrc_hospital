@@ -229,6 +229,7 @@ def search_medicine(request):
             data_dict = {}
             data_dict['medicine_id'] = i.id
             data_dict['name'] = i.medicine_name.capitalize()
+            data_dict['type'] = i.type if i.type else 'None'
             data_list.append(data_dict)
         context = {
             'results': data_list,

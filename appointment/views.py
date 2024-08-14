@@ -18,7 +18,6 @@ from common_function.date_formate import convert_date_format
 def add_appointment(request):
     if request.method == 'POST':
         form = request.POST
-        print(form, '==============form==========')
         appoint_ward = form.get('appointment_ward')
         patient = form.get('patient_search_id')
         doctor = form.get('doctor')
@@ -75,6 +74,14 @@ def add_appointment(request):
         return render(request, 'add_appointment.html', context)
 
 
+def all_appointment(request):
+    appointment = PatientAppointment.objects.all()
+    context = {
+        'appointment': appointment,
+    }
+    return render(request, 'all_appointment.html', context)
+
+
 def search_patient(request):
     if 'term' in request.GET:
         qs = Patient.objects.filter(patient_code__icontains=request.GET.get('term'))
@@ -90,3 +97,11 @@ def search_patient(request):
         }
         return JsonResponse(context, safe=False)
     return JsonResponse([], safe=False)
+
+
+def patient_appointment_detail(request, id):
+    appointment = PatientAppointment.objects.get(id=id)
+    context = {
+        'appointment': appointment
+    }
+    return render(request, 'patient_appointment_detail.html', context)

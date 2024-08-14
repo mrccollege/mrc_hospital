@@ -5,6 +5,9 @@ from doctor.models import Doctor
 
 from account.models import User
 
+from .models import PatientAppointmentChecked, PatientAppointmentCheckedDetail
+from appointment.models import PatientAppointment
+
 
 # Create your views here.
 def doctor_list(request):
@@ -65,3 +68,37 @@ def doctor_detail(request, id):
             'doctor': doctor
         }
         return render(request, 'doctor_detail.html', context)
+
+
+def patient_appointment_checked(request):
+    if request.method == 'POST':
+        form = request.POST
+        patient_id = form.get('patient_id')
+        doctor_diseases = form.get('doctor_diseases')
+        patient_bp_min = form.get('patient_bp_min')
+        patient_bp_max = form.get('patient_bp_max')
+        medicine_id = form.getlist('medicine_id')
+        medicine_qty = form.getlist('medicine_qty')
+        status = 'failed?'
+        obj = PatientAppointmentChecked.objects.create(doctor_id='',
+                                                       patient_id=patient_id,
+                                                       doctor_diseases=doctor_diseases,
+                                                       )
+        if obj:
+            try:
+                for i in range(len(medicine_id)):
+                    medicine_id = int(medicine_id[i])
+                    medicine_qty = int(medicine_qty[i])
+                    PatientAppointmentCheckedDetail.objects.create(head_id_id=obj.id,
+                                                                   medicine_id=medicine_id,
+                                                                   qty=medicine_qty,
+                                                                   )
+                PatientAppointment.objects.filter(patient_id=patient_id).update(appoint_status='checked')
+                status = 'success'
+                msg = 'Appointment Checked Successfully'
+            except Exception as e:
+                msg = str(e)
+                status = status
+
+        context = {}
+        return JsonResponse(context)

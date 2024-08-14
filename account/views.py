@@ -55,7 +55,7 @@ def store_registration(request):
         form = request.POST
         store_name = form.get('store_name')
         mobile = form.get('mobile')
-        email = mobile + 'yopmail.com'
+        email = mobile + '@yopmail.com'
         password = form.get('password')
         phone = form.get('phone')
         address = form.get('address')
@@ -96,7 +96,7 @@ def doctor_registration(request):
         form = request.POST
         username = form.get('doctor_name')
         mobile = form.get('mobile')
-        email = mobile + 'yopmail.com'
+        email = mobile + '@yopmail.com'
         phone = form.get('phone')
         address = form.get('address')
         specialist = form.get('specialist')
@@ -137,7 +137,7 @@ def patient_registration(request):
         form = request.POST
         username = form.get('patient_name')
         mobile = form.get('mobile')
-        email = mobile + 'yopmail.com'
+        email = mobile + '@yopmail.com'
         phone = form.get('phone')
         address = form.get('address')
         patient_age = form.get('patient_age')
