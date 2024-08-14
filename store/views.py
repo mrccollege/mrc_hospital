@@ -97,12 +97,13 @@ def transfer_new_medicine_from_main(request, id):
 
         if obj:
             MedicineStore.objects.filter(medicine_id=medicine_id, to_store_id=main_store_id).update(qty=medicine_qty)
+            available_stock = MedicineStore.objects.get(medicine_id=medicine_id, to_store_id=to_store_id)
             medicine_obj = Medicine.objects.get(id=medicine_id)
             MedicineStoreTransactionHistory.objects.create(from_store_id=main_store_id,
                                                            to_store_id=to_store_id,
                                                            medicine_id=medicine_id,
                                                            medicine_name=medicine_name,
-                                                           available_qty=medicine_qty,
+                                                           available_qty=available_stock.qty,
                                                            transfer_qty=transfer_medicine_qty,
                                                            medicine_manufacturer=medicine_obj.medicine_manufacturer,
                                                            medicine_expiry=medicine_obj.medicine_expiry,
@@ -157,11 +158,12 @@ def transfer_medicine_from_mini(request):
 
         if obj:
             MedicineStore.objects.filter(medicine_id=medicine_id, to_store_id=from_store_id).update(qty=medicine_qty)
+            available_stock = MedicineStore.objects.get(medicine_id=medicine_id, to_store_id=to_store_id)
             MedicineStoreTransactionHistory.objects.create(from_store_id=from_store_id,
                                                            to_store_id=to_store_id,
                                                            medicine_id=medicine_id,
                                                            medicine_name=medicine_name,
-                                                           available_qty=medicine_qty,
+                                                           available_qty=available_stock.qty,
                                                            transfer_qty=transfer_medicine_qty,
                                                            medicine_manufacturer=medicine_manufacturer,
                                                            medicine_expiry=medicine_expiry,

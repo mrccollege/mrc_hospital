@@ -15,44 +15,22 @@ from common_function.date_formate import convert_date_format
 def add_new_medicine(request):
     if request.method == 'POST':
         form = request.POST
-        store_id = int(form.get('store_id'))
         medicine_name = form.get('medicine_name')
         medicine_price = form.get('medicine_price')
-        medicine_qty = form.get('medicine_qty')
         medicine_manufacturer = form.get('medicine_manufacturer')
         medicine_expiry = form.get('medicine_expiry')
         medicine_expiry = convert_date_format(medicine_expiry)
         status = 'failed'
         msg = 'Something went wrong.'
         try:
-            store_obj = Store.objects.filter(id=store_id).exists()
-            if store_obj:
-                medicine_obj = Medicine.objects.create(medicine_name=medicine_name,
-                                                       medicine_price=int(medicine_price),
-                                                       medicine_manufacturer=medicine_manufacturer,
-                                                       medicine_expiry=medicine_expiry,
-                                                       )
-                if medicine_obj:
-                    medicine_id = medicine_obj.id
-                    main_store_medicine_obj = MedicineStore.objects.create(from_store_id=store_id,
-                                                                           to_store_id=store_id,
-                                                                           medicine_id=medicine_id,
-                                                                           qty=medicine_qty,
-                                                                           )
-                    if main_store_medicine_obj:
-                        MedicineStoreTransactionHistory.objects.create(from_store_id=store_id,
-                                                                       to_store_id=store_id,
-                                                                       medicine_id=medicine_id,
-                                                                       medicine_name=medicine_name,
-                                                                       qty=medicine_qty,
-                                                                       medicine_manufacturer=medicine_manufacturer,
-                                                                       medicine_expiry=medicine_expiry,
-                                                                       )
-                        status = 'success'
-                        msg = 'Medicine Added Successfully.'
-            else:
-                status = status
-                msg = 'Please Create Main store first.'
+            medicine_obj = Medicine.objects.create(medicine_name=medicine_name,
+                                                   medicine_price=int(medicine_price),
+                                                   medicine_manufacturer=medicine_manufacturer,
+                                                   medicine_expiry=medicine_expiry,
+                                                   )
+            if medicine_obj:
+                status = 'success'
+                msg = 'Medicine Added Successfully.'
 
         except Exception as e:
             status = status
@@ -69,6 +47,63 @@ def add_new_medicine(request):
             'store': store
         }
         return render(request, 'add_medicine.html', context)
+
+
+def add_medicine_to_store(request):
+    if request.method == 'POST':
+        form = request.POST
+        store_id = int(form.get('store_id'))
+        medicine_id = form.getlist('medicine_id')
+        medicine_qty = form.getlist('medicine_qty')
+        status = 'failed'
+        try:
+            for i in range(len(medicine_id)):
+                medicine_id = int(medicine_id[i])
+                medicine_qty = int(medicine_qty[i])
+                is_obj = MedicineStore.objects.filter(to_store_id=store_id, medicine_id=medicine_id)
+                query = Q(to_store_id=store_id, medicine_id=medicine_id)
+                if is_obj:
+                    pre_qty = is_obj[0].qty
+                    total_qty = pre_qty + medicine_qty
+                    store_obj = MedicineStore.objects.filter(query).update(qty=total_qty)
+                else:
+                    store_obj = MedicineStore.objects.create(from_store_id=store_id,
+                                                             to_store_id=store_id,
+                                                             medicine_id=medicine_id,
+                                                             qty=medicine_qty,
+                                                             )
+
+                if store_obj:
+                    store_qty = MedicineStore.objects.get(query)
+                    medicine = Medicine.objects.get(id=medicine_id)
+                    MedicineStoreTransactionHistory.objects.create(from_store_id=store_id,
+                                                                   to_store_id=store_id,
+                                                                   medicine_id=medicine_id,
+                                                                   medicine_name=medicine.medicine_name,
+                                                                   available_qty=store_qty.qty,
+                                                                   add_qty=medicine_qty,
+                                                                   medicine_manufacturer=medicine.medicine_manufacturer,
+                                                                   medicine_expiry=medicine.medicine_expiry,
+                                                                   )
+
+            status = 'success'
+            msg = 'Medicine Added Successfully.'
+
+        except Exception as e:
+            status = status
+            msg = str(e)
+
+        context = {
+            'status': status,
+            'msg': msg,
+        }
+        return JsonResponse(context)
+    else:
+        store = Store.objects.all()
+        context = {
+            'store': store
+        }
+        return render(request, 'add_medicine_to_store.html', context)
 
 
 def view_main_medicine(request, id):
@@ -183,3 +218,21 @@ def medicine_update(request, id):
             'medicine': medicine
         }
         return render(request, 'update_medicine.html', context)
+
+
+def search_medicine(request):
+    if request.method == 'GET':
+        form = request.GET
+        search_value = form.get('search_value')
+        medicineIds = form.getlist('medicineIds[]')
+        medicine = Medicine.objects.filter(medicine_name__icontains=search_value).exclude(id__in=medicineIds)
+        data_list = []
+        for i in medicine:
+            data_dict = {}
+            data_dict['medicine_id'] = i.id
+            data_dict['name'] = i.medicine_name.capitalize()
+            data_list.append(data_dict)
+        context = {
+            'results': data_list,
+        }
+        return JsonResponse(context)

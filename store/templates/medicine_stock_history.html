@@ -35,8 +35,13 @@
                                 <tr>
                                     <th>Medicine</th>
                                     <th>From Store</th>
+
+                                    <th>Add Qty</th>
+                                    <th>Minus Qty</th>
+                                    <th>Sell Qty</th>
+                                    <th>Transfer Qty</th>
                                     <th>To Store</th>
-                                    <th>Qty</th>
+                                    <th>Available Qty</th>
                                     <th>Manufacturer</th>
                                     <th>medicine_expiry</th>
                                     <th>Transaction Date</th>
@@ -47,8 +52,13 @@
                                 <tr>
                                     <td>{{i.medicine_name|title}}</td>
                                     <td>{{i.from_store|title}}</td>
+
+                                    <td>{{i.add_qty}}</td>
+                                    <td>{{i.minus_qty}}</td>
+                                    <td>{{i.sell_qty}}</td>
+                                    <td>{{i.transfer_qty}}</td>
                                     <td>{{i.to_store|title}}</td>
-                                    <td>{{i.qty}}</td>
+                                    <td>{{i.available_qty}}</td>
                                     <td>{{i.medicine_manufacturer|title}}</td>
                                     <td>{{i.medicine_expiry}}</td>
                                     <td>{{i.created_at}}</td>
