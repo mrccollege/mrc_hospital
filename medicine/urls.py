@@ -11,4 +11,5 @@ urlpatterns = [
 
 
     path('search_medicine/', views.search_medicine, name='search_medicine'),
+    path('upload_medicine_excel/', views.upload_medicine_excel, name='upload_medicine_excel'),
 ]

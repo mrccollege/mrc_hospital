@@ -1,13 +1,11 @@
 from datetime import datetime
-
 from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import render
-
+import pandas as pd
 from .models import Medicine
-
+from django.core.files.storage import FileSystemStorage
 from store.models import Store, MedicineStore, MedicineStoreTransactionHistory
-
 from common_function.date_formate import convert_date_format
 
 
@@ -236,3 +234,69 @@ def search_medicine(request):
             'results': data_list,
         }
         return JsonResponse(context)
+
+
+def upload_medicine_excel(request):
+    if request.method == 'POST' and request.FILES.get('medicine_excel'):
+        status = 'failed?'
+        try:
+            excel_file = request.FILES['medicine_excel']
+
+            # Check if the file is an Excel file
+            if not excel_file.name.endswith(('.xls', '.xlsx')):
+                return JsonResponse({'msg': 'Invalid file format. Please upload an Excel file.'})
+
+            # Save the file temporarily
+            fs = FileSystemStorage()
+            filename = fs.save(excel_file.name, excel_file)
+            file_path = fs.path(filename)
+
+            # Read the Excel file
+            try:
+                df = pd.read_excel(file_path)
+            except Exception as e:
+                fs.delete(filename)
+                return JsonResponse({'msg': f'Error reading Excel file: {str(e)}'})
+
+            # Normalize column names to avoid issues with case or extra spaces
+            df.columns = df.columns.str.strip().str.lower()
+
+            # Adjusted column mappings for normalized names
+            column_mappings = {
+                'medicine name': 'medicine_name',
+                'medicine price': 'medicine_price',
+                'medicine manufacturer/ supplier': 'medicine_manufacturer',
+                'medicine type': 'type',
+            }
+
+            # Ensure that all required columns are present
+            missing_columns = [col for col in column_mappings if col not in df.columns]
+            if missing_columns:
+                fs.delete(filename)
+                return JsonResponse({'msg': f'Excel file is missing required columns: {", ".join(missing_columns)}'})
+
+            # Proceed with data insertion
+            for index, row in df.iterrows():
+                medicine = Medicine(
+                    medicine_name=row[column_mappings['medicine name']],
+                    medicine_price=row[column_mappings['medicine price']],
+                    type=row[column_mappings['medicine type']],
+                    medicine_manufacturer=row[column_mappings['medicine manufacturer/ supplier']],
+                )
+                medicine.save()
+
+            fs.delete(filename)
+            status = 'success'
+            msg = 'Excel sheet uploaded and processed successfully.'
+        except Exception as e:
+            print(e, '================e====================')
+            msg = f"An error occurred: {str(e)}"
+            status = status
+
+        context = {
+            'status': status,
+            'msg': msg
+        }
+        return JsonResponse(context)
+
+    return render(request, 'upload_medicine_excel.html')
