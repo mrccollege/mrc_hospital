@@ -37,16 +37,6 @@
                                 <form id="medicine_form" role="form">{% csrf_token %}
                                     <div class="box-body">
                                         <div class="form-group">
-                                            <label for="store_id" class="form-label">Select Store</label>
-                                            <select name="store_id" id="store_id" class="form-control">
-                                                <option value="0">Select Store</option>
-                                                {% for i in store %}
-                                                <option value="{{i.id}}">{{i.user}}</option>
-                                                {% endfor %}
-
-                                            </select>
-                                        </div>
-                                        <div class="form-group">
                                             <label for="medicine_name" class="form-label">Medicine Name</label>
                                             <input type="text" class="form-control" id="medicine_name"
                                                    name="medicine_name" required>
@@ -55,11 +45,6 @@
                                             <label for="medicine_name" class="form-label">Medicine Price</label>
                                             <input type="text" class="form-control" id="medicine_price"
                                                    name="medicine_price" required>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="medicine_qty" class="form-label">Medicine Qty</label>
-                                            <input type="text" class="form-control" id="medicine_qty"
-                                                   name="medicine_qty" onkeypress="return isNumberKey(event)" required>
                                         </div>
                                         <div class="form-group">
                                             <label for="medicine_manufacturer" class="form-label">Medicine

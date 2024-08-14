@@ -1,3 +1,5 @@
+from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import render
 
@@ -70,9 +72,14 @@ def doctor_detail(request, id):
         return render(request, 'doctor_detail.html', context)
 
 
+@login_required(login_url='/account/user_login/')
 def patient_appointment_checked(request):
     if request.method == 'POST':
+        user_id = request.session.get('user_id')
+        doctor_id = Doctor.objects.get(user_id=user_id)
+        doctor_id = doctor_id.id
         form = request.POST
+        appointment_id = form.get('appointment_id')
         patient_id = form.get('patient_id')
         doctor_diseases = form.get('doctor_diseases')
         patient_bp_min = form.get('patient_bp_min')
@@ -80,25 +87,31 @@ def patient_appointment_checked(request):
         medicine_id = form.getlist('medicine_id')
         medicine_qty = form.getlist('medicine_qty')
         status = 'failed?'
-        obj = PatientAppointmentChecked.objects.create(doctor_id='',
-                                                       patient_id=patient_id,
-                                                       doctor_diseases=doctor_diseases,
-                                                       )
-        if obj:
-            try:
-                for i in range(len(medicine_id)):
-                    medicine_id = int(medicine_id[i])
-                    medicine_qty = int(medicine_qty[i])
-                    PatientAppointmentCheckedDetail.objects.create(head_id_id=obj.id,
-                                                                   medicine_id=medicine_id,
-                                                                   qty=medicine_qty,
-                                                                   )
-                PatientAppointment.objects.filter(patient_id=patient_id).update(appoint_status='checked')
-                status = 'success'
-                msg = 'Appointment Checked Successfully'
-            except Exception as e:
-                msg = str(e)
-                status = status
+        msg = 'Appointment Checked failed.'
 
-        context = {}
+        try:
+            obj = PatientAppointmentChecked.objects.create(doctor_id=doctor_id,
+                                                           patient_id=patient_id,
+                                                           doctor_diseases=doctor_diseases,
+                                                           )
+            if obj:
+                head_id = obj.id
+                for i in range(len(medicine_id)):
+                    PatientAppointmentCheckedDetail.objects.create(head_id_id=head_id,
+                                                                   medicine_id=int(medicine_id[i]),
+                                                                   qty=int(medicine_qty[i]),
+                                                                   )
+                query = Q(id=appointment_id, patient_id=patient_id, doctor_id=doctor_id)
+                PatientAppointment.objects.filter(query).update(appoint_status='checked')
+                status = 'success'
+                msg = 'Appointment Checked Successfully.'
+
+        except Exception as e:
+            msg = str(e)
+            status = status
+
+        context = {
+            'msg': msg,
+            'status': status,
+        }
         return JsonResponse(context)

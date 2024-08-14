@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import render
 
@@ -74,8 +75,10 @@ def add_appointment(request):
         return render(request, 'add_appointment.html', context)
 
 
+@login_required(login_url='/account/user_login/')
 def all_appointment(request):
-    appointment = PatientAppointment.objects.all()
+    user_id = request.session.get('user_id')
+    appointment = PatientAppointment.objects.filter(doctor__user__id=user_id)
     context = {
         'appointment': appointment,
     }
@@ -99,9 +102,11 @@ def search_patient(request):
     return JsonResponse([], safe=False)
 
 
+@login_required(login_url='/account/user_login/')
 def patient_appointment_detail(request, id):
     appointment = PatientAppointment.objects.get(id=id)
     context = {
+        'appointment_id': id,
         'appointment': appointment
     }
     return render(request, 'patient_appointment_detail.html', context)
