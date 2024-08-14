@@ -38,7 +38,6 @@ def transfer_new_main_store_medicine_detail(request, id):
     store_name = store_medicine.to_store.user.username
 
     mini_store = Store.objects.filter(type='MINI')
-    print(mini_store, '=============mini_store')
     context = {
         'recorde_id': id,
         'store_name': store_name,
@@ -103,7 +102,8 @@ def transfer_new_medicine_from_main(request, id):
                                                            to_store_id=to_store_id,
                                                            medicine_id=medicine_id,
                                                            medicine_name=medicine_name,
-                                                           qty=transfer_medicine_qty,
+                                                           available_qty=medicine_qty,
+                                                           transfer_qty=transfer_medicine_qty,
                                                            medicine_manufacturer=medicine_obj.medicine_manufacturer,
                                                            medicine_expiry=medicine_obj.medicine_expiry,
                                                            )
@@ -161,7 +161,8 @@ def transfer_medicine_from_mini(request):
                                                            to_store_id=to_store_id,
                                                            medicine_id=medicine_id,
                                                            medicine_name=medicine_name,
-                                                           qty=transfer_medicine_qty,
+                                                           available_qty=medicine_qty,
+                                                           transfer_qty=transfer_medicine_qty,
                                                            medicine_manufacturer=medicine_manufacturer,
                                                            medicine_expiry=medicine_expiry,
                                                            )
@@ -301,7 +302,19 @@ def create_bill(request):
                                                      medicine_sell_price=total_sell_price[i],
                                                      )
                     remaining_qty = int(record_qty[i]) - int(sell_qty[i])
-                    MedicineStore.objects.filter(to_store_id=store_id, medicine_id=medicine_id[i]).update(qty=remaining_qty)
+                    obj = MedicineStore.objects.filter(to_store_id=store_id, medicine_id=medicine_id[i]).update(
+                        qty=remaining_qty)
+                    if obj:
+                        medicine = Medicine.objects.get(id=medicine_id)
+                        MedicineStoreTransactionHistory.objects.create(from_store_id=store_id,
+                                                                       to_store_id=store_id,
+                                                                       medicine_id=medicine_id,
+                                                                       medicine_name=medicine.medicine_name,
+                                                                       available_qty=remaining_qty,
+                                                                       sell_qty=sell_qty,
+                                                                       medicine_manufacturer=medicine.medicine_manufacturer,
+                                                                       medicine_expiry=medicine.medicine_expiry,
+                                                                       )
 
                 status = 'success'
                 msg = 'Bill Generated Successfully.'

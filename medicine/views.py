@@ -105,18 +105,25 @@ def update_new_medicine(request):
                     obj = MedicineStore.objects.get(query)
                     total_qty = obj.qty
                     if add_medicine_qty:
+                        add_medicine_qty = add_medicine_qty
                         total_qty = obj.qty + int(add_medicine_qty)
+                    else:
+                        add_medicine_qty = 0
 
                     if minus_medicine_qty:
+                        minus_medicine_qty = minus_medicine_qty
                         total_qty = obj.qty - int(minus_medicine_qty)
-
+                    else:
+                        minus_medicine_qty = 0
                     main_store_medicine_obj = MedicineStore.objects.filter(query).update(qty=int(total_qty))
                     if main_store_medicine_obj:
                         MedicineStoreTransactionHistory.objects.create(from_store_id=to_store_id,
                                                                        to_store_id=to_store_id,
                                                                        medicine_id=medicine_id,
                                                                        medicine_name=medicine_name,
-                                                                       qty=medicine_qty,
+                                                                       available_qty=total_qty,
+                                                                       add_qty=add_medicine_qty,
+                                                                       minus_qty=minus_medicine_qty,
                                                                        medicine_manufacturer=medicine_manufacturer,
                                                                        medicine_expiry=medicine_expiry,
                                                                        )
