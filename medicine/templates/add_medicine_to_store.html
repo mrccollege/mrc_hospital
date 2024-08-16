@@ -15,7 +15,7 @@
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
         <section class="content-header">
-            <h1>Add Medicine to store</h1>
+            <h1>Purchase Medicine In Store</h1>
             <ol class="breadcrumb">
                 <li><a href="/"><i class="fa fa-dashboard"></i> Home</a></li>
                 <li><a href="/">Tables</a></li>
@@ -48,6 +48,13 @@
                                                     </select>
                                                 </div>
                                             </div>
+
+                                            <div class="col-lg-4">
+                                                <div class="form-group">
+                                                    <label for="store_id" class="form-label">Register New Medicine</label>
+                                                    <a href="/medicine/add_new_medicine/" type="button" class="btn btn-primary form-control">Register Medicine</a>
+                                                </div>
+                                            </div>
                                         </div>
 
                                     </div><!-- /.box-body -->
@@ -59,7 +66,10 @@
                                                 <tr>
                                                     <th>SN.</th>
                                                     <th>Medicine Name</th>
-                                                    <th>Medicine Qty</th>
+                                                    <th>Qty</th>
+                                                    <th>Price</th>
+                                                    <th>Batch No.</th>
+                                                    <th>Expiry Date</th>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
@@ -150,12 +160,17 @@
         html += '<td>'+index+'</td>';
         html += '<td><input onkeyup="search_medicine('+index+');" type="text" id="medicine'+index+'" name="medicine" class="form-control" autocomplete="off" placeholder="Search medicine: " required></td>';
         html += '<input type="hidden" name="medicine_id" class="form-control" id="medicine_id'+index+'" required>';
-        html += '<td><input type="text" id="medicine_qty'+index+'" name="medicine_qty" class="form-control" required></td>';
+        html += '<td><input type="text" id="qty'+index+'" name="qty" class="form-control" required></td>';
+        html += '<td><input type="text" id="price'+index+'" name="price" class="form-control" required></td>';
+        html += '<td><input type="text" id="batch_no'+index+'" name="batch_no" class="form-control" required></td>';
+        html += '<td><input type="text" id="expiry_date'+index+'" name="expiry_date" class="form-control" required></td>';
         html += '<td><button onclick="remove_row('+index+')"><i class="fa fa-remove" style="font-size:24px"></i></button></td>';
         html += '</tr>';
 
-        // Append the new row to the table body
         $('table tbody').append(html);
+        $("#expiry_date"+index).datepicker({
+           dateFormat: "dd/mm/yy"
+        });
         index +=1;
     }
     $(document).ready(function(){
@@ -192,7 +207,7 @@
                                 return {
                                     label: results.name,
                                     value: results.name,
-                                    medicine_id: results.medicine_id,
+                                    id: results.id,
                                 };
                             });
                             response(suggestedProducts);
@@ -204,7 +219,7 @@
                 });
             },
             select: function (event, ui) {
-                $('#medicine_id' + indexID).val(ui.item.medicine_id);
+                $('#medicine_id' + indexID).val(ui.item.id);
                 //add_medicine()
             }
         });

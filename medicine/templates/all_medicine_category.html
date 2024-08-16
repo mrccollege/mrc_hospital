@@ -12,7 +12,7 @@
         <!-- Content Header (Page header) -->
         <section class="content-header">
             <h1>
-                Main Store Detail
+                All Medicine Detail
             </h1>
             <ol class="breadcrumb">
                 <li><a href="/"><i class="fa fa-dashboard"></i> Home</a></li>
@@ -27,35 +27,28 @@
                 <div class="col-xs-12">
                     <div class="box">
                         <div class="box-header">
-                            <h3 class="box-title">{{store_name}}</h3>
+                            <h3 class="box-title">Medicines</h3>
                         </div><!-- /.box-header -->
                         <div class="box-body">
                             <table id="example1" class="table table-bordered table-striped">
                                 <thead>
                                 <tr>
-                                    <th>Medicine</th>
-                                    <th>Batch No.</th>
-                                    <th>Price</th>
-                                    <th>Qty</th>
-                                    <th>Manufacturer</th>
-                                    <th>medicine_expiry</th>
-                                    <th>Record</th>
+                                    <th>Name</th>
+                                    <th>Created at</th>
+                                    <th>Updated at</th>
                                     <th>Action</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {% for i in medicine %}
+                                {% for i in category %}
                                 <tr>
-                                    <td>{{i.medicine|title}}</td>
-                                    <td>{{i.batch_no|title}}</td>
-                                    <td>{{i.price}}</td>
-                                    <td>{{i.qty}}</td>
-                                    <td>{{i.medicine.manufacture|title}}</td>
-                                    <td>{{i.expiry|date:"d-F-Y"}}</td>
-                                    <td><a href="/medicine/view_record_medicine_detail/{{i.id}}/"><b>view</b></a></td>
-                                    <td><a href="/store/transfer_main_store_medicine_detail/{{i.id}}/"><b>Transfer</b></a></td>
+                                    <td>{{i.name|title}}</td>
+                                    <td>{{i.created_at}}</td>
+                                    <td>{{i.updated_at}}</td>
+                                    <td><a href="/medicine/update_category/{{i.id}}/">Update</a></td>
                                 </tr>
                                 {% endfor %}
+
                                 </tbody>
 
                             </table>

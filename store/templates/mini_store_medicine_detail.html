@@ -34,9 +34,12 @@
                                 <thead>
                                 <tr>
                                     <th>Medicine</th>
+                                    <th>Batch No.</th>
+                                    <th>Price</th>
                                     <th>Qty</th>
-                                    <th>Manufacturer</th>
+                                    <th>Manufacture</th>
                                     <th>medicine_expiry</th>
+                                    <th>Report</th>
                                     <th>Action</th>
                                 </tr>
                                 </thead>
@@ -44,9 +47,12 @@
                                 {% for i in store_medicine %}
                                 <tr>
                                     <td>{{i.medicine|title}}</td>
+                                    <td>{{i.batch_no}}</td>
+                                    <td>{{i.price}}</td>
                                     <td>{{i.qty}}</td>
-                                    <td>{{i.medicine.medicine_manufacturer|title}}</td>
-                                    <td>{{i.medicine.medicine_expiry}}</td>
+                                    <td>{{i.medicine.manufacture|title}}</td>
+                                    <td>{{i.expiry}}</td>
+                                    <td><a href="/medicine/view_record_medicine_detail/{{i.id}}/"><b>view</b></a></td>
                                     <td><a href="/store/transfer_mini_store_medicine_detail/{{i.id}}/"><b>Transfer</b></a></td>
                                 </tr>
                                 {% endfor %}

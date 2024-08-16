@@ -37,7 +37,7 @@
                                             <div class="col-lg-4 form-group">
                                                 <label for="medicine_name" class="form-label">Medicine Name</label>
                                                 <input type="text" class="form-control" id="medicine_name"
-                                                       name="medicine_name" value="{{store_medicine.medicine.medicine_name}}"
+                                                       name="medicine_name" value="{{store_medicine.medicine.name}}"
                                                        required>
                                                 <input type="hidden" name="medicine_id" id="medicine_id"
                                                        value="{{store_medicine.medicine.id}}">
@@ -93,7 +93,7 @@
         e.preventDefault();
         var formData = $('#medicine_form').serialize();
         $.ajax({
-          url: '/store/transfer_new_medicine_from_main/{{recorde_id}}/',
+          url: '/store/transfer_medicine_from_main/{{recorde_id}}/',
           type: 'POST',
           data: formData,
           success: function (response) {

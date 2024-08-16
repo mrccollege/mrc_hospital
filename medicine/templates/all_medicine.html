@@ -34,17 +34,19 @@
                                 <thead>
                                 <tr>
                                     <th>Medicine</th>
-                                    <th>Manufacturer</th>
-                                    <th>Expiry Date</th>
+                                    <th>Category</th>
+                                    <th>Manufacture</th>
+                                    <th>Manufacture Mobile</th>
                                     <th>Action</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 {% for i in medicine %}
                                 <tr>
-                                    <td>{{i.medicine_name|title}}</td>
-                                    <td>{{i.medicine_manufacturer|title}}</td>
-                                    <td>{{i.medicine_expiry}}</td>
+                                    <td>{{i.name|title}}</td>
+                                    <td>{{i.category|title}}</td>
+                                    <td>{{i.manufacture}}</td>
+                                    <td>{{i.mobile}}</td>
                                     <td><a href="/medicine/medicine_update/{{i.id}}/">Update</a></td>
                                 </tr>
                                 {% endfor %}

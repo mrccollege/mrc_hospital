@@ -41,7 +41,8 @@
                                                 <div class="form-group">
                                                     <label for="patient_name" class="form-label">Patient Name</label>
                                                     <input type="text" class="form-control" id="patient_name"
-                                                           name="patient_name" required placeholder="Enter Patient name: ">
+                                                           name="patient_name" required
+                                                           placeholder="Enter Patient name: ">
                                                 </div>
                                             </div>
                                             <div class="col-lg-4">
@@ -53,7 +54,8 @@
                                             </div>
                                             <div class="col-lg-4">
                                                 <div class="form-group">
-                                                    <label for="address" class="form-label">Patient Address (optional)</label>
+                                                    <label for="address" class="form-label">Patient Address
+                                                        (optional)</label>
                                                     <input type="text" class="form-control" id="address"
                                                            name="address" placeholder="Enter patient address: ">
                                                 </div>
@@ -72,6 +74,7 @@
                                                     <th colspan="1">Price</th>
                                                     <th>Medicine Qty</th>
                                                     <th>Sell Qty</th>
+                                                    <th>Discount</th>
                                                     <th>Final Amount</th>
                                                 </tr>
                                                 </thead>
@@ -80,12 +83,12 @@
                                             </table>
                                             <div class="text-center">
                                                 <button type="button" class="btn btn-primary"
-                                                        onclick="add_medicine()">
-                                                    Add
+                                                        onclick="add_medicine()"> Add
                                                 </button>
                                             </div>
                                         </div>
                                     </div><!-- /.box-body -->
+
 
                                     <div class="box-footer">
                                         <button type="submit" class="btn btn-primary">Submit</button>
@@ -168,6 +171,7 @@
         html += '<td><input readonly type="text" id="medicine_price'+index+'" class="form-control" name="medicine_price" required></td>';
         html += '<td><input type="text" id="record_qty'+index+'" name="record_qty" class="form-control" readonly required></td>';
         html += '<td><input type="text" onkeyup="sell_qty_funtion('+index+')" id="sell_qty'+index+'" name="sell_qty" class="form-control" placeholder="Sell quantity" required></td>';
+        html += '<td><input type="text" onkeyup="discount_funtion('+index+')" id="discount'+index+'" name="discount" class="form-control" value="0" required></td>';
         html += '<td><input value="0" type="text" id="total_sell_price'+index+'" name="total_sell_price" class="total form-control" readonly></td>';
         html += '<td><button onclick="remove_row('+index+')"><i class="fa fa-remove" style="font-size:24px"></i></button></td>';
         html += '</tr>';

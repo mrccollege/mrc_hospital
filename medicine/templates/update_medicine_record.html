@@ -32,14 +32,33 @@
                                 <!-- form start -->
                                 <form id="medicine_form" role="form">{% csrf_token %}
                                     <div class="box-body">
-                                        <div class="form-group">
-                                            <label for="medicine_name" class="form-label">Medicine Name</label>
-                                            <input type="text" class="form-control" id="medicine_name"
-                                                   name="medicine_name" value="{{medicine.medicine.medicine_name}}"
-                                                   required>
-                                            <input type="hidden" name="medicine_id" id="medicine_id"
-                                                   value="{{medicine.medicine.id}}">
+                                        <div class="row">
+                                            <div class="col-lg-4 form-group">
+                                                <label for="medicine_name" class="form-label">Medicine Name</label>
+                                                <input type="text" class="form-control" id="medicine_name"
+                                                       name="medicine_name" value="{{medicine.medicine.name}}"
+                                                       readonly required>
+                                                <input type="hidden" name="medicine_id" id="medicine_id" value="{{medicine.medicine.id}}">
+                                                <input type="hidden" name="store_id" id="store_id" value="{{store_id}}">
+                                            </div>
+
+                                            <div class="col-lg-4 form-group">
+                                                <label for="category_name" class="form-label">Category</label>
+                                                <input type="hidden" id="category_id" name="category_id" value="{{medicine.medicine.category.id}}">
+                                                <input type="text" class="form-control" id="category_name"
+                                                       name="category_name" value="{{medicine.medicine.category}}"
+                                                       readonly required>
+                                            </div>
+
+                                            <div class="col-lg-4 form-group">
+                                                <label for="batch_no" class="form-label">Batch No.</label>
+                                                <input type="text" class="form-control" id="batch_no"
+                                                       name="batch_no" value="{{medicine.batch_no}}"
+                                                       readonly required>
+                                            </div>
+
                                         </div>
+
                                         <div class="row">
                                             <div class="col-lg-4 form-group">
                                                 <label for="medicine_qty" class="form-label">Medicine Qty</label>
@@ -47,7 +66,8 @@
                                                        name="medicine_qty" value="{{medicine.qty}}" readonly required>
                                             </div>
                                             <div class="col-lg-4 form-group">
-                                                <input type="radio" name="main_qty" onchange="check_qty(this.value)"
+                                                <input type="radio" id="add_main_qty" name="main_qty"
+                                                       onchange="check_qty(this.value)"
                                                        value="add_medicine_qty">
                                                 <label for="medicine_qty" class="form-label">Add Qty</label>
                                                 <input type="text" class="form-control" id="add_medicine_qty"
@@ -63,18 +83,31 @@
                                                        maxlength="4" readonly>
                                             </div>
                                         </div>
-                                        <div class="form-group">
-                                            <label for="medicine_manufacturer" class="form-label">Medicine
-                                                Manufacturer</label>
-                                            <input type="text" class="form-control" id="medicine_manufacturer"
-                                                   name="medicine_manufacturer"
-                                                   value="{{medicine.medicine.medicine_manufacturer}}" required>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="medicine_expiry" class="form-label">Medicine Expiry</label>
-                                            <input type="text" class="form-control" id="medicine_expiry"
-                                                   name="medicine_expiry"
-                                                   value="{{medicine.medicine.medicine_expiry|date:'d/m/Y'}}">
+                                        <div class="row">
+                                            <div class="col-lg-4 form-group">
+                                                <label for="price" class="form-label">Price</label>
+                                                <input type="text" class="form-control" id="price"
+                                                       name="price" value="{{medicine.price}}"
+                                                       readonly required>
+                                            </div>
+                                            <div class="col-lg-4 form-group">
+                                                <label for="manufacture" class="form-label">Manufacturer</label>
+                                                <input type="text" class="form-control" id="manufacture"
+                                                       name="manufacture"
+                                                       value="{{medicine.medicine.manufacture}}" readonly required>
+                                            </div>
+                                            <div class="col-lg-4 form-group">
+                                                <label for="mobile" class="form-label">Manufacture mobile</label>
+                                                <input type="text" class="form-control" id="mobile"
+                                                       name="mobile"
+                                                       value="{{medicine.medicine.mobile}}" readonly required>
+                                            </div>
+                                            <div class="col-lg-4 form-group">
+                                                <label for="medicine_expiry" class="form-label">Expiry Date</label>
+                                                <input type="text" class="form-control" id="medicine_expiry"
+                                                       name="medicine_expiry" value="{{medicine.expiry|date:'d-F-Y'}}"
+                                                       readonly>
+                                            </div>
                                         </div>
                                     </div><!-- /.box-body -->
 
@@ -97,8 +130,24 @@
 
 {% block js %}
 <script>
+    $(document).ready(function(){
+        $("#add_main_qty").prop("checked", true);
+        $('#add_medicine_qty').attr('readonly', false)
+        $('#minus_medicine_qty').attr('readonly', true)
+    });
+
     $("#medicine_expiry").datepicker({
-        dateFormat: "dd/mm/yy"
+        dateFormat: "dd-M-yy",
+        onClose: function(dateText, inst) {
+            var date = $(this).datepicker('getDate');
+            if (date) {
+                var day = ("0" + date.getDate()).slice(-2);
+                var month = $.datepicker.formatDate('MM', date);
+                var year = date.getFullYear();
+
+                $(this).val(day + '-' + month + '-' + year);
+            }
+        }
     });
 </script>
 
@@ -109,7 +158,7 @@
         e.preventDefault();
         var formData = $('#medicine_form').serialize();
         $.ajax({
-          url: '/medicine/update_new_medicine/',
+          url: '/medicine/update_medicine_record/',
           type: 'POST',
           data: formData,
           success: function (response) {

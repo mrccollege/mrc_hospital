@@ -100,6 +100,8 @@ DATABASES = {
     }
 }
 
+# 178.16.139.173
+
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 

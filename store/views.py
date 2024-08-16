@@ -23,17 +23,19 @@ def main_store(request):
         store_name = store[0].user.username
         medicine = MedicineStore.objects.filter(to_store_id=main_store_id)
     else:
+        main_store_id = 0
         medicine = []
         store_name = 'Please create main store.'
 
     context = {
+        'main_store_id': main_store_id,
         'store_name': store_name,
         'medicine': medicine
     }
     return render(request, 'main_store_detail.html', context)
 
 
-def transfer_new_main_store_medicine_detail(request, id):
+def transfer_main_store_medicine_detail(request, id):
     store_medicine = MedicineStore.objects.get(id=id)
     store_name = store_medicine.to_store.user.username
 
@@ -63,7 +65,7 @@ def transfer_mini_store_medicine_detail(request, record_id):
     return render(request, 'transfer_medicine_from_mini_store.html', context)
 
 
-def transfer_new_medicine_from_main(request, id):
+def transfer_medicine_from_main(request, id):
     if request.method == 'POST':
         form = request.POST
         medicine_id = int(form.get('medicine_id'))
@@ -105,7 +107,7 @@ def transfer_new_medicine_from_main(request, id):
                                                            medicine_name=medicine_name,
                                                            available_qty=available_stock.qty,
                                                            transfer_qty=transfer_medicine_qty,
-                                                           medicine_manufacturer=medicine_obj.medicine_manufacturer,
+                                                           medicine_manufacture=medicine_obj.medicine_manufacturer,
                                                            medicine_expiry=medicine_obj.medicine_expiry,
                                                            )
             status = 'success'
@@ -129,20 +131,25 @@ def transfer_medicine_from_mini(request):
         transfer_medicine_qty = int(form.get('transfer_medicine_qty'))
         medicine = MedicineStore.objects.get(id=recorde_id)
         medicine_id = medicine.medicine.id
-        medicine_name = medicine.medicine.medicine_name
+        medicine_name = medicine.medicine.name
         existing_qty = medicine.qty
-        medicine_manufacturer = medicine.medicine.medicine_manufacturer
-        medicine_expiry = medicine.medicine.medicine_expiry
+        medicine_manufacture = medicine.medicine.manufacture
+        medicine_expiry = medicine.expiry
+        batch_no = medicine.batch_no
+        category = medicine.medicine.category.name
+        price = medicine.price
 
         if existing_qty >= transfer_medicine_qty:
             medicine_qty = existing_qty - transfer_medicine_qty
         else:
             status = 'failed'
+            msg = 'Transfer qty is more than Total qty of record.'
             context = {
-                'status': status
+                'status': status,
+                'msg': msg,
             }
             return JsonResponse(context)
-        query = Q(medicine_id=medicine_id, to_store_id=to_store_id)
+        query = Q(medicine_id=medicine_id, to_store_id=to_store_id, batch_no=batch_no)
         is_medicine = MedicineStore.objects.filter(query)
         if is_medicine:
             pre_qty = is_medicine[0].qty
@@ -157,25 +164,32 @@ def transfer_medicine_from_mini(request):
             obj_id = obj.id
 
         if obj:
-            MedicineStore.objects.filter(medicine_id=medicine_id, to_store_id=from_store_id).update(qty=medicine_qty)
+            MedicineStore.objects.filter(medicine_id=medicine_id, to_store_id=from_store_id, batch_no=batch_no).update(
+                qty=medicine_qty)
             available_stock = MedicineStore.objects.get(medicine_id=medicine_id, to_store_id=to_store_id)
             MedicineStoreTransactionHistory.objects.create(from_store_id=from_store_id,
                                                            to_store_id=to_store_id,
                                                            medicine_id=medicine_id,
                                                            medicine_name=medicine_name,
+                                                           category=category,
+                                                           price=price,
+                                                           batch_no=batch_no,
                                                            available_qty=available_stock.qty,
                                                            transfer_qty=transfer_medicine_qty,
-                                                           medicine_manufacturer=medicine_manufacturer,
+                                                           medicine_manufacture=medicine_manufacture,
                                                            medicine_expiry=medicine_expiry,
                                                            )
             status = 'success'
+            msg = 'Medicine Transfer successfully.'
         else:
             MedicineStore.objects.filter(query).update(qty=pre_qty)
             MedicineStore.objects.filter(id=obj_id).delete()
             status = 'failed'
+            msg = 'Medicine Transfer failed'
 
         context = {
-            'status': status
+            'status': status,
+            'msg': msg,
         }
         return JsonResponse(context)
 
@@ -221,14 +235,14 @@ def search_medicine(request):
         search_value = form.get('search_value')
         medicineIds = form.getlist('medicineIds[]')
         medicine = MedicineStore.objects.filter(to_store_id=store_id,
-                                                medicine__medicine_name__icontains=search_value,
+                                                medicine__name__icontains=search_value,
                                                 ).exclude(medicine__id__in=medicineIds)
         data_list = []
         for i in medicine:
             data_dict = {}
             data_dict['record_id'] = i.id
             data_dict['medicine_id'] = i.medicine.id
-            data_dict['name'] = i.medicine.medicine_name.capitalize()
+            data_dict['name'] = i.medicine.name.capitalize()
             data_dict['price'] = i.medicine.medicine_price
             data_dict['record_qty'] = i.qty
             data_list.append(data_dict)

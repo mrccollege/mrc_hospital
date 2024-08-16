@@ -23,11 +23,14 @@ class MedicineStore(models.Model):
     to_store = models.ForeignKey(Store, related_name='Medicine_to_store', on_delete=models.PROTECT)
     medicine = models.ForeignKey(Medicine, on_delete=models.PROTECT)
     qty = models.IntegerField(null=True)
+    price = models.IntegerField(null=True)
+    batch_no = models.CharField(max_length=100, null=True)
+    expiry = models.DateField(null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 
     def __str__(self):
-        return str(self.medicine.medicine_name)
+        return str(self.medicine.name)
 
     class Meta:
         db_table = 'medicine_store'
@@ -38,12 +41,15 @@ class MedicineStoreTransactionHistory(models.Model):
     to_store = models.ForeignKey(Store, related_name='Medicine_transfer_history_to_store', on_delete=models.PROTECT)
     medicine = models.ForeignKey(Medicine, on_delete=models.PROTECT)
     medicine_name = models.CharField(max_length=256, null=True)
+    category = models.CharField(max_length=100, null=True)
+    price = models.IntegerField(null=True)
+    batch_no = models.CharField(max_length=100, null=True)
     available_qty = models.IntegerField(null=True)
     add_qty = models.IntegerField(null=True, default=0)
     minus_qty = models.IntegerField(null=True, default=0)
     sell_qty = models.IntegerField(null=True, default=0)
     transfer_qty = models.IntegerField(null=True, default=0)
-    medicine_manufacturer = models.CharField(max_length=256, null=True)
+    medicine_manufacture = models.CharField(max_length=256, null=True)
     medicine_expiry = models.DateField(null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
