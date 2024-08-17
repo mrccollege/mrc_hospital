@@ -102,11 +102,6 @@
 {% endblock content %}
 
 {% block js %}
-<script>
-    $("#medicine_expiry").datepicker({
-       dateFormat: "dd/mm/yy"
-    });
-</script>
 
 <script>
     $('#medicine_form').on('submit', function (e) {
@@ -168,9 +163,21 @@
         html += '</tr>';
 
         $('table tbody').append(html);
+
         $("#expiry_date"+index).datepicker({
-           dateFormat: "dd/mm/yy"
+            dateFormat: "dd-M-yy",
+            onClose: function(dateText, inst) {
+                var date = $(this).datepicker('getDate');
+                if (date) {
+                    var day = ("0" + date.getDate()).slice(-2);
+                    var month = $.datepicker.formatDate('MM', date);
+                    var year = date.getFullYear();
+
+                    $(this).val(day + '-' + month + '-' + year);
+                }
+            }
         });
+
         index +=1;
     }
     $(document).ready(function(){

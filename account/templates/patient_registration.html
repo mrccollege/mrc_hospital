@@ -32,29 +32,32 @@
                                 <!-- form start -->
                                 <form id="store_form" role="form">{% csrf_token %}
                                     <div class="box-body">
-                                        <div class="form-group">
-                                            <label for="patient_name" class="form-label">Patient Name</label>
-                                            <input type="text" class="form-control" id="patient_name"
-                                                   name="patient_name" required>
-                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-4 form-group">
+                                                <label for="patient_name" class="form-label">Patient Name</label>
+                                                <input type="text" class="form-control" id="patient_name"
+                                                       name="patient_name" required>
+                                            </div>
 
-                                        <div class="form-group">
-                                            <label for="mobile" class="form-label">Mobile Number</label>
-                                            <input type="text" class="form-control" id="mobile" name="mobile"
-                                                   onkeypress="return isNumberKey(event)"
-                                                   required maxlength="10" autocomplete="off">
+                                            <div class="col-lg-4 form-group">
+                                                <label for="mobile" class="form-label">Mobile Number</label>
+                                                <input type="text" class="form-control" id="mobile" name="mobile"
+                                                       onkeypress="return isNumberKey(event)"
+                                                       required maxlength="10" autocomplete="off">
+                                            </div>
+                                            <div class="col-lg-4 form-group">
+                                                <label for="patient_age" class="form-label">Patient Age</label>
+                                                <input type="text" class="form-control" id="patient_age"
+                                                       name="patient_age"
+                                                       onkeypress="return isNumberKey(event)"
+                                                       required maxlength="3">
+                                            </div>
+
                                         </div>
                                         <div class="form-group">
                                             <label for="address" class="form-label">Address</label>
                                             <textarea class="form-control" id="address" name="address" rows="3"
                                                       required></textarea>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="patient_age" class="form-label">Patient Age</label>
-                                            <input type="text" class="form-control" id="patient_age"
-                                                   name="patient_age"
-                                                   onkeypress="return isNumberKey(event)"
-                                                   required maxlength="3">
                                         </div>
                                     </div><!-- /.box-body -->
                                     <div class="box-footer">

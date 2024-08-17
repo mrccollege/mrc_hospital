@@ -17,16 +17,23 @@ def add_category(request):
         form = request.POST
         name = form.get('name')
         cat_obj = MedicineCategory.objects.create(name=name)
+        cat_dict = {
+            'id': cat_obj.id,
+            'name': cat_obj.name,
+        }
         if cat_obj:
+            cat_obj = cat_dict
             status = 'success'
             msg = 'category registered successfully.'
         else:
+            cat_obj = {}
             status = 'failed'
             msg = 'category registered failed.'
 
         context = {
             'status': status,
             'msg': msg,
+            'cat_obj': cat_obj,
         }
         return JsonResponse(context)
 
@@ -154,7 +161,6 @@ def add_medicine_to_store(request):
         status = 'failed'
         try:
             for i in range(len(medicine_id)):
-                expiry_date = convert_date_format(expiry_date[i])
                 query = Q(to_store_id=store_id, medicine_id=int(medicine_id[i]), batch_no=batch_no[i])
                 is_obj = MedicineStore.objects.filter(query)
                 if is_obj:
@@ -168,7 +174,7 @@ def add_medicine_to_store(request):
                                                              qty=int(qty[i]),
                                                              price=int(price[i]),
                                                              batch_no=batch_no[i],
-                                                             expiry=expiry_date,
+                                                             expiry=datetime.strptime(expiry_date[i], "%d-%B-%Y"),
                                                              )
 
                 if store_obj:
@@ -184,7 +190,7 @@ def add_medicine_to_store(request):
                                                                    available_qty=store_qty.qty,
                                                                    add_qty=int(qty[i]),
                                                                    medicine_manufacture=medicine.manufacture,
-                                                                   medicine_expiry=expiry_date,
+                                                                   medicine_expiry=datetime.strptime(expiry_date[i], "%d-%B-%Y"),
                                                                    )
 
             status = 'success'

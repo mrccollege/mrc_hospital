@@ -4,7 +4,15 @@
 <!-- Datepicker -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-
     datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css">
-
+<style>
+    .form-container {
+        text-align: right;
+    }
+    .form-group {
+        display: inline-block;
+        margin-left: 15px;
+    }
+</style>
 {% endblock css %}
 
 
@@ -69,13 +77,15 @@
                                             <table class="table table-condensed">
                                                 <thead>
                                                 <tr>
-                                                    <th>SN.</th>
                                                     <th>Medicine Name</th>
-                                                    <th colspan="1">Price</th>
-                                                    <th>Medicine Qty</th>
+                                                    <th>Record Qty</th>
                                                     <th>Sell Qty</th>
-                                                    <th>Discount</th>
-                                                    <th>Final Amount</th>
+                                                    <th colspan="1">MRP.</th>
+                                                    <th>Disc.%</th>
+                                                    <th>S.Rate.</th>
+                                                    <th>HSN</th>
+                                                    <th>GST%</th>
+                                                    <th>Amount</th>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
@@ -86,16 +96,56 @@
                                                         onclick="add_medicine()"> Add
                                                 </button>
                                             </div>
+
+                                            <div class="row col-lg-6">
+                                                <div class="col">
+                                                    <label for="total">Total</label>
+                                                    <input type="text" class="form-control" name="total" id="total">
+                                                </div>
+                                                <div class="col">
+                                                    <label for="discount">Discount</label>
+                                                    <input type="text" class="form-control" name="discount"
+                                                           id="discount">
+                                                </div>
+                                                <div class="col">
+                                                    <label for="discount">SGST</label>
+                                                    <input type="text" class="form-control" name="discount"
+                                                           id="discount">
+                                                </div>
+                                                <div class="col">
+                                                    <label for="discount">CGST</label>
+                                                    <input type="text" class="form-control" name="discount"
+                                                           id="discount">
+                                                </div>
+                                                <div class="col">
+                                                    <label for="discount">Shippind & Packing</label>
+                                                    <input type="text" class="form-control" name="discount"
+                                                           id="discount">
+                                                </div>
+                                                <div class="col">
+                                                    <label for="discount">Credit</label>
+                                                    <input type="text" class="form-control" name="discount"
+                                                           id="discount">
+                                                </div>
+                                                <div class="col">
+                                                    <label for="discount">Cash</label>
+                                                    <input type="text" class="form-control" name="discount"
+                                                           id="discount">
+                                                </div>
+                                                <div class="col">
+                                                    <label for="discount">Online</label>
+                                                    <input type="text" class="form-control" name="discount"
+                                                           id="discount">
+                                                </div>
+
+                                            </div>
                                         </div>
                                     </div><!-- /.box-body -->
-
-
                                     <div class="box-footer">
                                         <button type="submit" class="btn btn-primary">Submit</button>
                                     </div>
                                 </form>
                             </div>
-
                         </div><!-- /.box-body -->
                     </div><!-- /.box -->
                 </div><!-- /.col -->
@@ -164,15 +214,26 @@
     function add_medicine(){
         var html = '';
         html += '<tr id="medicine_tr'+index+'">';
-        html += '<td>'+index+'</td>';
         html += '<td><input onkeyup="search_medicine('+index+');" type="text" id="medicine'+index+'" name="medicine" class="form-control" autocomplete="off" placeholder="Search medicine: " required></td>';
         html += '<input type="hidden" name="record_id" class="form-control" id="record_id'+index+'" required>';
         html += '<input type="hidden" name="medicine_id" class="form-control" id="medicine_id'+index+'" required>';
-        html += '<td><input readonly type="text" id="medicine_price'+index+'" class="form-control" name="medicine_price" required></td>';
+
         html += '<td><input type="text" id="record_qty'+index+'" name="record_qty" class="form-control" readonly required></td>';
-        html += '<td><input type="text" onkeyup="sell_qty_funtion('+index+')" id="sell_qty'+index+'" name="sell_qty" class="form-control" placeholder="Sell quantity" required></td>';
-        html += '<td><input type="text" onkeyup="discount_funtion('+index+')" id="discount'+index+'" name="discount" class="form-control" value="0" required></td>';
-        html += '<td><input value="0" type="text" id="total_sell_price'+index+'" name="total_sell_price" class="total form-control" readonly></td>';
+
+        html += '<td><input type="text" onkeyup="sell_qty_funtion('+index+')" onkeypress="return isNumberKey(event)" id="sell_qty'+index+'" name="sell_qty" class="form-control" placeholder="Sell quantity" required></td>';
+
+        html += '<td><input type="text" id="mrp'+index+'" name="mrp" class="form-control" value="0" readonly required></td>';
+
+        html += '<td><input type="text" onkeyup="discount_function('+index+')" onkeypress="return isNumberKey(event)" id="discount'+index+'" name="discount" class="form-control" required></td>';
+
+        html += '<td><input type="text" id="sale_rate'+index+'" name="sale_rate" class="form-control" readonly required></td>';
+
+        html += '<td><input type="text" onkeypress="return isNumberKey(event)" id="hsn'+index+'" name="hsn" class="form-control" readonly required></td>';
+
+        html += '<td><input type="text" onkeyup="gst_function('+index+')" onkeypress="return isNumberKey(event)" id="gst'+index+'" name="gst" class="form-control" required></td>';
+
+        html += '<td><input value="0" type="text" id="amount'+index+'" name="amount" class="total form-control" readonly></td>';
+
         html += '<td><button onclick="remove_row('+index+')"><i class="fa fa-remove" style="font-size:24px"></i></button></td>';
         html += '</tr>';
 
@@ -186,30 +247,98 @@
 
     function sell_qty_funtion(index){
         var sell_qty = parseInt($('#sell_qty'+index).val())
-        var medicine_price = parseInt($('#medicine_price'+index).val())
-        if(sell_qty){
-            sell_qty = sell_qty
-        }else{
-            sell_qty = 0
-        }
+        var mrp = parseInt($('#mrp'+index).val())
+        var discount = parseInt($('#discount'+index).val())
 
-        if(medicine_price){
-            medicine_price = medicine_price
-        }else{
-            medicine_price = 0
-        }
+        sell_qty = sell_qty ? sell_qty : 0;
+        mrp = mrp ? mrp : 0;
 
-        total_price = sell_qty * medicine_price
-        $('#total_sell_price'+index).val(total_price)
+        var amount = sell_qty * mrp
+
+        discount = discount ? discount : 0;
+        var discountAmount = (discount / 100) * amount;
+        amount = amount - discountAmount
+        $('#sale_rate' + index).val(amount.toFixed(2));
+        $('#amount'+index).val(amount.toFixed(2))
     }
+
+    function discount_function(index) {
+        var discount = parseFloat($('#discount' + index).val());
+        var sell_qty = parseInt($('#sell_qty'+index).val())
+        var mrp = parseInt($('#mrp'+index).val())
+
+        if (discount > 100) {
+            $('#discount' + index).val('')
+        }
+        var discount = parseFloat($('#discount' + index).val());
+
+        sell_qty = sell_qty ? sell_qty : 0;
+        mrp = mrp ? mrp : 0;
+
+        var amount = sell_qty * mrp
+
+        discount = discount ? discount : 0;
+        var discountAmount = (discount / 100) * amount;
+        amount = amount - discountAmount;
+
+        $('#sale_rate' + index).val(amount.toFixed(2));
+        $('#amount' + index).val(amount.toFixed(2));
+    }
+
+    function gst_function(index) {
+        var discount = parseFloat($('#discount' + index).val());
+        var sell_qty = parseInt($('#sell_qty'+index).val())
+        var mrp = parseInt($('#mrp'+index).val())
+        var gst = parseInt($('#gst'+index).val())
+
+        if (gst > 100) {
+            $('#gst'+index).val('')
+            return;
+        }
+        var gst = parseInt($('#gst'+index).val())
+
+        sell_qty = sell_qty ? sell_qty : 0;
+        mrp = mrp ? mrp : 0;
+
+        var amount = sell_qty * mrp
+
+        discount = discount ? discount : 0;
+        var discountAmount = (discount / 100) * amount;
+        amount = amount - discountAmount;
+
+        gst = gst ? gst : 0;
+        var gstAmount = (gst / 100) * amount;
+        amount = amount - gstAmount;
+
+        $('#amount' + index).val(amount.toFixed(2));
+    }
+
     function remove_row(index){
         $('#medicine_tr'+index).remove()
     }
 </script>
+
 <script>
     function search_medicine(indexID) {
-        $('#sell_qty' + indexID).val('');
-        $('#total_sell_price' + indexID).val('');
+
+        $('#medicine'+indexID).on('keydown', function(event) {
+            if (event.key === 'Backspace' || event.key === 'Delete') {
+                $('#record_id' + indexID).val('');
+                $('#medicine_id' + indexID).val('');
+                $('#mrp' + indexID).val('');
+                $('#record_qty' + indexID).val('');
+                $('#amount' + indexID).val(0);
+            }
+        });
+
+        $('#medicine'+indexID).on('input', function() {
+            var value = $(this).val();
+            var leadingSpaces = value.match(/^ */)[0].length;
+            if (leadingSpaces > 2) {
+                $(this).val(value.slice(0, leadingSpaces - 1) + value.slice(leadingSpaces));
+            }
+        });
+
         var medicineIds = [];
 
         $('input[name="medicine_id"]').each(function() {
@@ -248,16 +377,17 @@
                     }
                 });
             },
+            minLength: 2,
             select: function (event, ui) {
                 $('#record_id' + indexID).val(ui.item.record_id);
                 $('#medicine_id' + indexID).val(ui.item.medicine_id);
-                $('#medicine_price' + indexID).val(ui.item.price);
+                $('#mrp' + indexID).val(ui.item.price);
                 $('#record_qty' + indexID).val(ui.item.record_qty);
                 //add_medicine()
             }
-        });
+        })
     }
-
 </script>
+
 
 {% endblock js %}

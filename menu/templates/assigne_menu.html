@@ -113,12 +113,15 @@
              });
             return false;
         }
+
+        $('#loader-overlay').show(); // Show overlay
+        $('#loader').show(); // Show loader
+
         var checkedValues = $("input[name='checked_menu']:checked").map(function() {
             return $(this).val();
         }).get();
 
         var formData = $(this).serializeArray()
-
         $.each(checkedValues, function(index, value) {
             formData.push({name: 'checked_values[]', value: value});
         });
@@ -127,6 +130,8 @@
           type: 'POST',
           data: formData,
           success: function (response) {
+            $('#loader-overlay').hide(); // Show overlay
+            $('#loader').hide(); // Show loader
             if(response.status == 'success'){
               Swal.fire({
                 title: 'Success',

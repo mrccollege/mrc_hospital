@@ -9,8 +9,32 @@
 
 
 {% block content %}
-<div class="wrapper">
+<!-- Modal -->
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Add New Category</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="category_form">{% csrf_token %}
+                <div class="modal-body">
+                    <input type="text" class="form-control" name="name" id="add_category"
+                           placeholder="Enter category name..">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary"  id="category_model">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
+<div class="wrapper">
     <!-- Right side column. Contains the navbar and content of the page -->
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
@@ -36,27 +60,47 @@
                                 <!-- form start -->
                                 <form id="medicine_form" role="form">{% csrf_token %}
                                     <div class="box-body">
-                                        <div class="form-group">
-                                            <label for="name" class="form-label">Medicine Name</label>
-                                            <input type="text" class="form-control" id="name" name="name" required>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="category" class="form-label">Medicine Category</label>
-                                            <select name="category" id="category" class="form-control">
-                                                <option value="0">Select Category</option>
-                                                {% for i in category %}
-                                                <option value="{{i.id}}">{{i.name}}</option>
-                                                {% endfor %}
-                                            </select>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="manufacture" class="form-label">Manufacturer</label>
-                                            <input type="text" class="form-control" id="manufacture" name="manufacturer" required>
-                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-6 form-group">
+                                                <label for="name" class="form-label">Medicine Name</label>
+                                                <input type="text" class="form-control" id="name" name="name" required>
+                                            </div>
 
-                                        <div class="form-group">
-                                            <label for="mobile" class="form-label">Manufacturer Mobile</label>
-                                            <input type="text" class="form-control" id="mobile" name="mobile" maxlength="10" required>
+                                            <div class="col-lg-4">
+                                                <div class="form-group">
+                                                    <label for="category" class="form-label">Medicine
+                                                        Category</label>
+                                                    <select name="category" id="category" class="form-control">
+                                                        <option value="0">Select Category</option>
+                                                        {% for i in category %}
+                                                        <option value="{{i.id}}">{{i.name}}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg-2">
+                                                <label>Add New Category</label>
+                                                <button type="button" class="form-control btn btn-primary"
+                                                        data-toggle="modal"
+                                                        data-target="#exampleModalCenter">New Category
+                                                </button>
+                                            </div>
+
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-6 form-group">
+                                                <label for="manufacture" class="form-label">Manufacturer</label>
+                                                <input type="text" class="form-control" id="manufacture"
+                                                       name="manufacturer"
+                                                       required>
+                                            </div>
+
+                                            <div class="col-lg-6 form-group">
+                                                <label for="mobile" class="form-label">Manufacturer Mobile</label>
+                                                <input type="text" class="form-control" id="mobile" name="mobile"
+                                                       maxlength="10" required>
+                                            </div>
                                         </div>
                                     </div><!-- /.box-body -->
 
@@ -78,13 +122,53 @@
 {% endblock content %}
 
 {% block js %}
-<script>
-    $("#medicine_expiry").datepicker({
-       dateFormat: "dd/mm/yy"
-    });
-</script>
 
 <script>
+    $('#category_form').on('submit', function (e) {
+        $('#loader-overlay').show(); // Show overlay
+        $('#loader').show(); // Show loader
+        add_category = $('#add_category').val();
+        if(add_category == ''){
+            Swal.fire({
+                  title: 'Error',
+                  text: 'Please enter category name',
+                  icon: 'error',
+                  confirmButtonColor: '#3085d6',
+                  confirmButtonText: 'OK'
+             });
+            return false;
+        }
+        e.preventDefault();
+        var formData = $('#category_form').serialize();
+        $.ajax({
+          url: '/medicine/add_category/',
+          type: 'POST',
+          data: formData,
+          success: function (response) {
+            $('#loader-overlay').hide(); // Show overlay
+            $('#loader').hide(); // Show loader
+            if(response.status == 'success'){
+                console.log(response.cat_obj)
+                var html = '';
+                html += '<option value="'+response.cat_obj.id+'">'+response.cat_obj.name+'</option>';
+                $('#category').append(html)
+                $('#exampleModalCenter').modal('hide');
+            }else{
+              Swal.fire({
+                  title: 'Error',
+                  text: response.msg,
+                  icon: 'error',
+                  confirmButtonColor: '#3085d6',
+                  confirmButtonText: 'OK'
+              });
+              $('#password').val('');
+              return false;
+            }
+          },
+        });
+    });
+
+
     $('#medicine_form').on('submit', function (e) {
         $('#loader-overlay').show(); // Show overlay
         $('#loader').show(); // Show loader

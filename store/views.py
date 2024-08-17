@@ -70,11 +70,20 @@ def transfer_medicine_from_main(request, id):
         form = request.POST
         medicine_id = int(form.get('medicine_id'))
         to_store_id = int(form.get('to_store_id'))
-        medicine_name = form.get('medicine_name')
         transfer_medicine_qty = int(form.get('transfer_medicine_qty'))
         medicine = MedicineStore.objects.get(id=id)
         main_store_id = medicine.to_store.id
+
+        medicine_name = medicine.medicine.name
         existing_qty = medicine.qty
+
+        category = medicine.medicine.category.name
+        price = medicine.price
+        batch_no = medicine.batch_no
+
+        medicine_manufacture = medicine.medicine.manufacture
+        medicine_expiry = medicine.expiry
+
         if existing_qty >= transfer_medicine_qty:
             medicine_qty = existing_qty - transfer_medicine_qty
         else:
@@ -94,21 +103,26 @@ def transfer_medicine_from_main(request, id):
                                                to_store_id=to_store_id,
                                                medicine_id=medicine_id,
                                                qty=transfer_medicine_qty,
+                                               price=price,
+                                               batch_no=batch_no,
+                                               expiry=medicine_expiry
                                                )
             obj_id = obj.id
 
         if obj:
             MedicineStore.objects.filter(medicine_id=medicine_id, to_store_id=main_store_id).update(qty=medicine_qty)
             available_stock = MedicineStore.objects.get(medicine_id=medicine_id, to_store_id=to_store_id)
-            medicine_obj = Medicine.objects.get(id=medicine_id)
             MedicineStoreTransactionHistory.objects.create(from_store_id=main_store_id,
                                                            to_store_id=to_store_id,
                                                            medicine_id=medicine_id,
                                                            medicine_name=medicine_name,
+                                                           category=category,
+                                                           price=price,
+                                                           batch_no=batch_no,
                                                            available_qty=available_stock.qty,
                                                            transfer_qty=transfer_medicine_qty,
-                                                           medicine_manufacture=medicine_obj.medicine_manufacturer,
-                                                           medicine_expiry=medicine_obj.medicine_expiry,
+                                                           medicine_manufacture=medicine_manufacture,
+                                                           medicine_expiry=medicine_expiry,
                                                            )
             status = 'success'
         else:
@@ -160,6 +174,9 @@ def transfer_medicine_from_mini(request):
                                                to_store_id=to_store_id,
                                                medicine_id=medicine_id,
                                                qty=transfer_medicine_qty,
+                                               price=price,
+                                               batch_no=batch_no,
+                                               expiry=medicine_expiry
                                                )
             obj_id = obj.id
 
@@ -227,28 +244,36 @@ def view_mini_store_medicine(request, store_id):
 
 
 def search_medicine(request):
-    user_id = request.session['user_id']
-    store = Store.objects.get(user_id=user_id)
-    store_id = store.id
     if request.method == 'GET':
         form = request.GET
-        search_value = form.get('search_value')
+        search_value = form.get('search_value', '').strip()
         medicineIds = form.getlist('medicineIds[]')
-        medicine = MedicineStore.objects.filter(to_store_id=store_id,
-                                                medicine__name__icontains=search_value,
-                                                ).exclude(medicine__id__in=medicineIds)
-        data_list = []
-        for i in medicine:
-            data_dict = {}
-            data_dict['record_id'] = i.id
-            data_dict['medicine_id'] = i.medicine.id
-            data_dict['name'] = i.medicine.name.capitalize()
-            data_dict['price'] = i.medicine.medicine_price
-            data_dict['record_qty'] = i.qty
-            data_list.append(data_dict)
-        context = {
-            'results': data_list,
-        }
+
+        try:
+            user_id = request.session['user_id']
+            store = Store.objects.get(user_id=user_id)
+            store_id = store.id
+        except:
+            pass
+
+        query = Q(to_store_id=store_id) & ~Q(medicine__id__in=medicineIds)
+        if search_value:
+            search_terms = search_value.split()
+            for term in search_terms:
+                query &= Q(medicine__name__icontains=term)
+
+        medicines = MedicineStore.objects.filter(query).values('id', 'medicine__id', 'medicine__name', 'price', 'qty')
+        data_list = [
+            {
+                'record_id': i['id'],
+                'medicine_id': i['medicine__id'],
+                'name': i['medicine__name'].capitalize(),
+                'price': i['price'],
+                'record_qty': i['qty'],
+            }
+            for i in medicines
+        ]
+        context = {'results': data_list}
         return JsonResponse(context)
 
 
