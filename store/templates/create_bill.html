@@ -117,7 +117,7 @@
                                                 <div class="col">
                                                     <label for="shipping_packing">Shipping & Packing</label>
                                                     <input type="text" class="form-control" name="shipping_packing"
-                                                           id="shipping_packing" onkeypress="return isNumberKey(event)">
+                                                           id="shipping_packing" onkeypress="return isNumberKey(event)" onkeyup="total_amount_function()">
                                                 </div>
                                                 <div class="col">
                                                     <label for="credit">Credit</label>
@@ -294,6 +294,10 @@
             var value = parseFloat($(this).val()) || 0;
             sum += value;
         });
+
+        var shipping_packing = parseInt($('#shipping_packing').val());
+        shipping_packing = shipping_packing ? shipping_packing:0 ;
+        sum = sum + shipping_packing
         $('#total').val(sum);
 
         total_amount_function()
