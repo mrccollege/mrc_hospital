@@ -14,6 +14,8 @@ from patient.models import Patient
 
 from bill.models import PatientBill, PatientBillDetail
 
+from bill.models import SGST, CGST
+
 
 # Create your views here.
 def main_store(request):
@@ -279,16 +281,15 @@ def search_medicine(request):
 
 @login_required(login_url='/account/user_login/')
 def create_bill(request):
-    user_id = request.session['user_id']
-    try:
-        store = Store.objects.get(user_id=user_id)
-        store_id = store.id
-    except:
-        pass
-
     if request.method == 'POST':
         # User.objects.filter(username='rajat').delete()
         form = request.POST
+        user_id = request.session['user_id']
+        try:
+            store = Store.objects.get(user_id=user_id)
+            store_id = store.id
+        except:
+            store_id = 0
         username = form.get('patient_name')
         mobile = form.get('mobile')
         address = form.get('address')
@@ -299,7 +300,7 @@ def create_bill(request):
         status = 'failed'
         msg = 'Patient Registration failed.'
 
-        is_registered = User.objects.filter(mobile=mobile).exists()
+        is_registered = User.objects.filter(mobile=mobile)
         if is_registered:
             context = {
                 'status': 'failed',
@@ -311,50 +312,76 @@ def create_bill(request):
                                             email=email,
                                             password=password,
                                             mobile=mobile,
-                                            address=address
-                                            )
+                                            address=address, )
         if user_obj:
             patient_id = user_obj.id
             obj = Patient.objects.create(user_id=patient_id,
-                                         patient_code=patient_code,
-                                         )
+                                         patient_code=patient_code, )
             if obj:
                 obj_id = obj.id
 
         if obj_id != 0:
-            record_id = form.getlist('record_id')
-            medicine_id = form.getlist('medicine_id')
-            medicine_price = form.getlist('medicine_price')
-            record_qty = form.getlist('record_qty')
-            sell_qty = form.getlist('sell_qty')
-            total_sell_price = form.getlist('total_sell_price')
             invoice_number = datetime.now().strftime("%Y%d%H%M%S")
+            sgst = form.get('sgst')
+            cgst = form.get('cgst')
+            credit = form.get('credit')
+            cash = form.get('cash')
+            online = form.get('online')
+            shipping_packing = form.get('shipping_packing')
+            discount = form.get('discount')
+            total = form.get('total')
+
             obj = PatientBill.objects.create(patient_id=obj_id,
                                              store_id=store_id,
                                              invoice_number=invoice_number,
-                                             )
+                                             sgst=sgst,
+                                             cgst=cgst,
+                                             credit=credit,
+                                             cash=cash,
+                                             online=online,
+                                             shipping_packing=shipping_packing,
+                                             discount=discount,
+                                             total=total, )
             if obj:
+                record_id = form.getlist('record_id')
+                medicine_id = form.getlist('medicine_id')
+                record_qty = form.getlist('record_qty')
+                sell_qty = form.getlist('sell_qty')
+                mrp = form.getlist('mrp')
+                discount = form.getlist('discount')
+                sale_rate = form.getlist('sale_rate')
+                hsn = form.getlist('hsn')
+                gst = form.getlist('gst')
+                amount = form.getlist('amount')
+
                 for i in range(len(medicine_id)):
                     PatientBillDetail.objects.create(patient_bill_id=obj.id,
                                                      medicine_id=medicine_id[i],
-                                                     medicine_qty=record_qty[i],
-                                                     medicine_sell_qty=sell_qty[i],
-                                                     medicine_price=medicine_price[i],
-                                                     medicine_sell_price=total_sell_price[i],
+                                                     record_qty=record_qty[i],
+                                                     sell_qty=sell_qty[i],
+                                                     mrp=mrp[i],
+                                                     discount=discount[i],
+                                                     sale_rate=sale_rate[i],
+                                                     hsn=hsn[i],
+                                                     gst=gst[i],
+                                                     amount=amount[i],
                                                      )
                     remaining_qty = int(record_qty[i]) - int(sell_qty[i])
                     obj = MedicineStore.objects.filter(to_store_id=store_id, medicine_id=medicine_id[i]).update(
                         qty=remaining_qty)
                     if obj:
-                        medicine = Medicine.objects.get(id=medicine_id)
+                        medicine = MedicineStore.objects.get(id=record_id)
                         MedicineStoreTransactionHistory.objects.create(from_store_id=store_id,
                                                                        to_store_id=store_id,
                                                                        medicine_id=medicine_id,
-                                                                       medicine_name=medicine.medicine_name,
+                                                                       medicine_name=medicine.medicine.name,
+                                                                       category=medicine.category,
+                                                                       price=medicine.price,
+                                                                       batch_no=medicine.batch_no,
                                                                        available_qty=remaining_qty,
-                                                                       sell_qty=sell_qty,
-                                                                       medicine_manufacturer=medicine.medicine_manufacturer,
-                                                                       medicine_expiry=medicine.medicine_expiry,
+                                                                       sell_qty=sell_qty[i],
+                                                                       medicine_manufacture=medicine.manufacture,
+                                                                       medicine_expiry=medicine.expiry,
                                                                        )
 
                 status = 'success'
@@ -366,4 +393,11 @@ def create_bill(request):
         }
         return JsonResponse(context)
     else:
-        return render(request, 'create_bill.html')
+        sgst = SGST.objects.all()
+        cgst = CGST.objects.all()
+
+        context = {
+            'sgst': sgst,
+            'cgst': cgst,
+        }
+        return render(request, 'create_bill.html', context)

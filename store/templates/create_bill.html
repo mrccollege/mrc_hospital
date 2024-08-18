@@ -1,18 +1,6 @@
 {% extends 'base.html' %}
 
 {% block css %}
-<!-- Datepicker -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-
-    datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css">
-<style>
-    .form-container {
-        text-align: right;
-    }
-    .form-group {
-        display: inline-block;
-        margin-left: 15px;
-    }
-</style>
 {% endblock css %}
 
 
@@ -100,44 +88,52 @@
                                             <div class="row col-lg-6">
                                                 <div class="col">
                                                     <label for="total">Total</label>
-                                                    <input type="text" class="form-control" name="total" id="total">
+                                                    <input type="text" class="form-control" name="total" id="total"
+                                                           onkeypress="return isNumberKey(event)" readonly>
                                                 </div>
                                                 <div class="col">
-                                                    <label for="discount">Discount</label>
+                                                    <label for="discount">Discount %</label>
                                                     <input type="text" class="form-control" name="discount"
-                                                           id="discount">
+                                                           id="discount" onkeypress="return isNumberKey(event)" onkeyup="total_amount_function()">
                                                 </div>
                                                 <div class="col">
-                                                    <label for="discount">SGST</label>
-                                                    <input type="text" class="form-control" name="discount"
-                                                           id="discount">
+                                                    <label for="sgst">SGST %</label>
+                                                    <select name="" id="sgst" class="form-control">
+                                                        {% for i in sgst %}
+                                                        <option value="{{i.id}}">{{i.sgst_percent}}</option>
+                                                        >
+                                                        {% endfor %}
+                                                    </select>
                                                 </div>
                                                 <div class="col">
-                                                    <label for="discount">CGST</label>
-                                                    <input type="text" class="form-control" name="discount"
-                                                           id="discount">
+                                                    <label for="cgst">CGST %</label>
+                                                    <select name="" id="cgst" class="form-control">
+                                                        {% for i in cgst %}
+                                                        <option value="{{i.id}}">{{i.cgst_percent}}</option>
+                                                        >
+                                                        {% endfor %}
+                                                    </select>
                                                 </div>
                                                 <div class="col">
-                                                    <label for="discount">Shippind & Packing</label>
-                                                    <input type="text" class="form-control" name="discount"
-                                                           id="discount">
+                                                    <label for="shipping_packing">Shipping & Packing</label>
+                                                    <input type="text" class="form-control" name="shipping_packing"
+                                                           id="shipping_packing" onkeypress="return isNumberKey(event)">
                                                 </div>
                                                 <div class="col">
-                                                    <label for="discount">Credit</label>
-                                                    <input type="text" class="form-control" name="discount"
-                                                           id="discount">
+                                                    <label for="credit">Credit</label>
+                                                    <input type="text" class="form-control" name="credit"
+                                                           id="credit" onkeypress="return isNumberKey(event)">
                                                 </div>
                                                 <div class="col">
-                                                    <label for="discount">Cash</label>
-                                                    <input type="text" class="form-control" name="discount"
-                                                           id="discount">
+                                                    <label for="cash">Cash</label>
+                                                    <input type="text" class="form-control" name="cash"
+                                                           id="cash" onkeypress="return isNumberKey(event)">
                                                 </div>
                                                 <div class="col">
-                                                    <label for="discount">Online</label>
-                                                    <input type="text" class="form-control" name="discount"
-                                                           id="discount">
+                                                    <label for="online">Online</label>
+                                                    <input type="text" class="form-control" name="online"
+                                                           id="online" onkeypress="return isNumberKey(event)">
                                                 </div>
-
                                             </div>
                                         </div>
                                     </div><!-- /.box-body -->
@@ -260,6 +256,15 @@
         amount = amount - discountAmount
         $('#sale_rate' + index).val(amount.toFixed(2));
         $('#amount'+index).val(amount.toFixed(2))
+
+        var sum = 0;
+        $('input[name="amount"]').each(function(){
+            var value = parseFloat($(this).val()) || 0;
+            sum += value;
+        });
+        $('#total').val(sum);
+
+        total_amount_function()
     }
 
     function discount_function(index) {
@@ -283,6 +288,15 @@
 
         $('#sale_rate' + index).val(amount.toFixed(2));
         $('#amount' + index).val(amount.toFixed(2));
+
+        var sum = 0;
+        $('input[name="amount"]').each(function(){
+            var value = parseFloat($(this).val()) || 0;
+            sum += value;
+        });
+        $('#total').val(sum);
+
+        total_amount_function()
     }
 
     function gst_function(index) {
@@ -311,6 +325,15 @@
         amount = amount - gstAmount;
 
         $('#amount' + index).val(amount.toFixed(2));
+
+        var sum = 0;
+        $('input[name="amount"]').each(function(){
+            var value = parseFloat($(this).val()) || 0;
+            sum += value;
+        });
+        $('#total').val(sum);
+
+        total_amount_function()
     }
 
     function remove_row(index){
@@ -386,6 +409,32 @@
                 //add_medicine()
             }
         })
+    }
+</script>
+
+<script>
+    function total_amount_function(){
+        var total = 0;
+        $('input[name="amount"]').each(function(){
+            var value = parseFloat($(this).val()) || 0;
+            total += value;
+        });
+
+        var discount = parseFloat($('#discount').val());
+
+        if (discount > 100) {
+            $('#discount').val('')
+        }
+        var discount = parseFloat($('#discount').val());
+        discount = discount ? discount : 0 ;
+
+        var discountAmount = (discount / 100) * total;
+        amount = total - discountAmount;
+        if (amount < 1){
+            $('#total').val(total.toFixed(2));
+        }else{
+            $('#total').val(amount.toFixed(2));
+        }
     }
 </script>
 
