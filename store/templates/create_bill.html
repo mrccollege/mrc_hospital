@@ -295,9 +295,7 @@
             sum += value;
         });
 
-        var shipping_packing = parseInt($('#shipping_packing').val());
-        shipping_packing = shipping_packing ? shipping_packing:0 ;
-        sum = sum + shipping_packing
+
         $('#total').val(sum);
 
         total_amount_function()
@@ -434,9 +432,15 @@
 
         var discountAmount = (discount / 100) * total;
         amount = total - discountAmount;
+
+        var shipping_packing = parseInt($('#shipping_packing').val());
+        shipping_packing = shipping_packing ? shipping_packing:0 ;
+
         if (amount < 1){
+            total = shipping_packing +  total
             $('#total').val(total.toFixed(2));
         }else{
+            amount = shipping_packing +  amount
             $('#total').val(amount.toFixed(2));
         }
     }
