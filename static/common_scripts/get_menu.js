@@ -5,6 +5,7 @@ $(document).ready(function() {
         url: '/get_menus/',
         type: 'GET',
         success: function(data) {
+            $('.profile_name').html(data.profile_name)
             $('.sidebar-menu').html('');
             var html = '';
             html += '<li class="header">MAIN NAVIGATION</li>';

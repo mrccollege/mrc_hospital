@@ -11,7 +11,7 @@ from store.models import Store
 
 from doctor.models import Doctor
 
-from patient.models import Patient
+from patient.models import Patient, OtherReference
 
 
 # Create your views here.
@@ -133,14 +133,25 @@ def doctor_registration(request):
 
 def patient_registration(request):
     if request.method == 'POST':
-        # User.objects.filter(username='rajat').delete()
         form = request.POST
         username = form.get('patient_name')
+        care_of = form.get('care_of')
         mobile = form.get('mobile')
+        patient_age = form.get('patient_age')
+        sex = form.get('sex')
+        house_flat = form.get('house_flat')
+        street = form.get('street')
+        city = form.get('city')
+        district = form.get('district')
+        pincode = form.get('pincode')
+        state = form.get('state')
+        reference_by_patient = form.get('reference_by_patient')
+        reference_by_other = form.get('reference_by_other')
+        social_media = form.get('social_media')
         email = mobile + '@yopmail.com'
         phone = form.get('phone')
         address = form.get('address')
-        patient_age = form.get('patient_age')
+
         patient_code = datetime.now().strftime("%Y%d%H%M%S")
         status = 'failed'
         msg = 'Patient Registration failed.'
@@ -150,12 +161,24 @@ def patient_registration(request):
                                                 password='12345',
                                                 mobile=mobile,
                                                 phone=phone,
-                                                address=address)
+                                                Care_of=care_of,
+                                                sex=sex,
+                                                age=patient_age,
+                                                house_flat=house_flat,
+                                                street_colony=street,
+                                                city=city,
+                                                district=district,
+                                                pin=pincode,
+                                                state=state,
+                                                address=address
+                                                )
             if user_obj:
                 patient_id = user_obj.id
                 Patient.objects.create(user_id=patient_id,
                                        patient_code=patient_code,
-                                       patient_age=patient_age,
+                                       social_media_id=social_media,
+                                       reference_by_other_id=reference_by_other,
+                                       reference_by_patient=reference_by_patient,
                                        )
                 status = 'success'
                 msg = 'Patient Registration successfully.'
@@ -169,7 +192,12 @@ def patient_registration(request):
             'msg': msg,
         }
         return JsonResponse(context)
-    return render(request, 'patient_registration.html')
+    else:
+        reference_by_other = OtherReference.objects.all()
+        context = {
+            'reference_by_other': reference_by_other
+        }
+        return render(request, 'patient_registration.html', context)
 
 
 def user_login(request):
@@ -207,6 +235,3 @@ def user_logout(request):
     logout(request)
     request.session.flush()
     return redirect('/account/user_login/')
-
-
-

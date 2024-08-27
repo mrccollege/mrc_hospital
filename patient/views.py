@@ -1,7 +1,7 @@
 from django.http import JsonResponse
 from django.shortcuts import render
 
-from patient.models import Patient
+from patient.models import Patient, OtherReference
 
 from account.models import User
 
@@ -71,3 +71,51 @@ def patient_detail(request, id):
             'patient': patient
         }
         return render(request, 'patient_detail.html', context)
+
+
+def search_patient(request):
+    if 'term' in request.GET:
+        qs = Patient.objects.filter(patient_code__icontains=request.GET.get('term'))
+        data_list = []
+        for i in qs:
+            data_dict = {}
+            data_dict['id'] = i.id
+            data_dict['name'] = i.user.username
+            data_dict['code'] = i.patient_code
+            data_list.append(data_dict)
+        context = {
+            'data_list': data_list
+        }
+        return JsonResponse(context, safe=False)
+    return JsonResponse([], safe=False)
+
+
+def add_other_reference(request):
+    if request.method == 'POST':
+        form = request.POST
+        reference_name = form.get('reference_name')
+        reference_mobile = form.get('reference_mobile')
+        reference_address = form.get('reference_address')
+        patient_obj = OtherReference.objects.create(name=reference_name,
+                                                    mobile=reference_mobile,
+                                                    address=reference_address, )
+        patient_dict = {
+            'id': patient_obj.id,
+            'name': patient_obj.name,
+            'mobile': patient_obj.mobile,
+        }
+        if patient_obj:
+            patient_obj = patient_dict
+            status = 'success'
+            msg = 'Reference registered successfully.'
+        else:
+            patient_obj = {}
+            status = 'failed'
+            msg = 'Reference registered failed.'
+
+        context = {
+            'status': status,
+            'msg': msg,
+            'patient_obj': patient_obj,
+        }
+        return JsonResponse(context)
