@@ -10,7 +10,7 @@ class User(AbstractUser):
     email = models.EmailField(unique=True, null=True)
     mobile = models.CharField(max_length=20, null=True)
     phone = models.CharField(max_length=20, null=True, blank=True)
-    Care_of = models.CharField(max_length=256, null=True, blank=True)
+    care_of = models.CharField(max_length=256, null=True, blank=True)
     sex = models.CharField(max_length=20, null=True, blank=True)
     age = models.IntegerField(null=True, blank=True)
     house_flat = models.CharField(max_length=50, null=True, blank=True)

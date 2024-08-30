@@ -31,13 +31,14 @@
                         <div class="box-header">
                             <h3 class="box-title">Appointment Details</h3>
                         </div><!-- /.box-header -->
+
                         <div class="box-body">
                             <div class="box box-primary">
                                 <!-- form start -->
                                 <form id="medicine_form" role="form">{% csrf_token %}
                                     <div class="box-body">
                                         <div class="row">
-                                            <div class="col-lg-4">
+                                            <div class="col-lg-3">
                                                 <div class="form-group">
                                                     <label for="patient_name" class="form-label">Patient Name</label>
                                                     <input type="hidden" name="patient_id"
@@ -46,20 +47,27 @@
                                                            name="patient_name" value="{{appointment.patient}}" readonly>
                                                 </div>
                                             </div>
-                                            <div class="col-lg-4">
+                                            <div class="col-lg-3">
                                                 <div class="form-group">
-                                                    <label for="mobile" class="form-label">Patient Mobile</label>
+                                                    <label for="patient_name" class="form-label">C/O</label>
+                                                    <input type="text" class="form-control" id="care_of"
+                                                           name="patient_name"
+                                                           value="{{appointment.patient.user.care_of}}" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <div class="form-group">
+                                                    <label for="mobile" class="form-label">Mobile</label>
                                                     <input type="text" class="form-control" id="mobile"
                                                            name="mobile" value="{{appointment.patient.user.mobile}}"
                                                            readonly>
                                                 </div>
                                             </div>
-                                            <div class="col-lg-4">
+                                            <div class="col-lg-3">
                                                 <div class="form-group">
-                                                    <label for="address" class="form-label">Patient Address
-                                                        (optional)</label>
-                                                    <input type="text" class="form-control" id="address"
-                                                           name="address" value="{{appointment.patient.user.address}}"
+                                                    <label for="address" class="form-label">Address</label>
+                                                    <input type="text" class="form-control" id="address" name="address"
+                                                           value="{{appointment.patient.user.house_flat}}&nbsp;{{appointment.patient.user.street_colony}}&nbsp;{{appointment.patient.user.city}}&nbsp;{{appointment.patient.user.district}}&nbsp;{{appointment.patient.user.state}}"
                                                            readonly>
                                                 </div>
                                             </div>
@@ -67,93 +75,318 @@
 
 
                                         <div class="row">
-                                            <div class="col-lg-4">
+                                            <div class="col-lg-1">
+                                                <div class="form-group">
+                                                    <label for="patient_name" class="form-label">Gender</label>
+                                                    <input type="text" class="form-control" id="sex"
+                                                           name="patient_bp"
+                                                           value="{{appointment.patient.user.sex}}" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-1">
+                                                <div class="form-group">
+                                                    <label for="patient_name" class="form-label">Age</label>
+                                                    <input type="text" class="form-control" id="age"
+                                                           name="patient_bp"
+                                                           value="{{appointment.patient.user.age}}" readonly>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg-2">
+                                                <div class="form-group">
+                                                    <label for="address" class="form-label">Weight</label>
+                                                    <input type="text" class="form-control" id="patient_weight"
+                                                           name="patient_weight"
+                                                           value="{{appointment.patient_weight}}" readonly>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg-2">
+                                                <div class="form-group">
+                                                    <label for="patient_name" class="form-label">Blood Pressure</label>
+                                                    <input type="hidden" name="patient_id"
+                                                           value="{{appointment.patient.id}}">
+                                                    <input type="hidden" name="appointment_id"
+                                                           value="{{appointment_id}}">
+                                                    <input type="text" class="form-control" id="patient_bp"
+                                                           name="patient_bp"
+                                                           value="{{appointment.patient_bp}}" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-1">
+                                                <div class="form-group">
+                                                    <label for="pulse" class="form-label">Pulse</label>
+                                                    <input type="text" class="form-control" id="pulse"
+                                                           name="pulse"
+                                                           value="{{appointment.pulse}}" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-1">
+                                                <div class="form-group">
+                                                    <label for="oxygen" class="form-label">Oxygen</label>
+                                                    <input type="text" class="form-control" id="oxygen"
+                                                           name="patient_bp"
+                                                           value="{{appointment.oxygen}}" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-1">
+                                                <div class="form-group">
+                                                    <label for="temperature" class="form-label">Temp.</label>
+                                                    <input type="text" class="form-control" id="temperature"
+                                                           name="temperature"
+                                                           value="{{appointment.temperature}}" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-1">
+                                                <div class="form-group">
+                                                    <label for="respiration" class="form-label">Res.</label>
+                                                    <input type="text" class="form-control" id="respiration"
+                                                           name="respiration"
+                                                           value="{{appointment.respiration}}" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-2 form-group">
+                                                <label for="patient_diseases" class="form-label">Patient
+                                                    Diseases Remark</label>
+                                                <textarea rows="1" id="patient_diseases" name="patient_diseases"
+                                                          class="form-control"
+                                                          readonly>{{appointment.patient_diseases}}</textarea>
+                                            </div>
+
+
+                                        </div>
+                                        <hr>
+                                        <div class="row">
+                                            <div class="col-lg-6">
                                                 <div class="row">
-                                                    <div class="col-lg-4">
+                                                    <div class="col-lg-12">
                                                         <div class="form-group">
-                                                            <label for="patient_name" class="form-label">Patient Min
-                                                                BP</label>
-                                                            <input type="hidden" name="patient_id"
-                                                                   value="{{appointment.patient.id}}">
-                                                            <input type="hidden" name="appointment_id"
-                                                                   value="{{appointment_id}}">
-                                                            <input type="text" class="form-control" id="patient_bp_min"
-                                                                   name="patient_bp_min"
-                                                                   value="{{appointment.patient_bp_min}}">
+                                                            <label for="doctor_diseases" class="form-label">Chief
+                                                                Complaints</label>
+                                                            <textarea rows="1" id="doctor_diseases"
+                                                                      name="doctor_diseases"
+                                                                      class="form-control"
+                                                                      placeholder="Doctor Please Enter the Diseases Remark: "
+                                                                      required></textarea>
                                                         </div>
                                                     </div>
-                                                    <div class="col-lg-4">
-                                                        <div class="form-group">
-                                                            <label for="mobile" class="form-label">Patient Max
-                                                                BP</label>
-                                                            <input type="text" class="form-control" id="patient_bp_max"
-                                                                   name="patient_bp_max"
-                                                                   value="{{appointment.patient_bp_max}}">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-lg-4">
-                                                        <div class="form-group">
-                                                            <label for="address" class="form-label">Patient
-                                                                Weight</label>
-                                                            <input type="text" class="form-control" id="patient_weight"
-                                                                   name="patient_weight"
-                                                                   value="{{appointment.patient_weight}}" readonly>
-                                                        </div>
-                                                    </div>
-                                                </div>
 
-                                            </div>
-                                            <div class="col-lg-4">
-                                                <div class="form-group">
-                                                    <label for="patient_diseases" class="form-label">Patient
-                                                        Diseases Remark</label>
-                                                    <textarea id="patient_diseases" name="patient_diseases" class="form-control" readonly>{{appointment.patient_diseases}}</textarea>
+                                                    <div class="col-lg-12">
+                                                        <div class="col-lg-6">
+                                                            <div class="form-group">
+                                                                <label class="form-label">Other Associates
+                                                                    Complaints</label>
+                                                                <textarea id="other_associates_complaints"
+                                                                          name="doctor_diseases"
+                                                                          class="form-control"
+                                                                          placeholder="Other Associates Complaints: "
+                                                                          required></textarea>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-lg-3">
+                                                            <div class="form-group">
+                                                                <label class="form-label">Since</label>
+                                                                <select name="" class="form-control">
+                                                                    <option value="">1 week</option>
+                                                                    <option value="">1 months</option>
+                                                                    <option value="">1 year</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-lg-3">
+                                                            <div class="form-group">
+                                                                <label for="other_associates_complaints"
+                                                                       class="form-label">Severity</label>
+                                                                <select name="" id="" class="form-control">
+                                                                    <option value="">Low</option>
+                                                                    <option value="">Moderate</option>
+                                                                    <option value="">High</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
-                                            <div class="col-lg-4">
-                                                <div class="form-group">
-                                                    <label for="doctor_diseases" class="form-label">Doctor Diseases Remark</label>
-                                                    <textarea id="doctor_diseases" name="doctor_diseases" class="form-control" placeholder="Doctor Please Enter the Diseases Remark: " required></textarea>
+
+                                            <div class="col-lg-6">
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="col-lg-3">
+                                                            <div class="form-group">
+                                                                <label class="form-label">Since</label>
+                                                                <select name="" class="form-control">
+                                                                    <option value="">1 week</option>
+                                                                    <option value="">1 months</option>
+                                                                    <option value="">1 year</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-lg-3">
+                                                            <div class="form-group">
+                                                                <label for="other_associates_complaints"
+                                                                       class="form-label">Severity</label>
+                                                                <select name="" id="" class="form-control">
+                                                                    <option value="">Low</option>
+                                                                    <option value="">Moderate</option>
+                                                                    <option value="">High</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-lg-6">
+                                                            <label>Bleeding</label>
+                                                            <select class="form-control">
+                                                                <option>None</option>
+                                                                <option>In strip</option>
+                                                                <option>In Drops</option>
+                                                                <option>In Flow</option>
+                                                                <option>Mixed with Stool</option>
+                                                                <option>Melena</option>
+
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-lg-12">
+                                                        <div class="col-lg-6">
+                                                            <label>Upload Image</label>
+                                                            <input type="file" id="patient_image"
+                                                                   name="patient_image">
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-lg-12">
+                                                        <div id="row append_history">
+                                                            <div class="col-lg-12">
+                                                                <div class="row">
+                                                                    <div class="col-lg-6 form-group">
+                                                                        <label for="patient_diseases"
+                                                                               class="form-label">History</label>
+                                                                        <input type="text" class="form-control">
+                                                                    </div>
+
+                                                                    <div class="col-lg-4 form-group">
+                                                                        <label for="patient_diseases"
+                                                                               class="form-label">History
+                                                                            Remark</label>
+                                                                        <select class="form-control">
+                                                                            <option>Modern Surgery</option>
+                                                                            <option>Laser Surgery</option>
+                                                                            <option>Cryo Surgery</option>
+                                                                            <option>Bangali Technique</option>
+                                                                        </select>
+                                                                    </div>
+
+                                                                    <div class="col-lg-2">
+                                                                        <label>Add More</label>
+                                                                        <i class="fa fa-plus"
+                                                                           style="font-size:24px"></i>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
 
-                                    </div><!-- /.box-body -->
+                                        <div class="row">
+                                            <div class="col-lg-3">
+                                                <label>P/R</label>
+                                                <input type="text" name="pr" id="pr" class="form-control">
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <label>Procto</label>
+                                                <input type="text" name="pr" id="pr" class="form-control">
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <label>Probing</label>
+                                                <input type="text" name="pr" id="pr" class="form-control">
+                                            </div>
 
-                                    <div class="box-body">
-                                        <div class="table-responsive">
-                                            <table class="table table-condensed">
-                                                <thead>
-                                                <tr>
-                                                    <th>SN.</th>
-                                                    <th>Medicine Name</th>
-                                                    <th>Medicine Qty</th>
-                                                </tr>
-                                                </thead>
-                                                <tbody>
-                                                </tbody>
-                                            </table>
-                                            <div class="text-center">
-                                                <button type="button" class="btn btn-primary"
-                                                        onclick="add_medicine()">
-                                                    Add
-                                                </button>
+                                            <div class="col-lg-3">
+                                                <label>O/E</label>
+                                                <input type="text" name="pr" id="pr" class="form-control">
                                             </div>
                                         </div>
-                                    </div><!-- /.box-body -->
+                                        <hr>
 
-                                    <div class="box-footer">
-                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                        <div class="row">
+                                            <h1 class="text-center"> <em><b>Diagnosis</b></em></h1>
+                                            <div class="row mx-auto">
+                                                <div class="col-lg-4">
+                                                    <label>Disease Name</label>
+                                                    <select name="" id="" class="form-control">
+                                                        <option>Option1</option>
+                                                        <option>Option1</option>
+                                                        <option>Option1</option>
+                                                        <option>Option1</option>
+                                                    </select>
+                                                </div>
+
+                                                <div class="col-lg-4">
+                                                    <label>Position</label>
+                                                    <select name="" id="" class="form-control">
+                                                        <option>Option1</option>
+                                                        <option>Option1</option>
+                                                        <option>Option1</option>
+                                                        <option>Option1</option>
+                                                    </select>
+                                                </div>
+
+                                                <div class="col-lg-4">
+                                                    <label>Type</label>
+                                                    <select name="" id="" class="form-control">
+                                                        <option>Option1</option>
+                                                        <option>Option1</option>
+                                                        <option>Option1</option>
+                                                        <option>Option1</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+
                                     </div>
                                 </form>
-                            </div>
+                            </div><!-- /.box-body -->
 
-                        </div><!-- /.box-body -->
-                    </div><!-- /.box -->
-                </div><!-- /.col -->
-            </div><!-- /.row -->
-        </section><!-- /.content -->
-    </div><!-- /.content-wrapper -->
+                            <div class="box-body">
+                                <div class="table-responsive">
+                                    <table class="table table-condensed">
+                                        <thead>
+                                        <tr>
+                                            <th>SN.</th>
+                                            <th>Medicine Name</th>
+                                            <th>Medicine Qty</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                    <div class="text-center">
+                                        <button type="button" class="btn btn-primary"
+                                                onclick="add_medicine()">
+                                            Add
+                                        </button>
+                                    </div>
+                                </div>
+                            </div><!-- /.box-body -->
+
+                            <div class="box-footer">
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </div>
+                            </form>
+                        </div>
+
+                    </div><!-- /.box-body -->
+                </div><!-- /.box -->
+            </div><!-- /.col -->
+    </div><!-- /.row -->
+    </section><!-- /.content -->
+</div><!-- /.content-wrapper -->
 
 </div><!-- ./wrapper -->
 
@@ -164,6 +397,24 @@
     $("#medicine_expiry").datepicker({
        dateFormat: "dd/mm/yy"
     });
+
+<!--    $('#add_history_slots').click(function(){-->
+<!--        var html = '';-->
+
+<!--        html += '<div class="col-lg-12">';-->
+<!--        html += '<div class="col-lg-6 form-group">';-->
+<!--        html += '<label class="form-label">History</label>';-->
+<!--        html += '<input type="text" class="form-control">';-->
+<!--        html += '</div>';-->
+
+<!--        html += '<div class="col-lg-6 form-group">';-->
+<!--        html += '<label class="form-label">History Remark</label>';-->
+<!--        html += '<input type="text" class="form-control">';-->
+<!--        html += '</div>';-->
+<!--        html += '</div>';-->
+
+<!--        $(this).append(html)-->
+<!--    })-->
 </script>
 
 <script>

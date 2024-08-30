@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import render
 
@@ -75,19 +76,24 @@ def patient_detail(request, id):
 
 def search_patient(request):
     if 'term' in request.GET:
-        qs = Patient.objects.filter(patient_code__icontains=request.GET.get('term'))
-        data_list = []
-        for i in qs:
-            data_dict = {}
-            data_dict['id'] = i.id
-            data_dict['name'] = i.user.username
-            data_dict['code'] = i.patient_code
-            data_list.append(data_dict)
-        context = {
-            'data_list': data_list
-        }
-        return JsonResponse(context, safe=False)
-    return JsonResponse([], safe=False)
+        search_value = request.GET.get('term')
+        if search_value:
+            search_terms = search_value.split()
+            for term in search_terms:
+                query = Q(user__username__icontains=term) | Q(patient_code__icontains=term)
+                qs = Patient.objects.filter(query)
+                data_list = []
+                for i in qs:
+                    data_dict = {}
+                    data_dict['id'] = i.id
+                    data_dict['name'] = i.user.username
+                    data_dict['code'] = i.patient_code
+                    data_list.append(data_dict)
+                context = {
+                    'data_list': data_list
+                }
+                return JsonResponse(context, safe=False)
+            return JsonResponse([], safe=False)
 
 
 def add_other_reference(request):

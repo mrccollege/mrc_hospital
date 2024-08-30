@@ -22,18 +22,22 @@ from account.models import User
 def add_appointment(request):
     if request.method == 'POST':
         form = request.POST
-        appoint_ward = form.get('appointment_ward')
-        patient = form.get('patient_search_id')
-        doctor = form.get('doctor')
+        appointment_slot = form.get('appointment_slot')
+        patient_search_id = form.get('patient_search_id')
+        doctor_id = form.get('doctor_id')
         diseases = form.get('diseases')
-        patient_bp_min = form.get('patient_bp_min')
-        patient_bp_max = form.get('patient_bp_max')
-        patient_weight = form.get('patient_weight')
+        patient_bp = form.get('patient_bp')
+        pulse = form.get('pulse')
+        oxygen = form.get('oxygen')
+        temperature = form.get('temperature')
+        respiration = form.get('respiration')
+        weight = form.get('weight')
+        extra_fees = form.get('extra_fees')
         ward_fees = form.get('ward_fees')
         cash = int(form.get('cash'))
         online = int(form.get('online'))
         remaining = int(form.get('remaining'))
-
+        discount = int(form.get('discount'))
         appointment_date = form.get('appoint_date')
         appointment_date = convert_date_format(appointment_date)
         appointment_time = form.get('appoint_time')
@@ -41,15 +45,20 @@ def add_appointment(request):
         status = 'failed!'
         msg = 'Appointment failed.'
         try:
-            appoint_obj = PatientAppointment.objects.create(appoint_ward_id=appoint_ward,
-                                                            doctor_id=doctor,
-                                                            patient_id=patient,
+            appoint_obj = PatientAppointment.objects.create(appoint_ward_id=appointment_slot,
+                                                            doctor_id=doctor_id,
+                                                            patient_id=patient_search_id,
                                                             patient_diseases=diseases,
-                                                            patient_bp_min=patient_bp_min,
-                                                            patient_bp_max=patient_bp_max,
-                                                            patient_weight=patient_weight,
+                                                            patient_bp=patient_bp,
+                                                            pulse=pulse,
+                                                            oxygen=oxygen,
+                                                            temperature=temperature,
+                                                            respiration=respiration,
+                                                            patient_weight=weight,
+                                                            extra_fees=extra_fees,
+                                                            discount=discount,
                                                             fees=ward_fees,
-                                                            paid=cash + online,
+                                                            pay_amount=cash + online,
                                                             remaining=remaining,
                                                             cash=cash,
                                                             online=online,
@@ -70,10 +79,10 @@ def add_appointment(request):
         return JsonResponse(context)
     else:
         doctor = Doctor.objects.all()
-        appointment_ward = AppointmentWard.objects.all()
+        appointment_slot = AppointmentWard.objects.all()
         context = {
             'doctor': doctor,
-            'appointment_ward': appointment_ward,
+            'appointment_slot': appointment_slot,
         }
         return render(request, 'add_appointment.html', context)
 
@@ -85,8 +94,8 @@ def all_appointment(request):
     if is_admin.user_type == 'ADMIN':
         query = Q()
     else:
-        # query = Q(doctor__user__id=user_id, appoint_status='unchecked')
-        query = Q(doctor__user__id=user_id, appoint_status='checked')
+        query = Q(doctor__user__id=user_id, appoint_status='unchecked')
+        # query = Q(doctor__user__id=user_id, appoint_status='checked')
     appointment = PatientAppointment.objects.filter(query)
     context = {
         'appointment': appointment,
@@ -96,19 +105,24 @@ def all_appointment(request):
 
 def search_patient(request):
     if 'term' in request.GET:
-        qs = Patient.objects.filter(patient_code__icontains=request.GET.get('term'))
-        data_list = []
-        for i in qs:
-            data_dict = {}
-            data_dict['id'] = i.id
-            data_dict['name'] = i.user.username
-            data_dict['code'] = i.patient_code
-            data_list.append(data_dict)
-        context = {
-            'data_list': data_list
-        }
-        return JsonResponse(context, safe=False)
-    return JsonResponse([], safe=False)
+        search_value = request.GET.get('term')
+        if search_value:
+            search_terms = search_value.split()
+            for term in search_terms:
+                query = Q(user__username__icontains=term) | Q(patient_code__icontains=term)
+                qs = Patient.objects.filter(query)
+                data_list = []
+                for i in qs:
+                    data_dict = {}
+                    data_dict['id'] = i.id
+                    data_dict['name'] = i.user.username
+                    data_dict['code'] = i.patient_code
+                    data_list.append(data_dict)
+                context = {
+                    'data_list': data_list
+                }
+                return JsonResponse(context, safe=False)
+            return JsonResponse([], safe=False)
 
 
 @login_required(login_url='/account/user_login/')

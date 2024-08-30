@@ -145,12 +145,11 @@ def patient_registration(request):
         district = form.get('district')
         pincode = form.get('pincode')
         state = form.get('state')
-        reference_by_patient = form.get('reference_by_patient')
+        reference_by_patient = form.get('patient_search_id')
         reference_by_other = form.get('reference_by_other')
         social_media = form.get('social_media')
         email = mobile + '@yopmail.com'
         phone = form.get('phone')
-        address = form.get('address')
 
         patient_code = datetime.now().strftime("%Y%d%H%M%S")
         status = 'failed'
@@ -170,14 +169,19 @@ def patient_registration(request):
                                                 district=district,
                                                 pin=pincode,
                                                 state=state,
-                                                address=address
                                                 )
             if user_obj:
+                if social_media:
+                    social_media = None
+                if reference_by_other:
+                    reference_by_other = None
+                if reference_by_patient:
+                    reference_by_patient = None
                 patient_id = user_obj.id
                 Patient.objects.create(user_id=patient_id,
                                        patient_code=patient_code,
                                        social_media_id=social_media,
-                                       reference_by_other_id=reference_by_other,
+                                       other_reference_id=reference_by_other,
                                        reference_by_patient=reference_by_patient,
                                        )
                 status = 'success'
