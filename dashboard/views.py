@@ -18,16 +18,19 @@ def get_menus(request):
     if user_id is not None:
         menu_users = MenuUser.objects.filter(user_id=user_id).select_related('menu', 'menu__menu_category')
         category_menus = {}
+        try:
+            for menu_user in menu_users:
+                category_name = menu_user.menu.menu_category.cat_title
+                menu_title = menu_user.menu.menu_title
+                menu_url = menu_user.menu.menu_url
+                if category_name not in category_menus:
+                    category_menus[category_name] = []
+                category_menus[category_name].append({'title': menu_title, 'url': menu_url})
 
-        for menu_user in menu_users:
-            category_name = menu_user.menu.menu_category.cat_title
-            menu_title = menu_user.menu.menu_title
-            menu_url = menu_user.menu.menu_url
-            if category_name not in category_menus:
-                category_menus[category_name] = []
-            category_menus[category_name].append({'title': menu_title, 'url': menu_url})
+            category_menu_list = [{'category': cat, 'menus': menus} for cat, menus in category_menus.items()]
+        except:
+            category_menu_list = []
 
-        category_menu_list = [{'category': cat, 'menus': menus} for cat, menus in category_menus.items()]
         try:
             user_obj = User.objects.get(id=user_id)
             profile_name = user_obj.username
