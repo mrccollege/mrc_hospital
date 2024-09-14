@@ -6,7 +6,7 @@ from medicine.models import Medicine
 
 # Create your models here.
 class Store(models.Model):
-    user = models.ForeignKey(User, on_delete=models.PROTECT)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     type = models.CharField(max_length=10, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
@@ -19,9 +19,9 @@ class Store(models.Model):
 
 
 class MedicineStore(models.Model):
-    from_store = models.ForeignKey(Store, related_name='Medicine_from_store', on_delete=models.PROTECT)
-    to_store = models.ForeignKey(Store, related_name='Medicine_to_store', on_delete=models.PROTECT)
-    medicine = models.ForeignKey(Medicine, on_delete=models.PROTECT)
+    from_store = models.ForeignKey(Store, related_name='Medicine_from_store', on_delete=models.CASCADE)
+    to_store = models.ForeignKey(Store, related_name='Medicine_to_store', on_delete=models.CASCADE)
+    medicine = models.ForeignKey(Medicine, on_delete=models.CASCADE)
     qty = models.IntegerField(null=True)
     price = models.IntegerField(null=True)
     batch_no = models.CharField(max_length=100, null=True)
@@ -37,9 +37,9 @@ class MedicineStore(models.Model):
 
 
 class MedicineStoreTransactionHistory(models.Model):
-    from_store = models.ForeignKey(Store, related_name='Medicine_transfer_history_from_store', on_delete=models.PROTECT)
-    to_store = models.ForeignKey(Store, related_name='Medicine_transfer_history_to_store', on_delete=models.PROTECT)
-    medicine = models.ForeignKey(Medicine, on_delete=models.PROTECT)
+    from_store = models.ForeignKey(Store, related_name='Medicine_transfer_history_from_store', on_delete=models.CASCADE)
+    to_store = models.ForeignKey(Store, related_name='Medicine_transfer_history_to_store', on_delete=models.CASCADE)
+    medicine = models.ForeignKey(Medicine, on_delete=models.CASCADE)
     medicine_name = models.CharField(max_length=256, null=True)
     category = models.CharField(max_length=100, null=True)
     price = models.IntegerField(null=True)

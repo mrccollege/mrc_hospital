@@ -9,8 +9,8 @@ from store.models import Store
 
 # Create your models here.
 class PatientBill(models.Model):
-    store = models.ForeignKey(Store, on_delete=models.PROTECT, null=True)
-    patient = models.ForeignKey(Patient, on_delete=models.PROTECT, null=True)
+    store = models.ForeignKey(Store, on_delete=models.CASCADE, null=True)
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, null=True)
     invoice_number = models.CharField(max_length=100, null=True)
     sgst = models.IntegerField(default=0, null=True, blank=True)
     cgst = models.IntegerField(default=0, null=True, blank=True)
@@ -28,7 +28,7 @@ class PatientBill(models.Model):
 
 
 class PatientBillDetail(models.Model):
-    patient_bill = models.ForeignKey(PatientBill, on_delete=models.PROTECT, null=True)
+    patient_bill = models.ForeignKey(PatientBill, on_delete=models.CASCADE, null=True)
     medicine = models.ForeignKey(Medicine, on_delete=models.CASCADE, null=True)
     record_qty = models.IntegerField(default=0, null=True)
     sell_qty = models.IntegerField(default=0, null=True)

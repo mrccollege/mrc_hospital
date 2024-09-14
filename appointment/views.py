@@ -89,13 +89,13 @@ def add_appointment(request):
 
 @login_required(login_url='/account/user_login/')
 def all_appointment(request):
+    all_app = PatientAppointment.objects.all()
     user_id = request.session.get('user_id')
     is_admin = User.objects.get(id=user_id)
-    if is_admin.user_type == 'ADMIN':
+    if is_admin.user_type.upper() == 'ADMIN':
         query = Q()
     else:
         query = Q(doctor__user__id=user_id, appoint_status='unchecked')
-        # query = Q(doctor__user__id=user_id, appoint_status='checked')
     appointment = PatientAppointment.objects.filter(query)
     context = {
         'appointment': appointment,

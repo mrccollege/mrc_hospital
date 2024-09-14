@@ -16,7 +16,7 @@ class MedicineCategory(models.Model):
 
 class Medicine(models.Model):
     name = models.CharField(max_length=500, null=True)
-    category = models.ForeignKey(MedicineCategory, on_delete=models.PROTECT, null=True)
+    category = models.ForeignKey(MedicineCategory, on_delete=models.CASCADE, null=True)
     manufacture = models.CharField(max_length=500, null=True)
     mobile = models.CharField(max_length=500, null=True)
     created_at = models.DateTimeField(auto_now_add=True)

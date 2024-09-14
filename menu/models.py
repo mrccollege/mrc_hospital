@@ -18,7 +18,7 @@ class MenuCategory(models.Model):
 
 
 class MenuMaster(models.Model):
-    menu_category = models.ForeignKey(MenuCategory, on_delete=models.PROTECT, null=True)
+    menu_category = models.ForeignKey(MenuCategory, on_delete=models.CASCADE, null=True)
     menu_title = models.CharField(max_length=256, null=True)
     menu_url = models.CharField(max_length=500, null=True)
     menu_desc = models.TextField(null=True, blank=True)
@@ -33,8 +33,8 @@ class MenuMaster(models.Model):
 
 
 class MenuUser(models.Model):
-    user = models.ForeignKey(User, on_delete=models.PROTECT)
-    menu = models.ForeignKey(MenuMaster, on_delete=models.PROTECT)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    menu = models.ForeignKey(MenuMaster, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 

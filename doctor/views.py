@@ -6,8 +6,7 @@ from django.shortcuts import render
 from doctor.models import Doctor
 
 from account.models import User
-
-from .models import PatientAppointmentChecked, PatientAppointmentCheckedDetail
+from .models import PatientAppointmentHead, PatientMedicine
 from appointment.models import PatientAppointment
 
 
@@ -90,17 +89,17 @@ def patient_appointment_checked(request):
         msg = 'Appointment Checked failed.'
 
         try:
-            obj = PatientAppointmentChecked.objects.create(doctor_id=doctor_id,
-                                                           patient_id=patient_id,
-                                                           doctor_diseases=doctor_diseases,
-                                                           )
+            obj = PatientAppointmentHead.objects.create(doctor_id=doctor_id,
+                                                        patient_id=patient_id,
+                                                        doctor_diseases=doctor_diseases,
+                                                        )
             if obj:
                 head_id = obj.id
                 for i in range(len(medicine_id)):
-                    PatientAppointmentCheckedDetail.objects.create(head_id_id=head_id,
-                                                                   medicine_id=int(medicine_id[i]),
-                                                                   qty=int(medicine_qty[i]),
-                                                                   )
+                    PatientMedicine.objects.create(head_id_id=head_id,
+                                                   medicine_id=int(medicine_id[i]),
+                                                   qty=int(medicine_qty[i]),
+                                                   )
                 query = Q(id=appointment_id, patient_id=patient_id, doctor_id=doctor_id)
                 PatientAppointment.objects.filter(query).update(appoint_status='checked')
                 status = 'success'

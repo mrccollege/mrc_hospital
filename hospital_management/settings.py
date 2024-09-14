@@ -46,6 +46,8 @@ INSTALLED_APPS = [
     'doctor',
     'appointment',
     'bill',
+    'diagnosis',
+    'disease',
 
 ]
 
@@ -95,7 +97,7 @@ DATABASES = {
         'NAME': 'mrc_ayurveda',
         'USER': 'sanjay',
         'PASSWORD': 'Hello123456#',
-        'HOST': 'localhost',
+        'HOST': '178.16.139.173',
         'PORT': '3306',
     }
 }
