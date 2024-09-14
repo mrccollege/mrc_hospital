@@ -92,7 +92,7 @@
                                             <div class="col-lg-6 form-group">
                                                 <label for="manufacture" class="form-label">Manufacturer</label>
                                                 <input type="text" class="form-control" id="manufacture"
-                                                       name="manufacturer"
+                                                       name="manufacture"
                                                        required>
                                             </div>
 
@@ -186,7 +186,7 @@
         e.preventDefault();
         var formData = $('#medicine_form').serialize();
         $.ajax({
-          url: '/medicine/add_new_medicine/',
+          url: '/medicine/add_medicine/',
           type: 'POST',
           data: formData,
           success: function (response) {
@@ -201,7 +201,7 @@
                 confirmButtonColor: '#3085d6',
                 confirmButtonText: 'OK'
               }).then((result) => {
-                window.location.href = '/medicine/add_new_medicine/';
+                window.location.href = '/medicine/add_medicine/';
               });
             }else{
               Swal.fire({

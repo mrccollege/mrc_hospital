@@ -98,7 +98,7 @@
                             <div class="box box-primary">
                                 <!-- form start -->
                                 <form id="store_form" role="form">{% csrf_token %}
-<!--                                    msg - whatsapp - reg. no , id, pass, profile link-->
+                                    <!--                                    msg - whatsapp - reg. no , id, pass, profile link-->
                                     <div class="box-body">
                                         <div class="row">
                                             <div class="col-lg-4 form-group">
@@ -171,14 +171,24 @@
 
 
                                             <div class="col-lg-4 form-group">
+                                                <label for="country" class="form-label">Country</label>
+                                                <select id="country" name="country" class="form-control"
+                                                        onchange="change_country()">
+                                                    {% for i in country %}
+                                                    <option value="{{i.id}}">{{i.name}}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+
+                                            <div class="col-lg-4 form-group">
                                                 <label for="state" class="form-label">State</label>
                                                 <select id="state" name="state" class="form-control">
-                                                    <option value="0">Uttar Pradesh</option>
-                                                    <option value="0">Haryana</option>
-                                                    <option value="0">Delhi</option>
-                                                    <option value="0">Rajasthan</option>
-                                                    <option value="0">Madhya Pradesh</option>
-                                                    <option value="0">Uttarakhand</option>
+<!--                                                    <option value="0">Uttar Pradesh</option>-->
+<!--                                                    <option value="0">Haryana</option>-->
+<!--                                                    <option value="0">Delhi</option>-->
+<!--                                                    <option value="0">Rajasthan</option>-->
+<!--                                                    <option value="0">Madhya Pradesh</option>-->
+<!--                                                    <option value="0">Uttarakhand</option>-->
                                                 </select>
                                             </div>
                                         </div>
@@ -224,14 +234,17 @@
                                                 <label for="social_media" class="form-label">Reference By Social
                                                     Media</label>
                                                 <select class="form-control" name="social_media" id="social_media">
-                                                    <option value="FACEBOOK">Facebook</option>
-                                                    <option value="YOUTUBE">Youtube</option>
-                                                    <option value="GOOGLE">Google</option>
-                                                    <option value="INSTAGRAM">Instagram</option>
-                                                    <option value="WHATSAPP">Whatsapp</option>
-                                                    <option value="WALLPAINTING">Wall Painting</option>
-                                                    <option value="NEWSPAPER">News Paper</option>
-                                                    <option value="OTHER">Other</option>
+                                                    {% for i in social_media %}
+                                                    <option value="i.id">{{i.title}}</option>
+                                                    {% endfor %}
+<!--                                                    <option value="FACEBOOK">Facebook</option>-->
+<!--                                                    <option value="YOUTUBE">Youtube</option>-->
+<!--                                                    <option value="GOOGLE">Google</option>-->
+<!--                                                    <option value="INSTAGRAM">Instagram</option>-->
+<!--                                                    <option value="WHATSAPP">Whatsapp</option>-->
+<!--                                                    <option value="WALLPAINTING">Wall Painting</option>-->
+<!--                                                    <option value="NEWSPAPER">News Paper</option>-->
+<!--                                                    <option value="OTHER">Other</option>-->
                                                 </select>
                                             </div>
                                         </div>
@@ -259,7 +272,7 @@
                                                         <label for="smoking">Smoking</label>
                                                         <input type="checkbox" id="smoking">
                                                         <input type="text" id="hide_smoking" name="smoking">
-                                                    </div class="col-lg-2">
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -282,6 +295,33 @@
 {% endblock content %}
 
 {% block js %}
+
+<script>
+    $(document).ready(function(){
+        change_country()
+    })
+
+    function change_country(){
+        country_id = $('#country').val();
+        $('#loader-overlay').show(); // Show overlay
+        $('#loader').show(); // Show loader
+        $.ajax({
+          url: '/address_place/get_state/',
+          type: 'GET',
+          data: {'country_id': country_id},
+          success: function (response) {
+            $('#loader-overlay').hide(); // Show overlay
+            $('#loader').hide(); // Show loader
+            var html = ''
+            $.each(response.state, function(index, item){
+                html += '<option value="'+item.id+'">'+item.name+'</option>'
+            })
+            $('#state').html(html)
+          }
+        })
+    }
+</script>
+
 <script>
     $(document).ready(function(){
         $('#store_form').on('submit', function (e) {

@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
+from address_place.models import State, Country
+
 
 # Create your models here.
 
@@ -18,8 +20,8 @@ class User(AbstractUser):
     city = models.CharField(max_length=256, null=True, blank=True)
     district = models.CharField(max_length=256, null=True, blank=True)
     pin = models.IntegerField(null=True, blank=True)
-    state = models.CharField(max_length=50, null=True, blank=True)
-    address = models.TextField(null=True, blank=True)
+    state = models.ForeignKey(State, on_delete=models.CASCADE, null=True, blank=True)
+    country = models.ForeignKey(Country, on_delete=models.CASCADE, null=True, blank=True)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)

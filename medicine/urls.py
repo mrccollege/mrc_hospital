@@ -6,7 +6,7 @@ urlpatterns = [
     path('update_category/<int:id>/', views.update_category, name='update_category'),
     path('all_medicine_category/', views.all_medicine_category, name='all_medicine_category'),
 
-    path('add_new_medicine/', views.add_new_medicine, name='add_new_medicine'),
+    path('add_medicine/', views.add_medicine, name='add_medicine'),
     path('medicine_update/<int:id>/', views.medicine_update, name='medicine_update'),
     path('all_medicine/', views.all_medicine, name='all_medicine'),
 

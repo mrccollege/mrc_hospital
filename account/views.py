@@ -13,6 +13,10 @@ from doctor.models import Doctor
 
 from patient.models import Patient, OtherReference
 
+from address_place.models import Country
+
+from patient.models import SocialMediaReference
+
 
 # Create your views here.
 def hospital_registration(request):
@@ -62,7 +66,7 @@ def store_registration(request):
         status = 'failed'
         msg = 'Registration failed.'
         try:
-            user_obj = User.objects.create_user(username=store_name,
+            user_obj = User.objects.create_user(username=store_name.title(),
                                                 email=email,
                                                 password=password,
                                                 mobile=mobile,
@@ -144,6 +148,7 @@ def patient_registration(request):
         city = form.get('city')
         district = form.get('district')
         pincode = form.get('pincode')
+        country = form.get('country')
         state = form.get('state')
         reference_by_patient = form.get('patient_search_id')
         reference_by_other = form.get('reference_by_other')
@@ -155,12 +160,12 @@ def patient_registration(request):
         status = 'failed'
         msg = 'Patient Registration failed.'
         try:
-            user_obj = User.objects.create_user(username=username,
+            user_obj = User.objects.create_user(username=username.title(),
                                                 email=email,
                                                 password='12345',
                                                 mobile=mobile,
                                                 phone=phone,
-                                                Care_of=care_of,
+                                                care_of=care_of.title(),
                                                 sex=sex,
                                                 age=patient_age,
                                                 house_flat=house_flat,
@@ -168,7 +173,8 @@ def patient_registration(request):
                                                 city=city,
                                                 district=district,
                                                 pin=pincode,
-                                                state=state,
+                                                state_id=state,
+                                                country_id=country,
                                                 )
             if user_obj:
                 if social_media:
@@ -182,7 +188,7 @@ def patient_registration(request):
                                        patient_code=patient_code,
                                        social_media_id=social_media,
                                        other_reference_id=reference_by_other,
-                                       reference_by_patient=reference_by_patient,
+                                       reference_by_patient_id=reference_by_patient,
                                        )
                 status = 'success'
                 msg = 'Patient Registration successfully.'
@@ -197,8 +203,12 @@ def patient_registration(request):
         }
         return JsonResponse(context)
     else:
+        country = Country.objects.all()
+        social_media = SocialMediaReference.objects.all()
         reference_by_other = OtherReference.objects.all()
         context = {
+            'country': country,
+            'social_media': social_media,
             'reference_by_other': reference_by_other
         }
         return render(request, 'patient_registration.html', context)

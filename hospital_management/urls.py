@@ -16,6 +16,7 @@ urlpatterns = [
     path('appointment/', include('appointment.urls')),
     path('bill/', include('bill.urls')),
     path('menu/', include('menu.urls')),
+    path('address_place/', include('address_place.urls')),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

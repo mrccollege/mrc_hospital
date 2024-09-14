@@ -1,10 +1,12 @@
-from django.db.models import Q
+from datetime import datetime
+
+from django.db.models import Q, Case, When
 from django.http import JsonResponse
 from django.shortcuts import render
 
-from patient.models import Patient, OtherReference
-
+from patient.models import Patient, OtherReference, SocialMediaReference
 from account.models import User
+from address_place.models import Country
 
 
 # Create your views here.
@@ -20,41 +22,63 @@ def patient_detail(request, id):
     if request.method == 'POST':
         form = request.POST
         username = form.get('patient_name')
+        care_of = form.get('care_of')
         mobile = form.get('mobile')
-        email = mobile + 'yopmail.com'
-        password = form.get('password')
-        phone = form.get('phone')
-        address = form.get('address')
-        patient_diseases = form.get('diseases')
-        patient_bp_min = form.get('patient_bp_min')
-        patient_bp_max = form.get('patient_bp_max')
-        patient_weight = form.get('patient_weight')
         patient_age = form.get('patient_age')
+        sex = form.get('sex')
+        house_flat = form.get('house_flat')
+        street = form.get('street')
+        city = form.get('city')
+        district = form.get('district')
+        pincode = form.get('pincode')
+        country = form.get('country')
+        state = form.get('state')
+        reference_by_patient = form.get('patient_search_id')
+        reference_by_other = form.get('reference_by_other')
+        social_media = form.get('social_media')
+        print(social_media, '============social_media=====')
+        email = mobile + '@yopmail.com'
+        phone = form.get('phone')
         status = 'failed'
-        msg = 'Patient Detail Updated failed.'
+        msg = 'Patient Registration failed.'
         try:
-            patient_obj = Patient.objects.filter(id=id).update(patient_diseases=patient_diseases,
-                                                               patient_bp_min=patient_bp_min,
-                                                               patient_bp_max=patient_bp_max,
-                                                               patient_weight=patient_weight,
-                                                               patient_age=patient_age
-                                                               )
-            if patient_obj:
-                user_id = Patient.objects.get(id=id)
-                user_id = user_id.user.id
-                user_obj = User.objects.filter(id=user_id).update(username=username,
-                                                                  email=email,
-                                                                  mobile=mobile,
-                                                                  phone=phone,
-                                                                  address=address)
-                if user_obj:
-                    if password:
-                        u = Patient.objects.get(id=id)
-                        u.set_password(password)
-                        u.save()
-
+            user = Patient.objects.get(id=id)
+            user_obj = User.objects.filter(id=user.user.id).update(username=username.title(),
+                                                                   email=email,
+                                                                   password='12345',
+                                                                   mobile=mobile,
+                                                                   phone=phone,
+                                                                   care_of=care_of.title(),
+                                                                   sex=sex,
+                                                                   age=patient_age,
+                                                                   house_flat=house_flat,
+                                                                   street_colony=street,
+                                                                   city=city,
+                                                                   district=district,
+                                                                   pin=pincode,
+                                                                   state_id=state,
+                                                                   country_id=country,
+                                                                   )
+            if user_obj:
+                if social_media:
+                    social_media = social_media
+                else:
+                    social_media = None
+                if reference_by_other:
+                    reference_by_other = reference_by_other
+                else:
+                    reference_by_other = None
+                if reference_by_patient:
+                    reference_by_patient = reference_by_patient
+                else:
+                    reference_by_patient = None
+                print(social_media, '============social_media')
+                Patient.objects.filter(id=id).update(social_media_id=social_media,
+                                                     other_reference_id=reference_by_other,
+                                                     reference_by_patient_id=reference_by_patient,
+                                                     )
                 status = 'success'
-                msg = 'Patient Detail Updated successfully.'
+                msg = 'Patient updated successfully.'
 
         except Exception as e:
             status = status
@@ -67,7 +91,36 @@ def patient_detail(request, id):
         return JsonResponse(context)
     else:
         patient = Patient.objects.get(id=id)
+        country = Country.objects.annotate(
+            is_patient_country=Case(
+                When(id=patient.user.country.id, then=0),
+                default=1,
+            )
+        ).order_by('is_patient_country', 'name')
+
+        if patient.social_media:
+            reference_social_media_id = patient.social_media.id
+        else:
+            reference_social_media_id = None
+        social_media = SocialMediaReference.objects.annotate(
+            is_social_media=Case(
+                When(id=reference_social_media_id, then=0),
+                default=1,)
+        ).order_by('is_social_media', 'title')
+        if patient.reference_by_patient:
+            reference_by_patient_id = patient.reference_by_patient.id
+        else:
+            reference_by_patient_id = None
+        reference_by_other = OtherReference.objects.annotate(
+            is_reference_by_other=Case(
+                When(id=reference_by_patient_id, then=0),
+                default=1,
+            )
+        ).order_by('is_reference_by_other', 'name')
         context = {
+            'country': country,
+            'social_media': social_media,
+            'reference_by_other': reference_by_other,
             'id': id,
             'patient': patient
         }

@@ -1,17 +1,84 @@
 {% extends 'base.html' %}
 
 {% block css %}
+<style>
+
+    #patient_search {
+        width: 100%;
+    }
+    #patient_select {
+        width: 100%;
+        box-sizing: border-box;
+        display: none; /* Initially hidden */
+        position: absolute;
+        z-index: 1000; /* Ensure it appears above other elements */
+        background-color: white;
+        border: 1px solid #ccc;
+        max-height: 150px;
+        overflow-y: auto;
+    }
+    #patient_select option {
+        padding: 8px;
+        cursor: pointer;
+    }
+    #patient_select option:hover, #patient_select option.selected {
+        background-color: #f0f0f0;
+    }
+
+</style>
 {% endblock css %}
 
 
 {% block content %}
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Add New Category</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="add_other_reference_form">{% csrf_token %}
+                <div class="modal-body">
+                    <div class="mb-2 form-group">
+                        <label for="reference_name">Name</label>
+                        <input type="text" class="form-control" name="reference_name" id="reference_name"
+                               placeholder="Enter name..">
+                    </div>
+
+                    <div class="mb-2 form-group">
+                        <label for="reference_mobile">Mobile</label>
+                        <input type="text" class="form-control" name="reference_mobile" id="reference_mobile"
+                               placeholder="Enter mobile..">
+                    </div>
+
+                    <div class="mb-2 form-group">
+                        <label for="reference_address">Address</label>
+                        <input type="text" class="form-control" name="reference_address" id="reference_address"
+                               placeholder="Enter address..">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" id="category_model">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
 <div class="wrapper">
 
     <!-- Right side column. Contains the navbar and content of the page -->
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
         <section class="content-header">
-            <h1>Add New Patient</h1>
+            <h1>Update Patient Detail</h1>
             <ol class="breadcrumb">
                 <li><a href="/"><i class="fa fa-dashboard"></i> Home</a></li>
                 <li><a href="/">Tables</a></li>
@@ -31,84 +98,183 @@
                             <div class="box box-primary">
                                 <!-- form start -->
                                 <form id="store_form" role="form">{% csrf_token %}
+                                    <!--                                    msg - whatsapp - reg. no , id, pass, profile link-->
                                     <div class="box-body">
-                                        <div class="form-group">
-                                            <label for="patient_name" class="form-label">Patient Name</label>
-                                            <input type="text" class="form-control" id="patient_name"
-                                                   name="patient_name" value="{{patient.user.username}}" required>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label for="mobile" class="form-label">Mobile Number</label>
-                                            <input type="text" class="form-control" id="mobile" name="mobile"
-                                                   onkeypress="return isNumberKey(event)" value="{{patient.user.mobile}}"
-                                                   required maxlength="10">
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="password" class="form-label">Create Password </label>
-                                            <i id="show_pass" class="fa fa-eye-slash pointer"></i>
-                                            <input type="password" class="form-control" id="password" name="password"
-                                                   maxlength="16">
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="address" class="form-label">Address</label>
-                                            <textarea class="form-control" id="address" name="address" rows="3"
-                                                      required>{{patient.user.address}}</textarea>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label for="diseases" class="form-label">Diseases</label>
-                                            <textarea class="form-control" id="diseases" name="diseases" rows="3" required
-                                                      placeholder="Diseases Like : Acute cholecystitis, Bipolar disorder">{{patient.patient_diseases}}</textarea>
-                                        </div>
-
-                                    </div><!-- /.box-body -->
-                                    <div class="box-body row">
-                                        <div class="col-lg-4">
-                                            <div class="row">
-                                                <div class="col-lg-6">
-                                                    <div class="form-group">
-                                                        <label for="patient_bp_min" class="form-label">Patient BP
-                                                            Min</label>
-                                                        <input type="text" class="form-control" id="patient_bp_min"
-                                                               name="patient_bp_min"
-                                                               onkeypress="return isNumberKey(event)" value="{{patient.patient_bp_min}}"
-                                                               required maxlength="3" placeholder="Enter BP Like : 80">
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-6">
-                                                    <div class="form-group">
-                                                        <label for="patient_bp_max" class="form-label">Patient BP
-                                                            Max</label>
-                                                        <input type="text" class="form-control" id="patient_bp_max"
-                                                               name="patient_bp_max"
-                                                               onkeypress="return isNumberKey(event)" value="{{patient.patient_bp_max}}"
-                                                               required maxlength="3" placeholder="Enter BP Like : 120">
-                                                    </div>
-                                                </div>
+                                        <div class="row">
+                                            <div class="col-lg-4 form-group">
+                                                <label for="patient_name" class="form-label">Patient Name</label>
+                                                <input type="text" class="form-control" id="patient_name"
+                                                       name="patient_name" value="{{patient.user.username}}" required>
                                             </div>
-                                        </div>
-                                        <div class="col-lg-4">
-                                            <div class="form-group">
-                                                <label for="patient_weight" class="form-label">Patient Weight</label>
-                                                <input type="text" class="form-control" id="patient_weight"
-                                                       name="patient_weight"
-                                                       onkeypress="return isNumberKey(event)" value="{{patient.patient_weight}}"
-                                                       required maxlength="3">
+
+                                            <div class="col-lg-4 form-group">
+                                                <label for="care_of" class="form-label">Father/Wife of</label>
+                                                <input type="text" class="form-control" id="care_of"
+                                                       name="care_of" value="{{patient.user.care_of}}" required>
                                             </div>
-                                        </div>
-                                        <div class="col-lg-4">
-                                            <div class="form-group">
+
+                                            <div class="col-lg-4 form-group">
+                                                <label for="mobile" class="form-label">Mobile Number</label>
+                                                <input type="text" class="form-control" id="mobile" name="mobile" value="{{patient.user.mobile}}"
+                                                       onkeypress="return isNumberKey(event)"
+                                                       required maxlength="10" autocomplete="off">
+                                            </div>
+                                            <div class="col-lg-4 form-group">
                                                 <label for="patient_age" class="form-label">Patient Age</label>
                                                 <input type="text" class="form-control" id="patient_age"
-                                                       name="patient_age"
-                                                       onkeypress="return isNumberKey(event)" value="{{patient.patient_age}}"
+                                                       name="patient_age" value="{{patient.user.age}}"
+                                                       onkeypress="return isNumberKey(event)"
                                                        required maxlength="3">
                                             </div>
+
+                                            <div class="col-lg-4 form-group">
+                                                <label for="sex" class="form-label">Gender</label>
+                                                <select name="sex" id="sex" class="form-control">
+                                                    <option value="0">{{patient.user.sex}}</option>
+                                                </select>
+                                            </div>
                                         </div>
-                                    </div>
+
+                                        <div class="row">
+                                            <div class="col-lg-4 form-group">
+                                                <label for="house_flat" class="form-label">House No</label>
+                                                <input type="text" class="form-control" name="house_flat"
+                                                       id="house_flat" value="{{patient.user.house_flat}}">
+                                            </div>
+
+                                            <div class="col-lg-4 form-group">
+                                                <label for="street" class="form-label">Street / Colony</label>
+                                                <input type="text" class="form-control" name="street" id="street" value="{{patient.user.street_colony}}">
+                                            </div>
+
+                                            <div class="col-lg-4 form-group">
+                                                <label for="city" class="form-label">City</label>
+                                                <input type="text" class="form-control" name="city" id="city" value="{{patient.user.city}}">
+                                            </div>
+                                        </div>
+
+
+                                        <div class="row">
+                                            <div class="col-lg-4 form-group">
+                                                <label for="district" class="form-label">District</label>
+                                                <input type="text" class="form-control" name="district" id="district" value="{{patient.user.district}}">
+                                            </div>
+
+                                            <div class="col-lg-4 form-group">
+                                                <label for="pincode" class="form-label">Pin</label>
+                                                <input type="text" class="form-control" name="pincode" id="pincode" value="{{patient.user.pin}}">
+                                            </div>
+
+
+                                            <div class="col-lg-4 form-group">
+                                                <label for="country" class="form-label">Country</label>
+                                                <select id="country" name="country" class="form-control"
+                                                        onchange="change_country()">
+                                                    {% for i in country %}
+                                                    <option value="{{i.id}}">{{i.name}}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+
+                                            <div class="col-lg-4 form-group">
+                                                <label for="state" class="form-label">State</label>
+                                                <select id="state" name="state" class="form-control">
+                                                    <!--                                                    <option value="0">Uttar Pradesh</option>-->
+                                                    <!--                                                    <option value="0">Haryana</option>-->
+                                                    <!--                                                    <option value="0">Delhi</option>-->
+                                                    <!--                                                    <option value="0">Rajasthan</option>-->
+                                                    <!--                                                    <option value="0">Madhya Pradesh</option>-->
+                                                    <!--                                                    <option value="0">Uttarakhand</option>-->
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-lg-4 form-group">
+                                                <label class="form-label">Reference by
+                                                    patient</label>
+                                                <input type="text" class="form-control" id="patient_search"
+                                                       placeholder="Search Patient">
+                                                <input type="hidden" class="form-control" id="patient_search_id"
+                                                       name="patient_search_id" placeholder="Search Patient id">
+                                                <select id="patient_select" name="patient" size="5">
+                                                    <option value="0"></option>
+                                                </select>
+                                            </div>
+
+                                            <div class="col-lg-4">
+                                                <div class="row">
+                                                    <div class="col-lg-8 form-group">
+                                                        <label for="reference_by_other" class="form-label">Reference By
+                                                            doctor /
+                                                            medical/ other</label>
+                                                        <select class="form-control" name="reference_by_other"
+                                                                id="reference_by_other">
+                                                            {% for i in reference_by_other %}
+                                                            <option value="{{i.id}}">{{i.name}}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+
+                                                    <div class="col-lg-4 form-group">
+                                                        <label for="add_other" class="form-label">Add</label>
+                                                        <button type="button" class="form-control btn-primary"
+                                                                data-toggle="modal"
+                                                                data-target="#exampleModalCenter" id="add_other">Add New
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg-4 form-group">
+                                                <label for="social_media" class="form-label">Reference By Social
+                                                    Media</label>
+                                                <select class="form-control" name="social_media" id="social_media">
+                                                    {% for i in social_media %}
+                                                    <option value="{{i.id}}">{{i.title}}</option>
+                                                    {% endfor %}
+                                                    <!--                                                    <option value="FACEBOOK">Facebook</option>-->
+                                                    <!--                                                    <option value="YOUTUBE">Youtube</option>-->
+                                                    <!--                                                    <option value="GOOGLE">Google</option>-->
+                                                    <!--                                                    <option value="INSTAGRAM">Instagram</option>-->
+                                                    <!--                                                    <option value="WHATSAPP">Whatsapp</option>-->
+                                                    <!--                                                    <option value="WALLPAINTING">Wall Painting</option>-->
+                                                    <!--                                                    <option value="NEWSPAPER">News Paper</option>-->
+                                                    <!--                                                    <option value="OTHER">Other</option>-->
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-lg-2">
+                                                <label>Veg</label>
+                                                <input type="radio" checked name="veg-non-veg" value="0">
+                                                <label>Non-Veg</label>
+                                                <input type="radio" name="veg-non-veg" value="1">
+                                            </div>
+                                            <div class="col-lg-8">
+                                                <div class="row">
+                                                    <div class="col-lg-2">
+                                                        <label for="tobacco">Tobacco</label>
+                                                        <input type="checkbox" id="tobacco" onclick="get_value()">
+                                                        <input type="text" id="hide_tobacco" name="tobacco">
+                                                    </div>
+                                                    <div class="col-lg-2">
+                                                        <label for="alcohol">Alcohol</label>
+                                                        <input type="checkbox" id="alcohol">
+                                                        <input type="text" id="hide_alcohol" name="alcohol">
+                                                    </div>
+                                                    <div class="col-lg-2">
+                                                        <label for="smoking">Smoking</label>
+                                                        <input type="checkbox" id="smoking">
+                                                        <input type="text" id="hide_smoking" name="smoking">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div><!-- /.box-body -->
                                     <div class="box-footer">
-                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                        <button type="submit" class="btn btn-success">Submit</button>
                                     </div>
                                 </form>
                             </div>
@@ -125,9 +291,38 @@
 {% endblock content %}
 
 {% block js %}
+
+<script>
+    $(document).ready(function(){
+        change_country()
+    })
+
+    function change_country(){
+        country_id = $('#country').val();
+        $('#loader-overlay').show(); // Show overlay
+        $('#loader').show(); // Show loader
+        $.ajax({
+          url: '/address_place/get_state/',
+          type: 'GET',
+          data: {'country_id': country_id, 'patient_id': {{id}}},
+          success: function (response) {
+            $('#loader-overlay').hide(); // Show overlay
+            $('#loader').hide(); // Show loader
+            var html = ''
+            $.each(response.state, function(index, item){
+                html += '<option value="'+item.id+'">'+item.name+'</option>'
+            })
+            $('#state').html(html)
+          }
+        })
+    }
+</script>
+
 <script>
     $(document).ready(function(){
         $('#store_form').on('submit', function (e) {
+            $('#loader-overlay').show(); // Show overlay
+            $('#loader').show(); // Show loader
             e.preventDefault();
             var formData = $('#store_form').serialize();
             $.ajax({
@@ -135,6 +330,8 @@
               type: 'POST',
               data: formData,
               success: function (response) {
+                $('#loader-overlay').hide(); // Show overlay
+                $('#loader').hide(); // Show loader
                 if(response.status == 'success'){
                   Swal.fire({
                     title: 'Success',
@@ -144,7 +341,7 @@
                     confirmButtonColor: '#3085d6',
                     confirmButtonText: 'OK'
                   }).then((result) => {
-                    window.location.href = '/patient/patient_list/';
+                    window.location.href = '/patient/patient_detail/{{id}}/';
                   });
                 }else{
                   Swal.fire({
@@ -162,20 +359,178 @@
         });
     })
 
-    $('#show_pass').click(function(){
-        var is_class1 = $('#show_pass').hasClass('fa fa-eye-slash')
-        if(is_class1 == true){
-            $('#show_pass').removeClass('fa fa-eye-slash')
-            $('#show_pass').addClass('fa fa-eye')
-            $('#password').attr('type', 'text')
-            return false
-        }else{
-            $('#show_pass').removeClass('fa fa-eye')
-            $('#show_pass').addClass('fa fa-eye-slash')
-            $('#password').attr('type', 'password')
-            return false
+</script>
+
+<script>
+    $('#patient_search').on('input', function() {
+        var query = $(this).val();
+        if (query.length > 0) {
+            $.ajax({
+                url: '/patient/search_patient/',
+                data: {
+                    'term': query
+                },
+                dataType: 'json',
+                success: function(data) {
+                    $('#patient_select').empty().show();
+                    $.each(data.data_list, function(index, item) {
+                        $('#patient_select').append('<option value="' + item.id + '">' + item.name + ' ' + '('+ item.code+ ')' + '</option>');
+                    });
+                    selectedOptionIndex = -1;
+                }
+            });
+        } else {
+            $('#patient_select').empty().hide();
         }
-    })
+    });
+
+    $('#patient_search').on('keydown', function(e) {
+        var options = $('#patient_select option');
+        if (options.length > 0) {
+            if (e.key === "ArrowDown") {
+                e.preventDefault();
+                selectedOptionIndex = (selectedOptionIndex + 1) % options.length;
+                options.removeClass('selected').eq(selectedOptionIndex).addClass('selected');
+            } else if (e.key === "ArrowUp") {
+                e.preventDefault();
+                selectedOptionIndex = (selectedOptionIndex - 1 + options.length) % options.length;
+                options.removeClass('selected').eq(selectedOptionIndex).addClass('selected');
+            } else if (e.key === "Enter") {
+                e.preventDefault();
+                if (selectedOptionIndex >= 0) {
+                    var selectedText = options.eq(selectedOptionIndex).text();
+                    var selected_id = options.eq(selectedOptionIndex).val()
+                    $('#patient_search_id').val(selected_id);
+                    $('#patient_search').val(selectedText);
+                    $('#patient_select').empty().hide();
+                }
+            }
+        }
+    });
+
+    $(document).on('click', function(event) {
+        if (!$(event.target).closest('#patient_search, #patient_select').length) {
+            $('#patient_select').empty().hide();
+        }
+    });
+
+    $('#patient_select').on('change', function() {
+        var selectedText = $('#patient_select option:selected').text();
+        var selected_id = $('#patient_select option:selected').val()
+        $('#patient_search_id').val(selected_id);
+        $('#patient_search').val(selectedText);
+        $('#patient_select').empty().hide();
+    });
+</script>
+
+<script>
+    $('#add_other_reference_form').on('submit', function (e) {
+        $('#loader-overlay').show(); // Show overlay
+        $('#loader').show(); // Show loader
+        reference_name = $('#reference_name').val();
+        if(reference_name == ''){
+            Swal.fire({
+                  title: 'Error',
+                  text: 'Please enter name',
+                  icon: 'error',
+                  confirmButtonColor: '#3085d6',
+                  confirmButtonText: 'OK'
+             });
+            return false;
+        }
+
+        reference_mobile = $('#reference_mobile').val();
+        if(reference_mobile == ''){
+            Swal.fire({
+                  title: 'Error',
+                  text: 'Please enter mobile',
+                  icon: 'error',
+                  confirmButtonColor: '#3085d6',
+                  confirmButtonText: 'OK'
+             });
+            return false;
+        }
+
+        reference_address = $('#reference_address').val();
+        if(reference_address == ''){
+            Swal.fire({
+                  title: 'Error',
+                  text: 'Please enter address',
+                  icon: 'error',
+                  confirmButtonColor: '#3085d6',
+                  confirmButtonText: 'OK'
+             });
+            return false;
+        }
+
+        e.preventDefault();
+        var formData = $('#add_other_reference_form').serialize();
+        $.ajax({
+          url: '/patient/add_other_reference/',
+          type: 'POST',
+          data: formData,
+          success: function (response) {
+            $('#loader-overlay').hide(); // Show overlay
+            $('#loader').hide(); // Show loader
+            if(response.status == 'success'){
+                console.log(response.patient_obj)
+                var html = '';
+                html += '<option value="'+response.patient_obj.id+'">'+response.patient_obj.name+'</option>';
+                $('#reference_by_other').append(html)
+                $('#exampleModalCenter').modal('hide');
+            }else{
+              Swal.fire({
+                  title: 'Error',
+                  text: response.msg,
+                  icon: 'error',
+                  confirmButtonColor: '#3085d6',
+                  confirmButtonText: 'OK'
+              });
+              $('#password').val('');
+              return false;
+            }
+          },
+        });
+    });
+</script>
+
+<script>
+
+    $('#tobacco').click(function(){
+        console.log('=============v')
+        var is_tobacco = $('#tobacco').prop('checked');
+        console.log(is_tobacco, '===============is_tobacco=')
+        if (is_tobacco == true){
+            $('#tobacco').val('tobacco')
+        }else{
+            $('#tobacco').val('None')
+        }
+
+    });
+
+    $('#alcohol').click(function(){
+        console.log('=============v')
+        var is_alcohol = $('#alcohol').prop('checked');
+        console.log(is_alcohol, '===============is_alcohol=')
+        if (is_alcohol == true){
+            $('#alcohol').val('alcohol')
+        }else{
+            $('#alcohol').val('None')
+        }
+
+    });
+
+    $('#smoking').click(function(){
+        console.log('=============v')
+        var is_smoking = $('#smoking').prop('checked');
+        console.log(is_smoking, '===============is_smoking=')
+        if (is_smoking == true){
+            $('#smoking').val('smoking')
+        }else{
+            $('#smoking').val('None')
+        }
+
+    });
 
 </script>
 {% endblock js %}

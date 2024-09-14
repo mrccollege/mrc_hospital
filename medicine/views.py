@@ -16,7 +16,7 @@ def add_category(request):
     if request.method == 'POST':
         form = request.POST
         name = form.get('name')
-        cat_obj = MedicineCategory.objects.create(name=name)
+        cat_obj = MedicineCategory.objects.create(name=name.title())
         cat_dict = {
             'id': cat_obj.id,
             'name': cat_obj.name,
@@ -45,7 +45,7 @@ def update_category(request, id):
     if request.method == 'POST':
         form = request.POST
         name = form.get('name')
-        cat_obj = MedicineCategory.objects.filter(id=id).update(name=name)
+        cat_obj = MedicineCategory.objects.filter(id=id).update(name=name.title())
         if cat_obj:
             status = 'success'
             msg = 'category updated successfully.'
@@ -75,7 +75,7 @@ def all_medicine_category(request):
     return render(request, 'all_medicine_category.html', context)
 
 
-def add_new_medicine(request):
+def add_medicine(request):
     if request.method == 'POST':
         form = request.POST
         name = form.get('name')
@@ -85,9 +85,9 @@ def add_new_medicine(request):
         status = 'failed'
         msg = 'Something went wrong.'
         try:
-            medicine_obj = Medicine.objects.create(name=name,
+            medicine_obj = Medicine.objects.create(name=name.title(),
                                                    category_id=category,
-                                                   manufacture=manufacture,
+                                                   manufacture=manufacture.title(),
                                                    mobile=mobile,
                                                    )
             if medicine_obj:
@@ -121,9 +121,9 @@ def medicine_update(request, id):
         msg = 'Medicine Update Failed'
         status = 'Failed'
         try:
-            medicine_obj = Medicine.objects.filter(id=id).update(name=name,
+            medicine_obj = Medicine.objects.filter(id=id).update(name=name.title(),
                                                                  category=category,
-                                                                 manufacture=manufacture,
+                                                                 manufacture=manufacture.title(),
                                                                  mobile=mobile,
                                                                  )
             if medicine_obj:
@@ -161,7 +161,7 @@ def add_medicine_to_store(request):
         status = 'failed'
         try:
             for i in range(len(medicine_id)):
-                query = Q(to_store_id=store_id, medicine_id=int(medicine_id[i]), batch_no=batch_no[i])
+                query = Q(to_store_id=store_id, medicine_id=int(medicine_id[i]), batch_no=batch_no[i].upper())
                 is_obj = MedicineStore.objects.filter(query)
                 if is_obj:
                     pre_qty = is_obj[0].qty
@@ -173,7 +173,7 @@ def add_medicine_to_store(request):
                                                              medicine_id=int(medicine_id[i]),
                                                              qty=int(qty[i]),
                                                              price=int(price[i]),
-                                                             batch_no=batch_no[i],
+                                                             batch_no=batch_no[i].upper(),
                                                              expiry=datetime.strptime(expiry_date[i], "%d-%B-%Y"),
                                                              )
 
@@ -186,7 +186,7 @@ def add_medicine_to_store(request):
                                                                    medicine_name=medicine.name,
                                                                    category=medicine.category.name,
                                                                    price=price[i],
-                                                                   batch_no=batch_no[i],
+                                                                   batch_no=batch_no[i].upper(),
                                                                    available_qty=store_qty.qty,
                                                                    add_qty=int(qty[i]),
                                                                    medicine_manufacture=medicine.manufacture,
