@@ -6,7 +6,8 @@ from django.shortcuts import render
 from doctor.models import Doctor
 
 from account.models import User
-from .models import PatientAppointmentHead, PatientMedicine
+from .models import PatientAppointmentHead, PatientMedicine, ChiefComplaints, PatientAppointmentDiagnosis, \
+    OtherAssociatesComplaints
 from appointment.models import PatientAppointment
 
 
@@ -74,32 +75,86 @@ def doctor_detail(request, id):
 @login_required(login_url='/account/user_login/')
 def patient_appointment_checked(request):
     if request.method == 'POST':
+        form = request.POST
         user_id = request.session.get('user_id')
         doctor_id = Doctor.objects.get(user_id=user_id)
         doctor_id = doctor_id.id
-        form = request.POST
         appointment_id = form.get('appointment_id')
         patient_id = form.get('patient_id')
-        doctor_diseases = form.get('doctor_diseases')
-        patient_bp_min = form.get('patient_bp_min')
-        patient_bp_max = form.get('patient_bp_max')
+        p_r = form.get('p_r')
+        procto = form.get('procto')
+        probing = form.get('probing')
+        o_e = form.get('o_e')
+
+        # ---------------------------------------------
+        chief_complaints = form.get('chief_complaints')
+        since = form.get('since')
+        severity = form.get('severity')
+        bleeding = form.get('bleeding')
+        # ---------------------------------------------
+        disease_name = form.get('disease_name')
+        disease_position = form.get('disease_position')
+        disease_type = form.get('disease_type')
+        # ---------------------------------------------
+        other_associates = form.getlist('other_associates')
+        other_since = form.getlist('other_since')
+        other_severity = form.getlist('other_severity')
+        # ---------------------------------------------
+        history = form.getlist('history')
+        history_remark = form.getlist('history_remark')
+        # ---------------------------------------------
+
         medicine_id = form.getlist('medicine_id')
         medicine_qty = form.getlist('medicine_qty')
+        medicine_type = form.getlist('medicine_type')
+        medicine_dose = form.getlist('medicine_dose')
+        medicine_interval = form.getlist('medicine_interval')
+        medicine_with = form.getlist('medicine_with')
+
         status = 'failed?'
         msg = 'Appointment Checked failed.'
 
+        # ----------------------------------------------
         try:
             obj = PatientAppointmentHead.objects.create(doctor_id=doctor_id,
                                                         patient_id=patient_id,
-                                                        doctor_diseases=doctor_diseases,
+                                                        p_r=p_r,
+                                                        procto=procto,
+                                                        probing=probing,
+                                                        o_e=o_e,
                                                         )
             if obj:
                 head_id = obj.id
+                ChiefComplaints.objects.create(head_id=head_id,
+                                               chief_complaints=chief_complaints,
+                                               since_id=since,
+                                               severity_id=severity,
+                                               bleeding_id=bleeding,
+                                               )
+
+                PatientAppointmentDiagnosis.objects.create(head_id=head_id,
+                                                           disease_id=disease_name,
+                                                           position_id=disease_position,
+                                                           type_id=disease_type,
+                                                           )
+
+                for i in range(len(other_associates)):
+                    OtherAssociatesComplaints.objects.create(head_id=head_id,
+                                                             complaints=other_associates[i],
+                                                             since_id=other_since[i],
+                                                             severity_id=other_severity[i],
+                                                             )
+
                 for i in range(len(medicine_id)):
                     PatientMedicine.objects.create(head_id_id=head_id,
                                                    medicine_id=int(medicine_id[i]),
                                                    qty=int(medicine_qty[i]),
+                                                   medicine_type=medicine_type[i],
+                                                   medicine_dose=medicine_dose[i],
+                                                   medicine_interval=medicine_interval[i],
+                                                   medicine_with=medicine_with[i],
                                                    )
+
                 query = Q(id=appointment_id, patient_id=patient_id, doctor_id=doctor_id)
                 PatientAppointment.objects.filter(query).update(appoint_status='checked')
                 status = 'success'

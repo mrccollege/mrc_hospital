@@ -17,6 +17,10 @@ from common_function.date_formate import convert_date_format
 
 from account.models import User
 
+from disease.models import Since, Severity, Bleeding
+
+from diagnosis.models import DiagnosisDiseaseName, DiagnosisType, DiagnosisPosition
+
 
 # Create your views here.
 def add_appointment(request):
@@ -128,8 +132,18 @@ def search_patient(request):
 @login_required(login_url='/account/user_login/')
 def patient_appointment_detail(request, id):
     appointment = PatientAppointment.objects.get(id=id)
+    since = Since.objects.all()
+    severity = Severity.objects.all()
+    bleeding = Bleeding.objects.all()
+
+    diagnosis_name = DiagnosisDiseaseName.objects.all()
+
     context = {
         'appointment_id': id,
-        'appointment': appointment
+        'appointment': appointment,
+        'since': since,
+        'severity': severity,
+        'bleeding': bleeding,
+        'diagnosis_name': diagnosis_name,
     }
     return render(request, 'patient_appointment_detail.html', context)

@@ -36,7 +36,6 @@ def patient_detail(request, id):
         reference_by_patient = form.get('patient_search_id')
         reference_by_other = form.get('reference_by_other')
         social_media = form.get('social_media')
-        print(social_media, '============social_media=====')
         email = mobile + '@yopmail.com'
         phone = form.get('phone')
         status = 'failed'

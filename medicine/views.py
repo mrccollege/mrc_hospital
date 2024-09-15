@@ -7,7 +7,6 @@ import pandas as pd
 from .models import Medicine, MedicineCategory
 from django.core.files.storage import FileSystemStorage
 from store.models import Store, MedicineStore, MedicineStoreTransactionHistory
-from common_function.date_formate import convert_date_format
 from django.db.models import Case, When
 
 

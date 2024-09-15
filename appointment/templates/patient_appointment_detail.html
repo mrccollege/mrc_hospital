@@ -152,147 +152,91 @@
                                                           class="form-control"
                                                           readonly>{{appointment.patient_diseases}}</textarea>
                                             </div>
-
-
                                         </div>
                                         <hr>
+
                                         <div class="row">
                                             <div class="col-lg-6">
-                                                <div class="row">
-                                                    <div class="col-lg-12">
-                                                        <div class="form-group">
-                                                            <label for="doctor_diseases" class="form-label">Chief
-                                                                Complaints</label>
-                                                            <textarea rows="1" id="doctor_diseases"
-                                                                      name="doctor_diseases"
-                                                                      class="form-control"
-                                                                      placeholder="Doctor Please Enter the Diseases Remark: "
-                                                                      required></textarea>
-                                                        </div>
-                                                    </div>
+                                                <label>Upload Image</label>
+                                                <input type="file" id="patient_image"
+                                                       name="patient_image">
+                                            </div>
+                                        </div>
 
-                                                    <div class="col-lg-12">
-                                                        <div class="col-lg-6">
-                                                            <div class="form-group">
-                                                                <label class="form-label">Other Associates
-                                                                    Complaints</label>
-                                                                <textarea id="other_associates_complaints"
-                                                                          name="doctor_diseases"
-                                                                          class="form-control"
-                                                                          placeholder="Other Associates Complaints: "
-                                                                          required></textarea>
-                                                            </div>
-                                                        </div>
+                                        <hr>
 
-                                                        <div class="col-lg-3">
-                                                            <div class="form-group">
-                                                                <label class="form-label">Since</label>
-                                                                <select name="" class="form-control">
-                                                                    <option value="">1 week</option>
-                                                                    <option value="">1 months</option>
-                                                                    <option value="">1 year</option>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="col-lg-3">
-                                                            <div class="form-group">
-                                                                <label for="other_associates_complaints"
-                                                                       class="form-label">Severity</label>
-                                                                <select name="" id="" class="form-control">
-                                                                    <option value="">Low</option>
-                                                                    <option value="">Moderate</option>
-                                                                    <option value="">High</option>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                    </div>
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <div class="form-group">
+                                                    <label for="chief_complaints" class="form-label">Chief
+                                                        Complaints</label>
+                                                    <textarea rows="1" id="chief_complaints"
+                                                              name="chief_complaints"
+                                                              class="form-control"
+                                                              placeholder="Enter Chief Complaints: "
+                                                              required></textarea>
                                                 </div>
                                             </div>
 
+
                                             <div class="col-lg-6">
                                                 <div class="row">
-                                                    <div class="col-lg-12">
-                                                        <div class="col-lg-3">
-                                                            <div class="form-group">
-                                                                <label class="form-label">Since</label>
-                                                                <select name="" class="form-control">
-                                                                    <option value="">1 week</option>
-                                                                    <option value="">1 months</option>
-                                                                    <option value="">1 year</option>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="col-lg-3">
-                                                            <div class="form-group">
-                                                                <label for="other_associates_complaints"
-                                                                       class="form-label">Severity</label>
-                                                                <select name="" id="" class="form-control">
-                                                                    <option value="">Low</option>
-                                                                    <option value="">Moderate</option>
-                                                                    <option value="">High</option>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="col-lg-6">
-                                                            <label>Bleeding</label>
-                                                            <select class="form-control">
-                                                                <option>None</option>
-                                                                <option>In strip</option>
-                                                                <option>In Drops</option>
-                                                                <option>In Flow</option>
-                                                                <option>Mixed with Stool</option>
-                                                                <option>Melena</option>
-
+                                                    <div class="col-lg-3">
+                                                        <div class="form-group">
+                                                            <label class="form-label">Since</label>
+                                                            <select name="since" id="since" class="form-control">
+                                                                {% for i in since %}
+                                                                <option value="i.id">{{i.time}}</option>
+                                                                {% endfor %}
                                                             </select>
                                                         </div>
                                                     </div>
 
-                                                    <div class="col-lg-12">
-                                                        <div class="col-lg-6">
-                                                            <label>Upload Image</label>
-                                                            <input type="file" id="patient_image"
-                                                                   name="patient_image">
+                                                    <div class="col-lg-3">
+                                                        <div class="form-group">
+                                                            <label for="other_associates_complaints"
+                                                                   class="form-label">Severity</label>
+                                                            <select name="severity" id="severity" class="form-control">
+                                                                {% for i in severity %}
+                                                                <option value="i.id">{{i.type}}</option>
+                                                                {% endfor %}
+                                                                <!--                                                                    <option value="">Low</option>-->
+                                                                <!--                                                                    <option value="">Moderate</option>-->
+                                                                <!--                                                                    <option value="">High</option>-->
+                                                            </select>
                                                         </div>
                                                     </div>
 
-                                                    <div class="col-lg-12">
-                                                        <div id="row append_history">
-                                                            <div class="col-lg-12">
-                                                                <div class="row">
-                                                                    <div class="col-lg-6 form-group">
-                                                                        <label for="patient_diseases"
-                                                                               class="form-label">History</label>
-                                                                        <input type="text" class="form-control">
-                                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        <label>Bleeding</label>
+                                                        <select name="bleeding" id="bleeding" class="form-control">
+                                                            {% for i in bleeding %}
+                                                            <option value="i.id">{{i.type}}</option>
+                                                            {% endfor %}
+                                                            <!--                                                                <option>None</option>-->
+                                                            <!--                                                                <option>In strip</option>-->
+                                                            <!--                                                                <option>In Drops</option>-->
+                                                            <!--                                                                <option>In Flow</option>-->
+                                                            <!--                                                                <option>Mixed with Stool</option>-->
+                                                            <!--                                                                <option>Melena</option>-->
 
-                                                                    <div class="col-lg-4 form-group">
-                                                                        <label for="patient_diseases"
-                                                                               class="form-label">History
-                                                                            Remark</label>
-                                                                        <select class="form-control">
-                                                                            <option>Modern Surgery</option>
-                                                                            <option>Laser Surgery</option>
-                                                                            <option>Cryo Surgery</option>
-                                                                            <option>Bangali Technique</option>
-                                                                        </select>
-                                                                    </div>
-
-                                                                    <div class="col-lg-2">
-                                                                        <label>Add More</label>
-                                                                        <i class="fa fa-plus"
-                                                                           style="font-size:24px"></i>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
+                                                        </select>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
+                                        <hr>
 
+                                        <div class="row">
+                                            <div class="col-lg-6" id="other_associates_div">
+
+                                            </div>
+
+                                            <div class="col-lg-6" id="pre_treatment_history">
+
+                                            </div>
+                                        </div>
+                                        <hr>
                                         <div class="row">
                                             <div class="col-lg-3">
                                                 <label>P/R</label>
@@ -300,50 +244,43 @@
                                             </div>
                                             <div class="col-lg-3">
                                                 <label>Procto</label>
-                                                <input type="text" name="pr" id="pr" class="form-control">
+                                                <input type="text" name="procto" id="procto" class="form-control">
                                             </div>
                                             <div class="col-lg-3">
                                                 <label>Probing</label>
-                                                <input type="text" name="pr" id="pr" class="form-control">
+                                                <input type="text" name="probing" id="probing" class="form-control">
                                             </div>
 
                                             <div class="col-lg-3">
                                                 <label>O/E</label>
-                                                <input type="text" name="pr" id="pr" class="form-control">
+                                                <input type="text" name="o_e" id="o_e" class="form-control">
                                             </div>
                                         </div>
                                         <hr>
 
                                         <div class="row">
-                                            <h1 class="text-center"> <em><b>Diagnosis</b></em></h1>
+                                            <h1 class="text-center"><em><b>Diagnosis</b></em></h1>
                                             <div class="row mx-auto">
                                                 <div class="col-lg-4">
                                                     <label>Disease Name</label>
-                                                    <select name="" id="" class="form-control">
-                                                        <option>Option1</option>
-                                                        <option>Option1</option>
-                                                        <option>Option1</option>
-                                                        <option>Option1</option>
+                                                    <select name="disease_name" id="disease_name" class="form-control"
+                                                            onchange="change_disease_name()">
+                                                        {% for i in diagnosis_name %}
+                                                        <option value="{{i.id}}">{{i.name}}</option>
+                                                        {% endfor %}
                                                     </select>
                                                 </div>
 
                                                 <div class="col-lg-4">
                                                     <label>Position</label>
-                                                    <select name="" id="" class="form-control">
-                                                        <option>Option1</option>
-                                                        <option>Option1</option>
-                                                        <option>Option1</option>
-                                                        <option>Option1</option>
+                                                    <select name="disease_position" id="disease_position"
+                                                            class="form-control" onchange="change_disease_position()">
                                                     </select>
                                                 </div>
 
                                                 <div class="col-lg-4">
                                                     <label>Type</label>
-                                                    <select name="" id="" class="form-control">
-                                                        <option>Option1</option>
-                                                        <option>Option1</option>
-                                                        <option>Option1</option>
-                                                        <option>Option1</option>
+                                                    <select name="disease_type" id="disease_type" class="form-control">
                                                     </select>
                                                 </div>
                                             </div>
@@ -361,6 +298,10 @@
                                             <th>SN.</th>
                                             <th>Medicine Name</th>
                                             <th>Medicine Qty</th>
+                                            <th>Medicine Type</th>
+                                            <th>Medicine Dose</th>
+                                            <th>Medicine Interval</th>
+                                            <th>Medicine With</th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -393,28 +334,139 @@
 {% endblock content %}
 
 {% block js %}
+
+<script>
+    $(document).ready(function(){
+        change_disease_name()
+    })
+
+    function change_disease_name(){
+        name_id = $('#disease_name').val();
+        $('#loader-overlay').show(); // Show overlay
+        $('#loader').show(); // Show loader
+        $.ajax({
+          url: '/diagnosis/get_diagnosis_position/',
+          type: 'GET',
+          data: {'name_id': name_id},
+          success: function (response) {
+            $('#loader-overlay').hide(); // Show overlay
+            $('#loader').hide(); // Show loader
+            var html = ''
+            $.each(response.position, function(index, item){
+                html += '<option value="'+item.id+'">'+item.position+'</option>'
+            })
+            $('#disease_position').html(html)
+            change_disease_position()
+          }
+        })
+    }
+
+    function change_disease_position(){
+        position_id = $('#disease_position').val();
+        $('#loader-overlay').show(); // Show overlay
+        $('#loader').show(); // Show loader
+        $.ajax({
+          url: '/diagnosis/get_diagnosis_type/',
+          type: 'GET',
+          data: {'position_id': position_id},
+          success: function (response) {
+            $('#loader-overlay').hide(); // Show overlay
+            $('#loader').hide(); // Show loader
+            var html = ''
+            $.each(response.type, function(index, item){
+                html += '<option value="'+item.id+'">'+item.type+'</option>'
+            })
+            $('#disease_type').html(html)
+          }
+        })
+    }
+</script>
+
+
+<script>
+    $(document).ready(function(){
+        append_other_associates();
+        treatment_history()
+    })
+    var associates_index = 1
+    function append_other_associates(){
+        var html = '';
+        html += '<div class="row">';
+
+        html += '<div class="col-lg-6 form-group">';
+        html += '<label class="form-label">Other Associates Complaints</label>';
+        html += '<textarea id="other_associates_complaints'+associates_index+'" name="other_associates" itemid="other_associates" class="form-control" placeholder="Other Associates Complaints: " required></textarea>';
+        html += '</div>';
+
+        html += '<div class="col-lg-3 form-group">';
+        html += '<label class="form-label">Since</label>';
+        html += '<select name="other_since" id="other_since'+associates_index+'" class="form-control">';
+        html += '<option value="">1 week</option>';
+        html += '<option value="">1 months</option>';
+        html += '<option value="">1 year</option>';
+        html += '</select>';
+        html += '</div>';
+
+        html += '<div class="col-lg-2 form-group">';
+        html += '<label class="form-label">Severity</label>';
+        html += '<select name="other_severity" id="other_severity'+associates_index+'" class="form-control">';
+        html += '<option value="">Low</option>';
+        html += '<option value="">Moderate</option>';
+        html += '<option value="">High</option>';
+        html += '</select>';
+        html += '</div>';
+
+        html += '<div class="col-lg-1 form-group">'
+        html += '<label for="">Add</label>'
+        html += '<i class="fa fa-plus" style="font-size:24px" onclick="append_other_associates()"></i>'
+        html += '</div>'
+
+        html += '</div>';
+
+
+
+        $('#other_associates_div').append(html)
+        associates_index ++;
+    }
+
+    var history_index = 1
+    function treatment_history(){
+
+        var html = '';
+        html += '<div class="col-lg-12">';
+        html += '<div class="row">';
+        html += '<div class="col-lg-6 form-group">';
+        html += '<label class="form-label">History</label>';
+        html += '<input type="text" name="history" id="history'+history_index+'" class="form-control">';
+        html += '</div>';
+
+        html += '<div class="col-lg-4 form-group">';
+        html += '<label class="form-label">History Remark</label>';
+        html += '<select name="history_remark" class="form-control">';
+        html += '<option>Modern Surgery</option>';
+        html += '<option>Laser Surgery</option>';
+        html += '<option>Cryo Surgery</option>';
+        html += '<option>Bangali Technique</option>';
+        html += '</select>';
+        html += '</div>';
+
+        html += '<div class="col-lg-1">';
+        html += '<label>Add</label>';
+        html += '<i class="fa fa-plus" style="font-size:24px" onclick="treatment_history()"></i>';
+        html += '</div>';
+        html += '</div>';
+        html += '</div>';
+
+        $('#pre_treatment_history').append(html)
+        history_index ++;
+    }
+
+</script>
+
 <script>
     $("#medicine_expiry").datepicker({
        dateFormat: "dd/mm/yy"
     });
-
-<!--    $('#add_history_slots').click(function(){-->
-<!--        var html = '';-->
-
-<!--        html += '<div class="col-lg-12">';-->
-<!--        html += '<div class="col-lg-6 form-group">';-->
-<!--        html += '<label class="form-label">History</label>';-->
-<!--        html += '<input type="text" class="form-control">';-->
-<!--        html += '</div>';-->
-
-<!--        html += '<div class="col-lg-6 form-group">';-->
-<!--        html += '<label class="form-label">History Remark</label>';-->
-<!--        html += '<input type="text" class="form-control">';-->
-<!--        html += '</div>';-->
-<!--        html += '</div>';-->
-
-<!--        $(this).append(html)-->
-<!--    })-->
 </script>
 
 <script>
@@ -466,6 +518,10 @@
         html += '<td><input onkeyup="search_medicine('+index+');" type="text" id="medicine'+index+'" name="medicine" class="form-control" autocomplete="off" placeholder="Search medicine: " required></td>';
         html += '<input type="hidden" name="medicine_id" class="form-control" id="medicine_id'+index+'" required>';
         html += '<td><input type="text" id="medicine_qty'+index+'" name="medicine_qty" class="form-control" required></td>';
+        html += '<td><input type="text" id="medicine_type'+index+'" name="medicine_type" class="form-control" required></td>';
+        html += '<td><input type="text" id="medicine_dose'+index+'" name="medicine_dose" class="form-control" required></td>';
+        html += '<td><input type="text" id="medicine_interval'+index+'" name="medicine_interval" class="form-control" required></td>';
+        html += '<td><input type="text" id="medicine_with'+index+'" name="medicine_with" class="form-control" required></td>';
         html += '<td><button onclick="remove_row('+index+')"><i class="fa fa-remove" style="font-size:24px"></i></button></td>';
         html += '</tr>';
 

@@ -64,7 +64,6 @@ class OtherAssociatesComplaints(models.Model):
     complaints = models.TextField(null=True, blank=True)
     since = models.ForeignKey(Since, on_delete=models.CASCADE, null=True)
     severity = models.ForeignKey(Severity, on_delete=models.CASCADE, null=True)
-    bleeding = models.ForeignKey(Bleeding, on_delete=models.CASCADE, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 
@@ -79,6 +78,9 @@ class PatientMedicine(models.Model):
     head = models.ForeignKey(PatientAppointmentHead, on_delete=models.CASCADE, null=True)
     medicine = models.ForeignKey(Medicine, on_delete=models.CASCADE, null=True)
     qty = models.IntegerField(default=0, null=True)
+    dose = models.CharField(max_length=100, null=True, blank=True)
+    interval = models.CharField(max_length=100, null=True, blank=True)
+    dose_with = models.CharField(max_length=100, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 
