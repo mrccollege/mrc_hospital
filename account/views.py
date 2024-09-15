@@ -108,12 +108,12 @@ def doctor_registration(request):
         status = 'failed'
         msg = 'Doctor Registration failed.'
         try:
-            user_obj = User.objects.create_user(username=username,
+            user_obj = User.objects.create_user(username=username.title(),
                                                 email=email,
                                                 password='12345',
                                                 mobile=mobile,
                                                 phone=phone,
-                                                address=address)
+                                                city=address)
             if user_obj:
                 doctor_id = user_obj.id
                 Doctor.objects.create(user_id=doctor_id,

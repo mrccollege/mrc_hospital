@@ -72,7 +72,6 @@ def patient_detail(request, id):
                     reference_by_patient = reference_by_patient
                 else:
                     reference_by_patient = None
-                print(social_media, '============social_media')
                 Patient.objects.filter(id=id).update(social_media_id=social_media,
                                                      other_reference_id=reference_by_other,
                                                      reference_by_patient_id=reference_by_patient,
