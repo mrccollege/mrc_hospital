@@ -153,136 +153,51 @@
                                                           readonly>{{appointment.patient_diseases}}</textarea>
                                             </div>
                                         </div>
-                                        <hr>
-
-                                        <div class="row">
-                                            <div class="col-lg-6">
-                                                <label>Upload Image</label>
-                                                <input type="file" id="patient_image"
-                                                       name="patient_image">
-                                            </div>
-                                        </div>
 
                                         <hr>
 
                                         <div class="row">
-                                            <div class="col-lg-6">
-                                                <div class="form-group">
-                                                    <label for="chief_complaints" class="form-label">Chief
-                                                        Complaints</label>
-                                                    <textarea rows="1" id="chief_complaints"
-                                                              name="chief_complaints"
-                                                              class="form-control"
-                                                              placeholder="Enter Chief Complaints: "
-                                                              required></textarea>
-                                                </div>
-                                            </div>
-
-
+                                            <h1 class="text-center"><em><b>Advice</b></em></h1>
                                             <div class="col-lg-6">
                                                 <div class="row">
                                                     <div class="col-lg-3">
-                                                        <div class="form-group">
-                                                            <label class="form-label">Since</label>
-                                                            <select name="since" id="since" class="form-control">
-                                                                {% for i in since %}
-                                                                <option value="i.id">{{i.time}}</option>
-                                                                {% endfor %}
-                                                            </select>
-                                                        </div>
+                                                        <label>Madication</label>
+                                                        <input type="checkbox" checked name="" id="">
                                                     </div>
 
                                                     <div class="col-lg-3">
-                                                        <div class="form-group">
-                                                            <label class="form-label">Severity</label>
-                                                            <select name="severity" id="severity" class="form-control">
-                                                                {% for i in severity %}
-                                                                <option value="i.id">{{i.type}}</option>
-                                                                {% endfor %}
-                                                                <!--                                                                    <option value="">Low</option>-->
-                                                                <!--                                                                    <option value="">Moderate</option>-->
-                                                                <!--                                                                    <option value="">High</option>-->
-                                                            </select>
-                                                        </div>
+                                                        <label>Panch Karma</label>
+                                                        <input type="checkbox" name="" id="">
                                                     </div>
 
-                                                    <div class="col-lg-6">
-                                                        <label>Bleeding</label>
-                                                        <select name="bleeding" id="bleeding" class="form-control">
-                                                            {% for i in bleeding %}
-                                                            <option value="i.id">{{i.type}}</option>
-                                                            {% endfor %}
-                                                            <!--                                                                <option>None</option>-->
-                                                            <!--                                                                <option>In strip</option>-->
-                                                            <!--                                                                <option>In Drops</option>-->
-                                                            <!--                                                                <option>In Flow</option>-->
-                                                            <!--                                                                <option>Mixed with Stool</option>-->
-                                                            <!--                                                                <option>Melena</option>-->
+                                                    <div class="col-lg-3">
+                                                        <label>Review</label>
+                                                        <input type="checkbox" name="" id="">
+                                                    </div>
 
-                                                        </select>
+                                                    <div class="col-lg-3">
+                                                        <label>Admission</label>
+                                                        <input type="checkbox" name="" id="">
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <hr>
 
-                                        <div class="row">
-                                            <div class="col-lg-6" id="other_associates_div">
+                                            <div class="col-lg-6">
+                                                <div class="row">
+                                                    <div class="col-lg-4">
+                                                        <label>Mrc Therapy</label>
+                                                        <input type="text" name="" id="">
+                                                    </div>
 
-                                            </div>
+                                                    <div class="col-lg-4">
+                                                        <label>Consult with</label>
+                                                        <input type="text" name="" id="">
+                                                    </div>
 
-                                            <div class="col-lg-6" id="pre_treatment_history">
-
-                                            </div>
-                                        </div>
-
-                                        <hr>
-
-                                        <div class="row">
-                                            <div class="col-lg-3">
-                                                <label>P/R</label>
-                                                <input type="text" name="pr" id="pr" class="form-control">
-                                            </div>
-                                            <div class="col-lg-3">
-                                                <label>Procto</label>
-                                                <input type="text" name="procto" id="procto" class="form-control">
-                                            </div>
-                                            <div class="col-lg-3">
-                                                <label>Probing</label>
-                                                <input type="text" name="probing" id="probing" class="form-control">
-                                            </div>
-
-                                            <div class="col-lg-3">
-                                                <label>O/E</label>
-                                                <input type="text" name="o_e" id="o_e" class="form-control">
-                                            </div>
-                                        </div>
-                                        <hr>
-
-                                        <div class="row">
-                                            <h1 class="text-center"><em><b>Diagnosis</b></em></h1>
-                                            <div class="row mx-auto">
-                                                <div class="col-lg-4">
-                                                    <label>Disease Name</label>
-                                                    <select name="disease_name" id="disease_name" class="form-control"
-                                                            onchange="change_disease_name()">
-                                                        {% for i in diagnosis_name %}
-                                                        <option value="{{i.id}}">{{i.name}}</option>
-                                                        {% endfor %}
-                                                    </select>
-                                                </div>
-
-                                                <div class="col-lg-4">
-                                                    <label>Position</label>
-                                                    <select name="disease_position" id="disease_position"
-                                                            class="form-control" onchange="change_disease_position()">
-                                                    </select>
-                                                </div>
-
-                                                <div class="col-lg-4">
-                                                    <label>Type</label>
-                                                    <select name="disease_type" id="disease_type" class="form-control">
-                                                    </select>
+                                                    <div class="col-lg-4">
+                                                        <label>Refer to</label>
+                                                        <input type="text" name="" id="">
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -293,16 +208,17 @@
 
                             <div class="box-body">
                                 <div class="table-responsive">
+                                    <h1 class="text-center"><em><b>Rx</b></em></h1>
                                     <table class="table table-condensed">
                                         <thead>
                                         <tr>
                                             <th>SN.</th>
                                             <th>Medicine Name</th>
-                                            <th>Medicine Qty</th>
                                             <th>Medicine Type</th>
                                             <th>Medicine Dose</th>
                                             <th>Medicine Interval</th>
                                             <th>Medicine With</th>
+                                            <th>Medicine Days</th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -444,10 +360,10 @@
         html += '<div class="col-lg-4 form-group">';
         html += '<label class="form-label">History Remark</label>';
         html += '<select name="history_remark" class="form-control">';
-        html += '<option>Modern Surgery</option>';
-        html += '<option>Laser Surgery</option>';
-        html += '<option>Cryo Surgery</option>';
-        html += '<option>Bengali Technique</option>';
+        html += '<option>Hyper Tension</option>';
+        html += '<option>Diabetes</option>';
+        html += '<option>Tuberculosis</option>';
+        html += '<option>Depression</option>';
         html += '</select>';
         html += '</div>';
 
@@ -518,11 +434,12 @@
         html += '<td>'+index+'</td>';
         html += '<td><input onkeyup="search_medicine('+index+');" type="text" id="medicine'+index+'" name="medicine" class="form-control" autocomplete="off" placeholder="Search medicine: " required></td>';
         html += '<input type="hidden" name="medicine_id" class="form-control" id="medicine_id'+index+'" required>';
-        html += '<td><input type="text" id="medicine_qty'+index+'" name="medicine_qty" class="form-control" required></td>';
         html += '<td><input type="text" id="medicine_type'+index+'" name="medicine_type" class="form-control" required></td>';
         html += '<td><input type="text" id="medicine_dose'+index+'" name="medicine_dose" class="form-control" required></td>';
         html += '<td><input type="text" id="medicine_interval'+index+'" name="medicine_interval" class="form-control" required></td>';
         html += '<td><input type="text" id="medicine_with'+index+'" name="medicine_with" class="form-control" required></td>';
+        html += '<td><input type="text" id="medicine_days'+index+'" name="medicine_days" class="form-control" value="7" required></td>';
+
         html += '<td><button onclick="remove_row('+index+')"><i class="fa fa-remove" style="font-size:24px"></i></button></td>';
         html += '</tr>';
 

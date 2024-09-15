@@ -5,6 +5,8 @@ from .models import PatientBill, PatientBillDetail
 from store.models import Store
 from django.db.models import Sum, Q
 
+from appointment.models import PatientAppointment
+
 
 # Create your views here.
 @login_required(login_url='/account/user_login/')
@@ -34,3 +36,12 @@ def patient_bill_detail(request, id):
         'total_sell_price': total_sell_price,
     }
     return render(request, 'patient_bill_detail.html', context)
+
+
+def appointment_patient_bill_detail(request, id):
+    appointment = PatientAppointment.objects.get(id=id)
+    context = {
+        'appointment_id': id,
+        'appointment': appointment,
+    }
+    return render(request, 'appointment_patient_bill.html', context)

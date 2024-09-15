@@ -1,0 +1,623 @@
+{% extends 'base.html' %}
+
+{% block css %}
+<!-- Datepicker -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-
+    datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css">
+
+{% endblock css %}
+
+
+{% block content %}
+<div class="wrapper">
+
+    <!-- Right side column. Contains the navbar and content of the page -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <h1>Panch Karma Patient Appointment Detail</h1>
+            <ol class="breadcrumb">
+                <li><a href="/"><i class="fa fa-dashboard"></i> Home</a></li>
+                <li><a href="/">Tables</a></li>
+                <li class="active">Data tables</li>
+            </ol>
+        </section>
+
+        <!-- Main content -->
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="box">
+                        <div class="box-header">
+                            <h3 class="box-title">Appointment Details</h3>
+                        </div><!-- /.box-header -->
+
+                        <div class="box-body">
+                            <div class="box box-primary">
+                                <!-- form start -->
+                                <form id="medicine_form" role="form">{% csrf_token %}
+                                    <div class="box-body">
+                                        <div class="row">
+                                            <div class="col-lg-3">
+                                                <div class="form-group">
+                                                    <label for="patient_name" class="form-label">Patient Name</label>
+                                                    <input type="hidden" name="patient_id"
+                                                           value="{{appointment.patient.id}}">
+                                                    <input type="text" class="form-control" id="patient_name"
+                                                           name="patient_name" value="{{appointment.patient}}" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <div class="form-group">
+                                                    <label for="patient_name" class="form-label">C/O</label>
+                                                    <input type="text" class="form-control" id="care_of"
+                                                           name="patient_name"
+                                                           value="{{appointment.patient.user.care_of}}" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <div class="form-group">
+                                                    <label for="mobile" class="form-label">Mobile</label>
+                                                    <input type="text" class="form-control" id="mobile"
+                                                           name="mobile" value="{{appointment.patient.user.mobile}}"
+                                                           readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <div class="form-group">
+                                                    <label for="address" class="form-label">Address</label>
+                                                    <input type="text" class="form-control" id="address" name="address"
+                                                           value="{{appointment.patient.user.house_flat}}&nbsp;{{appointment.patient.user.street_colony}}&nbsp;{{appointment.patient.user.city}}&nbsp;{{appointment.patient.user.district}}&nbsp;{{appointment.patient.user.state}}"
+                                                           readonly>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="row">
+                                            <div class="col-lg-1">
+                                                <div class="form-group">
+                                                    <label for="patient_name" class="form-label">Gender</label>
+                                                    <input type="text" class="form-control" id="sex"
+                                                           name="patient_bp"
+                                                           value="{{appointment.patient.user.sex}}" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-1">
+                                                <div class="form-group">
+                                                    <label for="patient_name" class="form-label">Age</label>
+                                                    <input type="text" class="form-control" id="age"
+                                                           name="patient_bp"
+                                                           value="{{appointment.patient.user.age}}" readonly>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg-2">
+                                                <div class="form-group">
+                                                    <label for="address" class="form-label">Weight</label>
+                                                    <input type="text" class="form-control" id="patient_weight"
+                                                           name="patient_weight"
+                                                           value="{{appointment.patient_weight}}" readonly>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg-2">
+                                                <div class="form-group">
+                                                    <label for="patient_name" class="form-label">Blood Pressure</label>
+                                                    <input type="hidden" name="patient_id"
+                                                           value="{{appointment.patient.id}}">
+                                                    <input type="hidden" name="appointment_id"
+                                                           value="{{appointment_id}}">
+                                                    <input type="text" class="form-control" id="patient_bp"
+                                                           name="patient_bp"
+                                                           value="{{appointment.patient_bp}}" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-1">
+                                                <div class="form-group">
+                                                    <label for="pulse" class="form-label">Pulse</label>
+                                                    <input type="text" class="form-control" id="pulse"
+                                                           name="pulse"
+                                                           value="{{appointment.pulse}}" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-1">
+                                                <div class="form-group">
+                                                    <label for="oxygen" class="form-label">Oxygen</label>
+                                                    <input type="text" class="form-control" id="oxygen"
+                                                           name="patient_bp"
+                                                           value="{{appointment.oxygen}}" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-1">
+                                                <div class="form-group">
+                                                    <label for="temperature" class="form-label">Temp.</label>
+                                                    <input type="text" class="form-control" id="temperature"
+                                                           name="temperature"
+                                                           value="{{appointment.temperature}}" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-1">
+                                                <div class="form-group">
+                                                    <label for="respiration" class="form-label">Res.</label>
+                                                    <input type="text" class="form-control" id="respiration"
+                                                           name="respiration"
+                                                           value="{{appointment.respiration}}" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-2 form-group">
+                                                <label for="patient_diseases" class="form-label">Patient
+                                                    Diseases Remark</label>
+                                                <textarea rows="1" id="patient_diseases" name="patient_diseases"
+                                                          class="form-control"
+                                                          readonly>{{appointment.patient_diseases}}</textarea>
+                                            </div>
+                                        </div>
+                                        <hr>
+
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <label>Upload Image</label>
+                                                <input type="file" id="patient_image"
+                                                       name="patient_image">
+                                            </div>
+                                        </div>
+
+                                        <hr>
+
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <div class="form-group">
+                                                    <label for="chief_complaints" class="form-label">Chief
+                                                        Complaints</label>
+                                                    <textarea rows="1" id="chief_complaints"
+                                                              name="chief_complaints"
+                                                              class="form-control"
+                                                              placeholder="Enter Chief Complaints: "
+                                                              required></textarea>
+                                                </div>
+                                            </div>
+
+
+                                            <div class="col-lg-6">
+                                                <div class="row">
+                                                    <div class="col-lg-3">
+                                                        <div class="form-group">
+                                                            <label class="form-label">Since</label>
+                                                            <select name="since" id="since" class="form-control">
+                                                                {% for i in since %}
+                                                                <option value="i.id">{{i.time}}</option>
+                                                                {% endfor %}
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-lg-3">
+                                                        <div class="form-group">
+                                                            <label class="form-label">Severity</label>
+                                                            <select name="severity" id="severity" class="form-control">
+                                                                {% for i in severity %}
+                                                                <option value="i.id">{{i.type}}</option>
+                                                                {% endfor %}
+                                                                <!--                                                                    <option value="">Low</option>-->
+                                                                <!--                                                                    <option value="">Moderate</option>-->
+                                                                <!--                                                                    <option value="">High</option>-->
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-lg-6">
+                                                        <label>Bleeding</label>
+                                                        <select name="bleeding" id="bleeding" class="form-control">
+                                                            {% for i in bleeding %}
+                                                            <option value="i.id">{{i.type}}</option>
+                                                            {% endfor %}
+                                                            <!--                                                                <option>None</option>-->
+                                                            <!--                                                                <option>In strip</option>-->
+                                                            <!--                                                                <option>In Drops</option>-->
+                                                            <!--                                                                <option>In Flow</option>-->
+                                                            <!--                                                                <option>Mixed with Stool</option>-->
+                                                            <!--                                                                <option>Melena</option>-->
+
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <hr>
+
+                                        <div class="row">
+                                            <div class="col-lg-6" id="other_associates_div">
+
+                                            </div>
+
+                                            <div class="col-lg-6" id="pre_treatment_history">
+
+                                            </div>
+                                        </div>
+
+                                        <hr>
+
+                                        <div class="row">
+                                            <div class="col-lg-3">
+                                                <label>Agni</label>
+                                                <input type="text" name="pr" id="pr" class="form-control">
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <label>Kosth</label>
+                                                <input type="text" name="procto" id="procto" class="form-control">
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <label>Nidra</label>
+                                                <input type="text" name="probing" id="probing" class="form-control">
+                                            </div>
+
+                                            <div class="col-lg-3">
+                                                <label>Bal</label>
+                                                <input type="text" name="o_e" id="o_e" class="form-control">
+                                            </div>
+                                        </div>
+                                        <hr>
+
+                                        <div class="row">
+                                            <h1 class="text-center"><em><b>Diagnosis</b></em></h1>
+<!--                                             add more functionality-->
+                                            <div class="row mx-auto">
+                                                <div class="col-lg-4">
+                                                    <label>Disease Name</label>
+                                                    <input type="text" name="" id="">
+                                                </div>
+
+                                                <div class="col-lg-4">
+                                                    <label>Severity</label>
+                                                    <input type="text" name="" id="">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <h1 class="text-center"><em><b>Advice</b></em></h1>
+                                            <div class="col-lg-6">
+                                                <div class="row">
+                                                    <div class="col-lg-3">
+                                                        <label>Madication</label>
+                                                        <input type="checkbox" checked name="" id="">
+                                                    </div>
+
+                                                    <div class="col-lg-3">
+                                                        <label>Panch Karma</label>
+                                                        <input type="checkbox" name="" id="">
+                                                    </div>
+
+                                                    <div class="col-lg-3">
+                                                        <label>Review</label>
+                                                        <input type="checkbox" name="" id="">
+                                                    </div>
+
+                                                    <div class="col-lg-3">
+                                                        <label>Admission</label>
+                                                        <input type="checkbox" name="" id="">
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg-6">
+                                                <div class="row">
+                                                    <div class="col-lg-4">
+                                                        <label>Mrc Therapy</label>
+                                                        <input type="text" name="" id="">
+                                                    </div>
+
+                                                    <div class="col-lg-4">
+                                                        <label>Consult with</label>
+                                                        <input type="text" name="" id="">
+                                                    </div>
+
+                                                    <div class="col-lg-4">
+                                                        <label>Refer to</label>
+                                                        <input type="text" name="" id="">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </form>
+                            </div><!-- /.box-body -->
+
+                            <div class="box-body">
+                                <div class="table-responsive">
+                                    <h1 class="text-center"><em><b>Rx</b></em></h1>
+                                    <table class="table table-condensed">
+                                        <thead>
+                                        <tr>
+                                            <th>SN.</th>
+                                            <th>Medicine Name</th>
+                                            <th>Medicine Type</th>
+                                            <th>Medicine Dose</th>
+                                            <th>Medicine Interval</th>
+                                            <th>Medicine With</th>
+                                            <th>Medicine Days</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                    <div class="text-center">
+                                        <button type="button" class="btn btn-primary"
+                                                onclick="add_medicine()">
+                                            Add
+                                        </button>
+                                    </div>
+                                </div>
+                            </div><!-- /.box-body -->
+
+                            <div class="box-footer">
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </div>
+                            </form>
+                        </div>
+
+                    </div><!-- /.box-body -->
+                </div><!-- /.box -->
+            </div><!-- /.col -->
+    </div><!-- /.row -->
+    </section><!-- /.content -->
+</div><!-- /.content-wrapper -->
+
+</div><!-- ./wrapper -->
+
+{% endblock content %}
+
+{% block js %}
+
+<script>
+    $(document).ready(function(){
+        change_disease_name()
+    })
+
+    function change_disease_name(){
+        name_id = $('#disease_name').val();
+        $('#loader-overlay').show(); // Show overlay
+        $('#loader').show(); // Show loader
+        $.ajax({
+          url: '/diagnosis/get_diagnosis_position/',
+          type: 'GET',
+          data: {'name_id': name_id},
+          success: function (response) {
+            $('#loader-overlay').hide(); // Show overlay
+            $('#loader').hide(); // Show loader
+            var html = ''
+            $.each(response.position, function(index, item){
+                html += '<option value="'+item.id+'">'+item.position+'</option>'
+            })
+            $('#disease_position').html(html)
+            change_disease_position()
+          }
+        })
+    }
+
+    function change_disease_position(){
+        position_id = $('#disease_position').val();
+        $('#loader-overlay').show(); // Show overlay
+        $('#loader').show(); // Show loader
+        $.ajax({
+          url: '/diagnosis/get_diagnosis_type/',
+          type: 'GET',
+          data: {'position_id': position_id},
+          success: function (response) {
+            $('#loader-overlay').hide(); // Show overlay
+            $('#loader').hide(); // Show loader
+            var html = ''
+            $.each(response.type, function(index, item){
+                html += '<option value="'+item.id+'">'+item.type+'</option>'
+            })
+            $('#disease_type').html(html)
+          }
+        })
+    }
+</script>
+
+
+<script>
+    $(document).ready(function(){
+        append_other_associates();
+        treatment_history()
+    })
+    var associates_index = 1
+    function append_other_associates(){
+        var html = '';
+        html += '<div class="row">';
+
+        html += '<div class="col-lg-6 form-group">';
+        html += '<label class="form-label">Other Associates Complaints</label>';
+        html += '<textarea id="other_associates_complaints'+associates_index+'" name="other_associates" itemid="other_associates" class="form-control" placeholder="Other Associates Complaints: " required></textarea>';
+        html += '</div>';
+
+        html += '<div class="col-lg-3 form-group">';
+        html += '<label class="form-label">Since</label>';
+        html += '<select name="other_since" id="other_since'+associates_index+'" class="form-control">';
+        html += '<option value="">1 week</option>';
+        html += '<option value="">1 months</option>';
+        html += '<option value="">1 year</option>';
+        html += '</select>';
+        html += '</div>';
+
+        html += '<div class="col-lg-2 form-group">';
+        html += '<label class="form-label">Severity</label>';
+        html += '<select name="other_severity" id="other_severity'+associates_index+'" class="form-control">';
+        html += '<option value="">Low</option>';
+        html += '<option value="">Moderate</option>';
+        html += '<option value="">High</option>';
+        html += '</select>';
+        html += '</div>';
+
+        html += '<div class="col-lg-1 form-group">'
+        html += '<label for="">Add</label>'
+        html += '<i class="fa fa-plus" style="font-size:24px" onclick="append_other_associates()"></i>'
+        html += '</div>'
+
+        html += '</div>';
+
+
+
+        $('#other_associates_div').append(html)
+        associates_index ++;
+    }
+
+    var history_index = 1
+    function treatment_history(){
+
+        var html = '';
+        html += '<div class="col-lg-12">';
+        html += '<div class="row">';
+        html += '<div class="col-lg-6 form-group">';
+        html += '<label class="form-label">History</label>';
+        html += '<input type="text" name="history" id="history'+history_index+'" class="form-control">';
+        html += '</div>';
+
+        html += '<div class="col-lg-4 form-group">';
+        html += '<label class="form-label">History Remark</label>';
+        html += '<select name="history_remark" class="form-control">';
+        html += '<option>Hyper Tension</option>';
+        html += '<option>Diabetes</option>';
+        html += '<option>Tuberculosis</option>';
+        html += '<option>Depression</option>';
+        html += '</select>';
+        html += '</div>';
+
+        html += '<div class="col-lg-1">';
+        html += '<label>Add</label>';
+        html += '<i class="fa fa-plus" style="font-size:24px" onclick="treatment_history()"></i>';
+        html += '</div>';
+        html += '</div>';
+        html += '</div>';
+
+        $('#pre_treatment_history').append(html)
+        history_index ++;
+    }
+
+</script>
+
+<script>
+    $("#medicine_expiry").datepicker({
+       dateFormat: "dd/mm/yy"
+    });
+</script>
+
+<script>
+    $('#medicine_form').on('submit', function (e) {
+        $('#loader-overlay').show(); // Show overlay
+        $('#loader').show(); // Show loader
+        e.preventDefault();
+        var formData = $('#medicine_form').serialize();
+        $.ajax({
+          url: '/doctor/patient_appointment_checked/',
+          type: 'POST',
+          data: formData,
+          success: function (response) {
+            $('#loader-overlay').hide();
+            $('#loader').hide();
+            if(response.status == 'success'){
+              Swal.fire({
+                title: 'Success',
+                text: response.msg,
+                icon: 'success',
+                showCancelButton: false,
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'OK'
+              }).then((result) => {
+                window.location.href = '/appointment/all_appointment/';
+              });
+            }else{
+              Swal.fire({
+                  title: 'Error',
+                  text: response.msg,
+                  icon: 'error',
+                  confirmButtonColor: '#3085d6',
+                  confirmButtonText: 'OK'
+              });
+              $('#password').val('');
+              return false;
+            }
+          },
+        });
+    });
+</script>
+
+<script>
+    var index = 1;
+    function add_medicine(){
+        var html = '';
+        html += '<tr id="medicine_tr'+index+'">';
+        html += '<td>'+index+'</td>';
+        html += '<td><input onkeyup="search_medicine('+index+');" type="text" id="medicine'+index+'" name="medicine" class="form-control" autocomplete="off" placeholder="Search medicine: " required></td>';
+        html += '<input type="hidden" name="medicine_id" class="form-control" id="medicine_id'+index+'" required>';
+        html += '<td><input type="text" id="medicine_type'+index+'" name="medicine_type" class="form-control" required></td>';
+        html += '<td><input type="text" id="medicine_dose'+index+'" name="medicine_dose" class="form-control" required></td>';
+        html += '<td><input type="text" id="medicine_interval'+index+'" name="medicine_interval" class="form-control" required></td>';
+        html += '<td><input type="text" id="medicine_with'+index+'" name="medicine_with" class="form-control" required></td>';
+        html += '<td><input type="text" id="medicine_days'+index+'" name="medicine_days" class="form-control" value="7" required></td>';
+
+        html += '<td><button onclick="remove_row('+index+')"><i class="fa fa-remove" style="font-size:24px"></i></button></td>';
+        html += '</tr>';
+
+        // Append the new row to the table body
+        $('table tbody').append(html);
+        index +=1;
+    }
+    $(document).ready(function(){
+        add_medicine();
+    });
+
+    function remove_row(index){
+        $('#medicine_tr'+index).remove()
+    }
+</script>
+
+<script>
+    function search_medicine(indexID) {
+        var medicineIds = [];
+        $('input[name="medicine_id"]').each(function() {
+            medicineIds.push($(this).val());
+        });
+        medicineIds = medicineIds.filter(function(id) {
+            return id.trim() !== '';
+        });
+
+        $('#medicine' + indexID).autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: '/medicine/search_medicine/',
+                    type: 'GET',
+                    data: {
+                        search_value: request.term,
+                        medicineIds: medicineIds,
+                    },
+                    success: function (result) {
+                        if (result.results) {
+                            var suggestedProducts = result.results.map(function (results) {
+                                return {
+                                    label: results.name + ' - ' + '('+results.type+')',
+                                    value: results.name + ' - ' + '('+results.type+')',
+                                    medicine_id: results.medicine_id,
+                                };
+                            });
+                            response(suggestedProducts);
+                        }
+                    },
+                    error: function (xhr, errmsg, err) {
+                        console.log(xhr.status + ": " + xhr.responseText);
+                    }
+                });
+            },
+            select: function (event, ui) {
+                $('#medicine_id' + indexID).val(ui.item.medicine_id);
+                //add_medicine()
+            }
+        });
+    }
+
+</script>
+
+{% endblock js %}

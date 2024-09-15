@@ -146,4 +146,5 @@ def patient_appointment_detail(request, id):
         'bleeding': bleeding,
         'diagnosis_name': diagnosis_name,
     }
-    return render(request, 'patient_appointment_detail.html', context)
+    # return render(request, 'kshar_shutra_patient_appointment_detail.html', context)
+    return render(request, 'panch_karma_patient_appointment.html', context)
