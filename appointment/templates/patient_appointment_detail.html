@@ -194,8 +194,7 @@
 
                                                     <div class="col-lg-3">
                                                         <div class="form-group">
-                                                            <label for="other_associates_complaints"
-                                                                   class="form-label">Severity</label>
+                                                            <label class="form-label">Severity</label>
                                                             <select name="severity" id="severity" class="form-control">
                                                                 {% for i in severity %}
                                                                 <option value="i.id">{{i.type}}</option>
@@ -236,7 +235,9 @@
 
                                             </div>
                                         </div>
+
                                         <hr>
+
                                         <div class="row">
                                             <div class="col-lg-3">
                                                 <label>P/R</label>
@@ -446,7 +447,7 @@
         html += '<option>Modern Surgery</option>';
         html += '<option>Laser Surgery</option>';
         html += '<option>Cryo Surgery</option>';
-        html += '<option>Bangali Technique</option>';
+        html += '<option>Bengali Technique</option>';
         html += '</select>';
         html += '</div>';
 

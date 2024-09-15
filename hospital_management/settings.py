@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'diagnosis',
     'disease',
     'address_place',
+    'previous_treatment',
 
 ]
 
