@@ -86,62 +86,82 @@
                                                         onclick="add_medicine()"> Add
                                                 </button>
                                             </div>
-
+                                            <hr>
                                             <div class="row col-lg-6">
-                                                <div class="col">
-                                                    <label for="sub_total">Sub. Total</label>
-                                                    <input type="text" class="form-control" name="sub_total" id="sub_total"
-                                                           onkeypress="return isNumberKey(event)" readonly>
-                                                </div>
-                                                <div class="col">
-                                                    <label for="discount">Discount %</label>
-                                                    <input type="text" class="form-control" name="discount"
-                                                           id="discount" onkeypress="return isNumberKey(event)" onkeyup="total_amount_function()">
-                                                </div>
-                                                <div class="col">
-                                                    <label for="sgst">SGST %</label>
-                                                    <input type="text" name="sgst" id="sgst" class="form-control">
-                                                </div>
-                                                <div class="col">
-                                                    <label for="cgst">CGST %</label>
-                                                    <input type="text" name="cgst" id="cgst" class="form-control">
-                                                </div>
-                                                <div class="col">
-                                                    <label for="shipping_packing">Shipping & Packing</label>
-                                                    <input type="text" class="form-control" name="shipping_packing"
-                                                           id="shipping_packing" onkeypress="return isNumberKey(event)" onkeyup="total_amount_function()">
-                                                </div>
-                                                <div class="col">
-                                                    <label for="total">Total</label>
-                                                    <input type="text" class="form-control" name="total" id="total"
-                                                           onkeypress="return isNumberKey(event)" readonly>
-                                                </div>
-                                                <div class="col">
-                                                    <label for="old_credit">Old Credit</label>
-                                                    <input type="text" class="form-control" name="old_credit"
-                                                           id="old_credit" onkeypress="return isNumberKey(event)">
+                                                <div class="row">
+                                                    <div class="col-lg-3">
+                                                        <label for="sub_total">Sub. Total</label>
+                                                        <input type="text" class="form-control" name="sub_total"
+                                                               id="sub_total"
+                                                               onkeypress="return isNumberKey(event)" readonly>
+                                                    </div>
+                                                    <div class="col-lg-3">
+                                                        <label for="discount">Discount %</label>
+                                                        <input type="text" class="form-control" name="discount"
+                                                               id="discount" onkeypress="return isNumberKey(event)"
+                                                               onkeyup="total_amount_function()">
+                                                    </div>
+                                                    <div class="col-lg-3">
+                                                        <label for="sgst">SGST %</label>
+                                                        <input type="text" name="sgst" id="sgst" class="form-control">
+                                                    </div>
+                                                    <div class="col-lg-3">
+                                                        <label for="cgst">CGST %</label>
+                                                        <input type="text" name="cgst" id="cgst" class="form-control">
+                                                    </div>
                                                 </div>
 
-                                                <div class="col">
-                                                    <label for="total_pay_bill_amount">Total Pay Bill Amount</label>
-                                                    <input type="text" class="form-control" name="total_pay_bill_amount"
-                                                           id="total_pay_bill_amount" onkeypress="return isNumberKey(event)" readonly>
-                                                </div>
-                                                <div class="col">
-                                                    <label for="cash">Cash</label>
-                                                    <input type="text" class="form-control" name="cash"
-                                                           id="cash" onkeypress="return isNumberKey(event)" onkeyup="online_amount_function()">
-                                                </div>
-                                                <div class="col">
-                                                    <label for="online">Online</label>
-                                                    <input type="text" class="form-control" name="online"
-                                                           id="online" onkeypress="return isNumberKey(event)" onkeyup="online_amount_function()">
+                                                <div class="row">
+                                                    <div class="col-lg-6">
+                                                        <label for="shipping_packing">Shipping & Packing</label>
+                                                        <input type="text" class="form-control" name="shipping_packing"
+                                                               id="shipping_packing"
+                                                               onkeypress="return isNumberKey(event)"
+                                                               onkeyup="total_amount_function()">
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        <label for="total">Total</label>
+                                                        <input type="text" class="form-control" name="total" id="total"
+                                                               onkeypress="return isNumberKey(event)" readonly>
+                                                    </div>
                                                 </div>
 
-                                                <div class="col">
-                                                    <label for="new_credit">New Credit</label>
-                                                    <input type="text" class="form-control" name="new_credit"
-                                                           id="new_credit" onkeypress="return isNumberKey(event)" readonly>
+                                                <div class="row">
+                                                    <div class="col-lg-3">
+                                                        <label for="old_credit">Old Credit</label>
+                                                        <input type="text" class="form-control" name="old_credit"
+                                                               id="old_credit" onkeypress="return isNumberKey(event)">
+                                                    </div>
+
+                                                    <div class="col-lg-9">
+                                                        <label for="total_pay_bill_amount">Total Pay Bill Amount</label>
+                                                        <input type="text" class="form-control"
+                                                               name="total_pay_bill_amount"
+                                                               id="total_pay_bill_amount"
+                                                               onkeypress="return isNumberKey(event)" readonly>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="col-lg-4">
+                                                        <label for="cash">Cash</label>
+                                                        <input type="text" class="form-control" name="cash"
+                                                               id="cash" onkeypress="return isNumberKey(event)"
+                                                               onkeyup="online_amount_function()">
+                                                    </div>
+                                                    <div class="col-lg-4">
+                                                        <label for="online">Online</label>
+                                                        <input type="text" class="form-control" name="online"
+                                                               id="online" onkeypress="return isNumberKey(event)"
+                                                               onkeyup="online_amount_function()">
+                                                    </div>
+
+                                                    <div class="col-lg-4">
+                                                        <label for="new_credit">New Credit</label>
+                                                        <input type="text" class="form-control" name="new_credit"
+                                                               id="new_credit" onkeypress="return isNumberKey(event)"
+                                                               readonly>
+                                                    </div>
                                                 </div>
 
                                             </div>
