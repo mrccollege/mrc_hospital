@@ -270,6 +270,7 @@
 
     function remove_row(index){
         $('#medicine_tr'+index).remove()
+        sub_total_function()
     }
 </script>
 
@@ -361,15 +362,7 @@
         var amt =  amt - gst_amt
         $('#amount'+index).val(amt);
 
-        var amountElements = document.querySelectorAll('[id^="amount"]');
-        var totalSum = 0;
-        amountElements.forEach(function(element) {
-            var amt = parseFloat(element.value) || 0;
-            console.log('Amount:', amt);
-            totalSum += amt;
-        });
-        $('#sub_total').val(totalSum)
-
+        sub_total_function()
     }
 </script>
 
@@ -391,14 +384,7 @@
             var amt =  amt - gst_amt
             $('#amount'+index).val(amt);
 
-            var amountElements = document.querySelectorAll('[id^="amount"]');
-            var totalSum = 0;
-            amountElements.forEach(function(element) {
-                var amt = parseFloat(element.value) || 0;
-                console.log('Amount:', amt);
-                totalSum += amt;
-            });
-            $('#sub_total').val(totalSum)
+            sub_total_function()
 
         }else{
             console.log('sell qty is not here')
@@ -426,18 +412,23 @@
             var amt =  amt - gst_amt
             $('#amount'+index).val(amt);
 
-            var amountElements = document.querySelectorAll('[id^="amount"]');
-            var totalSum = 0;
-            amountElements.forEach(function(element) {
-                var amt = parseFloat(element.value) || 0;
-                console.log('Amount:', amt);
-                totalSum += amt;
-            });
-            $('#sub_total').val(totalSum)
-
+            sub_total_function()
         }else{
             console.log('sell qty is not here')
         }
+    }
+</script>
+
+<script>
+    function sub_total_function(){
+        var amountElements = document.querySelectorAll('[id^="amount"]');
+        var totalSum = 0;
+        amountElements.forEach(function(element) {
+            var amt = parseFloat(element.value) || 0;
+            console.log('Amount:', amt);
+            totalSum += amt;
+        });
+        $('#sub_total').val(totalSum)
     }
 </script>
 {% endblock js %}
