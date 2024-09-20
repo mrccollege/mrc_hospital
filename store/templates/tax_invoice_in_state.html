@@ -165,12 +165,6 @@
 
 {% block js %}
 <script>
-    $("#medicine_expiry").datepicker({
-       dateFormat: "dd/mm/yy"
-    });
-</script>
-
-<script>
     $('#medicine_form').on('submit', function (e) {
         $('#loader-overlay').show(); // Show overlay
         $('#loader').show(); // Show loader
@@ -216,6 +210,10 @@
 </script>
 
 <script>
+    $(document).ready(function(){
+        add_medicine();
+    });
+
     var index = 1;
     function add_medicine(){
         var html = '';
@@ -248,117 +246,6 @@
         // Append the new row to the table body
         $('table tbody').append(html);
         index +=1;
-    }
-    $(document).ready(function(){
-        add_medicine();
-    });
-
-    function sell_qty_funtion(index){
-        var sell_qty = parseInt($('#sell_qty'+index).val())
-        var mrp = parseInt($('#mrp'+index).val())
-        var discount = parseInt($('#discount'+index).val())
-
-        sell_qty = sell_qty ? sell_qty : 0;
-        mrp = mrp ? mrp : 0;
-
-        var amount = sell_qty * mrp
-
-        discount = discount ? discount : 0;
-        var discountAmount = (discount / 100) * amount;
-        amount = amount - discountAmount
-        $('#sale_rate' + index).val(amount.toFixed(2));
-        $('#amount'+index).val(amount.toFixed(2))
-
-        var sum = 0;
-        $('input[name="amount"]').each(function(){
-            var value = parseFloat($(this).val()) || 0;
-            sum += value;
-        });
-        $('#total').val(sum);
-
-        total_amount_function()
-    }
-
-    function discount_function(index) {
-        var discount = parseFloat($('#discount' + index).val());
-        var sell_qty = parseInt($('#sell_qty'+index).val())
-        var mrp = parseInt($('#mrp'+index).val())
-
-        if (discount > 100) {
-            $('#discount' + index).val('')
-        }
-        var discount = parseFloat($('#discount' + index).val());
-
-        sell_qty = sell_qty ? sell_qty : 0;
-        mrp = mrp ? mrp : 0;
-
-        var amount = sell_qty * mrp
-
-        discount = discount ? discount : 0;
-        var discountAmount = (discount / 100) * amount;
-        amount = amount - discountAmount;
-
-        $('#sale_rate' + index).val(amount.toFixed(2));
-        $('#amount' + index).val(amount.toFixed(2));
-
-        var sum = 0;
-        $('input[name="amount"]').each(function(){
-            var value = parseFloat($(this).val()) || 0;
-            sum += value;
-        });
-
-
-        $('#total').val(sum);
-
-        total_amount_function()
-    }
-
-    function gst_function(index) {
-        var discount = parseFloat($('#discount' + index).val());
-        var sell_qty = parseInt($('#sell_qty'+index).val())
-        var mrp = parseInt($('#mrp'+index).val())
-        var gst = parseInt($('#gst'+index).val())
-
-        if (gst > 100) {
-            $('#gst'+index).val('')
-            return;
-        }
-        var gst = parseInt($('#gst'+index).val())
-
-        sell_qty = sell_qty ? sell_qty : 0;
-        mrp = mrp ? mrp : 0;
-
-        var amount = sell_qty * mrp
-
-        discount = discount ? discount : 0;
-        var discountAmount = (discount / 100) * amount;
-        amount = amount - discountAmount;
-        s_rate = amount
-
-        gst = gst ? gst : 0;
-        var gstAmount = (gst / 100) * amount;
-        //amount = amount + gstAmount;
-
-        amount = gstAmount / 100
-        amount =  amount + 1
-        amount = s_rate / amount
-        tax = s_rate - amount
-        $('#tax' + index).val(tax.toFixed(2));
-        $('#taxable_amount' + index).val(amount.toFixed(2));
-        $('#amount' + index).val(s_rate.toFixed(2));
-
-        sgst = tax / 2
-
-        $('#sgst, #cgst').val(sgst.toFixed(2))
-
-        var sum = 0;
-        $('input[name="amount"]').each(function(){
-            var value = parseFloat($(this).val()) || 0;
-            sum += value;
-        });
-        $('#sub_total').val(sum);
-
-        total_amount_function()
     }
 
     function remove_row(index){
@@ -438,60 +325,99 @@
 </script>
 
 <script>
-    function total_amount_function(){
-        var total = 0;
-        $('input[name="amount"]').each(function(){
-            var value = parseFloat($(this).val()) || 0;
-            total += value;
+    function sell_qty_funtion(index){
+        var sell_qty = parseInt($('#sell_qty' + index).val()) || 0;
+        var mrp = parseInt($('#mrp' + index).val()) || 0;
+        var sell_amt = sell_qty * mrp
+
+        var discount = parseInt($('#discount'+index).val()) || 0;
+        var disc_amt = (discount / 100) * sell_amt;
+        var amt =  sell_amt - disc_amt
+
+        $('#sale_rate'+index).val(amt);
+
+        var gst = parseInt($('#gst'+index).val()) || 0;
+        var gst_amt = (gst / 100) * amt;
+        var amt =  amt - gst_amt
+        $('#amount'+index).val(amt);
+
+        var amountElements = document.querySelectorAll('[id^="amount"]');
+        var totalSum = 0;
+        amountElements.forEach(function(element) {
+            var amt = parseFloat(element.value) || 0;
+            console.log('Amount:', amt);
+            totalSum += amt;
         });
+        $('#sub_total').val(totalSum)
 
-        var discount = parseFloat($('#discount').val());
+    }
+</script>
 
-        if (discount > 100) {
-            $('#discount').val('')
-        }
-        var discount = parseFloat($('#discount').val());
-        discount = discount ? discount : 0 ;
+<script>
+    function discount_function(index){
+        var sell_qty = parseInt($('#sell_qty' + index).val()) || 0;
+        var mrp = parseInt($('#mrp' + index).val()) || 0;
+        var sell_amt = sell_qty * mrp
 
-        var discountAmount = (discount / 100) * total;
-        amount = total - discountAmount;
+        if (sell_qty){
+            var discount = parseInt($('#discount'+index).val()) || 0;
+            var disc_amt = (discount / 100) * sell_amt;
+            var amt =  sell_amt - disc_amt
 
-        var shipping_packing = parseInt($('#shipping_packing').val());
-        shipping_packing = shipping_packing ? shipping_packing:0 ;
-        old_credit = parseInt($('#old_credit').val());
-        old_credit = old_credit ? old_credit:0;
-        if (amount < 1){
-            total = shipping_packing +  total
-            total = $('#total').val(total.toFixed(2));
-            total = $('#total').val();
+            $('#sale_rate'+index).val(amt);
 
-            total =  Number(total) + old_credit
-            $('#total_pay_bill_amount').val(total.toFixed(2))
+            var gst = parseInt($('#gst'+index).val()) || 0;
+            var gst_amt = (gst / 100) * amt;
+            var amt =  amt - gst_amt
+            $('#amount'+index).val(amt);
+
+            var amountElements = document.querySelectorAll('[id^="amount"]');
+            var totalSum = 0;
+            amountElements.forEach(function(element) {
+                var amt = parseFloat(element.value) || 0;
+                console.log('Amount:', amt);
+                totalSum += amt;
+            });
+            $('#sub_total').val(totalSum)
+
         }else{
-            amount = shipping_packing +  amount
-            total = $('#total').val(amount.toFixed(2));
-            total = $('#total').val();
+            console.log('sell qty is not here')
+        }
 
-            amount = Number(total) + old_credit
-            $('#total_pay_bill_amount').val(amount.toFixed(2))
+
+    }
+</script>
+
+<script>
+    function gst_function(index){
+        var sell_qty = parseInt($('#sell_qty' + index).val()) || 0;
+        var mrp = parseInt($('#mrp' + index).val()) || 0;
+        var sell_amt = sell_qty * mrp
+
+        if (sell_qty){
+            var discount = parseInt($('#discount'+index).val()) || 0;
+            var disc_amt = (discount / 100) * sell_amt;
+            var amt =  sell_amt - disc_amt
+
+            $('#sale_rate'+index).val(amt);
+
+            var gst = parseInt($('#gst'+index).val()) || 0;
+            var gst_amt = (gst / 100) * amt;
+            var amt =  amt - gst_amt
+            $('#amount'+index).val(amt);
+
+            var amountElements = document.querySelectorAll('[id^="amount"]');
+            var totalSum = 0;
+            amountElements.forEach(function(element) {
+                var amt = parseFloat(element.value) || 0;
+                console.log('Amount:', amt);
+                totalSum += amt;
+            });
+            $('#sub_total').val(totalSum)
+
+        }else{
+            console.log('sell qty is not here')
         }
     }
 </script>
-    <script>
-        function online_amount_function(){
-            var cash = $('#cash').val()
-            var online = $('#online').val()
-            cash = cash ? cash:0;
-            online = online ? online:0;
-
-
-            pay_amount = Number(cash) + Number(online)
-            g_total = Number($('#total_pay_bill_amount').val());
-            g_total = g_total ? g_total:0;
-            new_credit = g_total - pay_amount
-            $('#new_credit').val(new_credit.toFixed(2))
-
-        }
-    </script>
-
 {% endblock js %}
