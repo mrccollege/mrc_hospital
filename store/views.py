@@ -400,6 +400,6 @@ def create_bill(request):
             'sgst': sgst,
             'cgst': cgst,
         }
-        return render(request, 'tax_invoice_in_state.html', context)
+        # return render(request, 'tax_invoice_in_state.html', context)
         # return render(request, 'new_tax_invoice_other_state.html', context)
-        # return render(request, 'bill_of_supply.html', context)
+        return render(request, 'new_bill_of_supply.html', context)

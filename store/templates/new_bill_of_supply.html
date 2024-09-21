@@ -1,0 +1,452 @@
+{% extends 'base.html' %}
+
+{% block css %}
+{% endblock css %}
+
+
+{% block content %}
+<div class="wrapper">
+
+    <!-- Right side column. Contains the navbar and content of the page -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <h1>Create New Bill (Tax Invoice)</h1>
+            <ol class="breadcrumb">
+                <li><a href="/"><i class="fa fa-dashboard"></i> Home</a></li>
+                <li><a href="/">Tables</a></li>
+                <li class="active">Data tables</li>
+            </ol>
+        </section>
+
+        <!-- Main content -->
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="box">
+                        <div class="box-header">
+                            <h3 class="box-title">Fill Complete Medicine Details</h3>
+                        </div><!-- /.box-header -->
+                        <div class="box-body">
+                            <div class="box box-primary">
+                                <!-- form start -->
+                                <form id="medicine_form" role="form">{% csrf_token %}
+                                    <div class="box-body">
+                                        <div class="row">
+                                            <div class="col-lg-4">
+                                                <div class="form-group">
+                                                    <label for="patient_name" class="form-label">Patient Name</label>
+                                                    <input type="text" class="form-control" id="patient_name"
+                                                           name="patient_name" required
+                                                           placeholder="Enter Patient name: ">
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <div class="form-group">
+                                                    <label for="mobile" class="form-label">Patient Mobile</label>
+                                                    <input type="text" class="form-control" id="mobile"
+                                                           name="mobile" required placeholder="Enter patient mobile: ">
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <div class="form-group">
+                                                    <label for="address" class="form-label">Patient Address
+                                                        (optional)</label>
+                                                    <input type="text" class="form-control" id="address"
+                                                           name="address" placeholder="Enter patient address: ">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div><!-- /.box-body -->
+
+                                    <div class="box-body">
+                                        <div class="table-responsive">
+                                            <table class="table table-condensed">
+                                                <thead>
+                                                <tr>
+                                                    <th>Medicine Name</th>
+                                                    <th>Record Qty</th>
+                                                    <th>Sell Qty</th>
+                                                    <th colspan="1">MRP.</th>
+                                                    <th>Disc.%</th>
+                                                    <th>S.Rate.</th>
+
+                                                    <th>Amount</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                </tbody>
+                                            </table>
+                                            <div class="text-center">
+                                                <button type="button" class="btn btn-primary"
+                                                        onclick="add_medicine()"> Add
+                                                </button>
+                                            </div>
+                                            <hr>
+                                            <div class="row col-lg-6">
+                                                <div class="row">
+                                                    <div class="col-lg-3">
+                                                        <label for="sub_total">Sub. Total</label>
+                                                        <input type="text" class="form-control" name="sub_total"
+                                                               id="sub_total" value="0"
+                                                               onkeypress="return isNumberKey(event)" readonly>
+                                                    </div>
+                                                    <div class="col-lg-3">
+                                                        <label for="total_discount">Discount %</label>
+                                                        <input type="text" class="form-control" name="total_discount"
+                                                               id="total_discount" value="0" onkeypress="return isNumberKey(event)"
+                                                               onkeyup="total_discount_apply_function()">
+                                                    </div>
+                                                    <div class="col-lg-3">
+                                                        <label for="sgst">SGST %</label>
+                                                        <input type="text" name="sgst" id="sgst" class="form-control">
+                                                    </div>
+                                                    <div class="col-lg-3">
+                                                        <label for="cgst">CGST %</label>
+                                                        <input type="text" name="cgst" id="cgst" class="form-control">
+                                                    </div>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="col-lg-6">
+                                                        <label for="shipping_packing">Shipping & Packing</label>
+                                                        <input type="text" class="form-control" name="shipping_packing"
+                                                               id="shipping_packing" value="0"
+                                                               onkeypress="return isNumberKey(event)"
+                                                               onkeyup="total_discount_apply_function()">
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        <label for="total">Total</label>
+                                                        <input type="text" class="form-control" name="total" id="total"
+                                                               onkeypress="return isNumberKey(event)" readonly>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="col-lg-6">
+                                                        <label for="old_credit">Old Credit</label>
+                                                        <input type="text" class="form-control" name="old_credit"
+                                                               id="old_credit" readonly>
+                                                    </div>
+
+                                                    <div class="col-lg-6">
+                                                        <label for="total_pay_bill_amount">Total Pay Bill Amount</label>
+                                                        <input type="text" class="form-control"
+                                                               name="total_pay_bill_amount"
+                                                               id="total_pay_bill_amount"
+                                                               onkeypress="return isNumberKey(event)" readonly>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="col-lg-4">
+                                                        <label for="cash">Cash</label>
+                                                        <input type="text" class="form-control" name="cash"
+                                                               id="cash" onkeypress="return isNumberKey(event)"
+                                                               onkeyup="cash_online_function()()">
+                                                    </div>
+                                                    <div class="col-lg-4">
+                                                        <label for="online">Online</label>
+                                                        <input type="text" class="form-control" name="online"
+                                                               id="online" onkeypress="return isNumberKey(event)"
+                                                               onkeyup="cash_online_function()">
+                                                    </div>
+
+                                                    <div class="col-lg-4">
+                                                        <label for="new_credit">New Credit</label>
+                                                        <input type="text" class="form-control" name="new_credit"
+                                                               id="new_credit" onkeypress="return isNumberKey(event)"
+                                                               readonly>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div><!-- /.box-body -->
+                                    <div class="box-footer">
+                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div><!-- /.box-body -->
+                    </div><!-- /.box -->
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+        </section><!-- /.content -->
+    </div><!-- /.content-wrapper -->
+
+</div><!-- ./wrapper -->
+
+{% endblock content %}
+
+{% block js %}
+<script>
+    $('#medicine_form').on('submit', function (e) {
+        $('#loader-overlay').show(); // Show overlay
+        $('#loader').show(); // Show loader
+        store_id = $('#store_id').val();
+        if(store_id == 0){
+            return false;
+        }
+        e.preventDefault();
+        var formData = $('#medicine_form').serialize();
+        $.ajax({
+          url: '/store/create_bill/',
+          type: 'POST',
+          data: formData,
+          success: function (response) {
+            if(response.status == 'success'){
+                $('#loader-overlay').hide(); // Show overlay
+                $('#loader').hide(); // Show loader
+
+              Swal.fire({
+                title: 'Success',
+                text: response.msg,
+                icon: 'success',
+                showCancelButton: false,
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'OK'
+              }).then((result) => {
+                window.location.href = '/store/create_bill/';
+              });
+            }else{
+              Swal.fire({
+                  title: 'Error',
+                  text: response.msg,
+                  icon: 'error',
+                  confirmButtonColor: '#3085d6',
+                  confirmButtonText: 'OK'
+              });
+              $('#password').val('');
+              return false;
+            }
+          },
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function(){
+        add_medicine();
+    });
+
+    var index = 1;
+    function add_medicine(){
+        var html = '';
+        html += '<tr id="medicine_tr'+index+'">';
+        html += '<td><input onkeyup="search_medicine('+index+');" type="text" id="medicine'+index+'" name="medicine" class="form-control" autocomplete="off" placeholder="Search medicine: " required></td>';
+        html += '<input type="hidden" name="record_id" class="form-control" id="record_id'+index+'" required>';
+        html += '<input type="hidden" name="medicine_id" class="form-control" id="medicine_id'+index+'" required>';
+
+        html += '<td><input type="text" id="record_qty'+index+'" name="record_qty" class="form-control" readonly required></td>';
+
+        html += '<td><input type="text" onkeyup="sell_qty_function('+index+')" onkeypress="return isNumberKey(event)" id="sell_qty'+index+'" name="sell_qty" class="form-control" placeholder="Sell quantity" required></td>';
+
+        html += '<td><input type="text" id="mrp'+index+'" name="mrp" class="form-control" value="0" readonly required></td>';
+
+        html += '<td><input type="text" onkeyup="discount_function('+index+')" onkeypress="return isNumberKey(event)" id="discount'+index+'" name="discount" class="form-control" required></td>';
+
+        html += '<td><input type="text" id="sale_rate'+index+'" name="sale_rate" class="form-control" readonly required></td>';
+
+
+        html += '<td><input value="0" type="text" id="amount'+index+'" name="amount" class="total form-control" readonly></td>';
+
+        html += '<td><button onclick="remove_row('+index+')"><i class="fa fa-remove" style="font-size:24px"></i></button></td>';
+        html += '</tr>';
+
+        // Append the new row to the table body
+        $('table tbody').append(html);
+        index +=1;
+    }
+
+    function remove_row(index){
+        $('#medicine_tr'+index).remove()
+        sub_total_function()
+        sgst_and_cgst_function()
+    }
+</script>
+
+<script>
+    function search_medicine(indexID) {
+
+        $('#medicine'+indexID).on('keydown', function(event) {
+            if (event.key === 'Backspace' || event.key === 'Delete') {
+                $('#record_id' + indexID).val('');
+                $('#medicine_id' + indexID).val('');
+                $('#mrp' + indexID).val('');
+                $('#record_qty' + indexID).val('');
+                $('#amount' + indexID).val(0);
+            }
+        });
+
+        $('#medicine'+indexID).on('input', function() {
+            var value = $(this).val();
+            var leadingSpaces = value.match(/^ */)[0].length;
+            if (leadingSpaces > 2) {
+                $(this).val(value.slice(0, leadingSpaces - 1) + value.slice(leadingSpaces));
+            }
+        });
+
+        var medicineIds = [];
+
+        $('input[name="medicine_id"]').each(function() {
+            medicineIds.push($(this).val());
+        });
+        medicineIds = medicineIds.filter(function(id) {
+            return id.trim() !== '';
+        });
+
+        $('#medicine' + indexID).autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: '/store/search_medicine/',
+                    type: 'GET',
+                    data: {
+                        search_value: request.term,
+                        medicineIds: medicineIds,
+                    },
+                    success: function (result) {
+                        if (result.results) {
+                            var suggestedProducts = result.results.map(function (results) {
+                                return {
+                                    label: results.name,
+                                    value: results.name,
+                                    record_id: results.record_id,
+                                    medicine_id: results.medicine_id,
+                                    record_qty: results.record_qty,
+                                    price:results.price
+                                };
+                            });
+                            response(suggestedProducts);
+                        }
+                    },
+                    error: function (xhr, errmsg, err) {
+                        console.log(xhr.status + ": " + xhr.responseText);
+                    }
+                });
+            },
+            minLength: 2,
+            select: function (event, ui) {
+                $('#record_id' + indexID).val(ui.item.record_id);
+                $('#medicine_id' + indexID).val(ui.item.medicine_id);
+                $('#mrp' + indexID).val(ui.item.price);
+                $('#record_qty' + indexID).val(ui.item.record_qty);
+                //add_medicine()
+            }
+        })
+    }
+</script>
+
+<script>
+    function sell_qty_function(index){
+        var sell_qty = parseInt($('#sell_qty' + index).val()) || 0;
+        var mrp = parseInt($('#mrp' + index).val()) || 0;
+        var sell_amt = sell_qty * mrp
+
+        var discount = parseInt($('#discount'+index).val()) || 0;
+        var disc_amt = (discount / 100) * sell_amt;
+        var amt =  sell_amt - disc_amt
+
+        $('#sale_rate'+index).val(amt.toFixed(2));
+        $('#amount'+index).val(amt.toFixed(2));
+
+        sub_total_function()
+        total_discount_apply_function()
+
+    }
+</script>
+
+<script>
+    function discount_function(index){
+        var sell_qty = parseInt($('#sell_qty' + index).val()) || 0;
+        var mrp = parseInt($('#mrp' + index).val()) || 0;
+        var sell_amt = sell_qty * mrp
+
+        if (sell_qty){
+            var discount = parseInt($('#discount'+index).val()) || 0;
+            var disc_amt = (discount / 100) * sell_amt;
+            var amt =  sell_amt - disc_amt
+
+            $('#sale_rate'+index).val(amt);
+            $('#amount'+index).val(amt.toFixed(2));
+
+            sub_total_function()
+            total_discount_apply_function()
+
+
+        }else{
+            console.log('sell qty is not here')
+        }
+
+
+    }
+</script>
+
+<script>
+    function gst_function(index){
+        var sell_qty = parseInt($('#sell_qty' + index).val()) || 0;
+        var mrp = parseInt($('#mrp' + index).val()) || 0;
+        var sell_amt = sell_qty * mrp
+
+        if (sell_qty){
+            var discount = parseInt($('#discount'+index).val()) || 0;
+            var disc_amt = (discount / 100) * sell_amt;
+            var amt =  sell_amt - disc_amt
+
+            $('#sale_rate'+index).val(amt.toFixed(2));
+            $('#amount'+index).val(amt.toFixed(2));
+
+            sub_total_function()
+            total_discount_apply_function()
+        }else{
+            console.log('sell qty is not here')
+        }
+    }
+</script>
+
+<script>
+    function sub_total_function(){
+        var amountElements = document.querySelectorAll('[name="amount"]');
+        var totalSum = 0;
+        amountElements.forEach(function(element) {
+            var amt = parseFloat(element.value) || 0;
+            console.log('Amount:', amt);
+            totalSum += amt;
+        });
+        $('#sub_total').val(totalSum.toFixed(2))
+    }
+</script>
+
+<script>
+    function total_discount_apply_function(){
+        var dis_apply = parseFloat($('#total_discount').val()) || 0;
+        var shipping_packing = parseFloat($('#shipping_packing').val()) || 0;
+
+        var sub_total = parseFloat($('#sub_total').val())
+        //var sub_total = shipping_packing +  sub_total
+
+        var disc_amt = (dis_apply / 100) * sub_total;
+        var amt =  sub_total - disc_amt
+        var amt =  amt +  shipping_packing
+        $('#total').val(amt.toFixed(2))
+
+        var old_credit = parseFloat($('#old_credit').val()) || 0;
+        var total = parseFloat($('#total').val()) || 0;
+
+        var total_pay_bill = old_credit + total
+        parseFloat($('#total_pay_bill_amount').val(total_pay_bill.toFixed(2)))
+    }
+</script>
+
+<script>
+    function cash_online_function(){
+        var cash = parseFloat($('#cash').val()) || 0;
+        var online  = parseFloat($('#online').val()) || 0;
+        total_pay_bill = parseFloat($('#total_pay_bill_amount').val()) || 0;
+
+        var paid_amt = total_pay_bill - (cash + online)
+        $('#new_credit').val(paid_amt.toFixed(2))
+    }
+</script>
+{% endblock js %}
