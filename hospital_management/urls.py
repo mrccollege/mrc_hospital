@@ -18,6 +18,7 @@ urlpatterns = [
     path('menu/', include('menu.urls')),
     path('address_place/', include('address_place.urls')),
     path('diagnosis/', include('diagnosis.urls')),
+    path('my_order/', include('my_order.urls')),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
