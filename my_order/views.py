@@ -92,16 +92,16 @@ def medicine_order(request):
         user_id = request.session.get('user_id')
         try:
             user = User.objects.get(id=user_id)
-            doctor_id = Doctor.objects.get(user_id=user_id)
-            doctor_id = doctor_id.id
+            doctor = Doctor.objects.get(user_id=user.id)
+            doctor_id = doctor.id
         except:
-            user = ''
+            doctor = ''
             doctor_id = 0
 
         medicine = Medicine.objects.filter()
         context = {
             'medicine': medicine,
-            'user': user,
+            'doctor': doctor,
             'doctor_id': doctor_id,
         }
         return render(request, 'medicine_order.html', context)

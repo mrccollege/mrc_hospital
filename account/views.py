@@ -249,3 +249,33 @@ def user_logout(request):
     logout(request)
     request.session.flush()
     return redirect('/account/user_login/')
+
+
+def update_user_detail(request):
+    if request.method == 'POST':
+        form = request.POST
+        user_id = form.get('user_id')
+        mobile = form.get('mobile')
+        house_flat = form.get('house_flat')
+        street_colony = form.get('street_colony')
+        city = form.get('city')
+        district = form.get('district')
+        pin = form.get('pin')
+        state = form.get('state')
+        country = form.get('country')
+        User.objects.filter(id=user_id).update(mobile=mobile,
+                                               house_flat=house_flat,
+                                               street_colony=street_colony,
+                                               city=city,
+                                               district=district,
+                                               pin=pin,
+                                               # state=state,
+                                               # country=country,
+                                               )
+        status = 'success'
+        msg = 'Information has been updated.'
+        context = {
+            'status': status,
+            'msg': msg,
+        }
+        return JsonResponse(context)
