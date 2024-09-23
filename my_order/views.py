@@ -53,28 +53,33 @@ def medicine_order(request):
         mrp = form.getlist('mrp')
         amount = form.getlist('amount')
         order_qty = form.getlist('order_qty')
+        try:
+            order_head = MedicineOrderHead.objects.create(doctor_id=doctor_id,
+                                                          subtotal=subtotal,
+                                                          discount=discount,
+                                                          shipping=shipping,
+                                                          pay_amount=pay_amount,
+                                                          )
 
-        order_head = MedicineOrderHead.objects.create(doctor_id=doctor_id,
-                                                      subtotal=subtotal,
-                                                      discount=discount,
-                                                      shipping=shipping,
-                                                      pay_amount=pay_amount,
-                                                      )
+            if order_head:
+                for i in range(len(medicine_id)):
+                    MedicineOrderDetail.objects.create(head_id=order_head.id,
+                                                       medicine_id=medicine_id[i],
+                                                       mrp=mrp[i],
+                                                       order_qty=order_qty[i],
+                                                       amount=amount[i],
+                                                       )
 
-        if order_head:
-            for i in range(len(medicine_id)):
-                MedicineOrderDetail.objects.create(head_id=order_head.id,
-                                                   medicine_id=medicine_id[i],
-                                                   mrp=mrp[i],
-                                                   order_qty=order_qty[i],
-                                                   amount=amount[i],
-                                                   )
+                status = 'success'
+                msg = 'order successfully created.'
 
-            status = 'success'
-            msg = 'order successfully created.'
-        else:
+            else:
+                status = 'failed'
+                msg = 'order failed.'
+
+        except Exception as e:
             status = 'failed'
-            msg = 'order failed.'
+            msg = str(e)
 
         context = {
             'status': status,
