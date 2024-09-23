@@ -7,6 +7,8 @@ from django.db.models import Sum, Q
 
 from appointment.models import PatientAppointment
 
+from my_order.models import MedicineOrderHead, MedicineOrderDetail
+
 
 # Create your views here.
 @login_required(login_url='/account/user_login/')
@@ -45,3 +47,14 @@ def appointment_patient_bill_detail(request, id):
         'appointment': appointment,
     }
     return render(request, 'appointment_patient_bill.html', context)
+
+
+def order_received(request, id):
+    user = MedicineOrderHead.objects.get(id=id)
+    medicine = MedicineOrderDetail.objects.filter(head_id=id)
+    context = {
+        'id': id,
+        'user': user,
+        'medicine': medicine,
+    }
+    return render(request, 'order_received.html', context)
