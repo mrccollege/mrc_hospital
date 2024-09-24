@@ -57,18 +57,59 @@
                                                 </div>
                                             </div>
                                         </div>
+
                                         <div class="row">
                                             <div class="col-lg-4 form-group">
-                                                <label for="address" class="form-label">Address</label>
-                                                <textarea class="form-control" id="address" name="address" rows="3"
-                                                          required></textarea>
+                                                <label for="house_flat" class="form-label">House No. / Flat / Floor</label>
+                                                <input type="text" class="form-control" name="house_flat"
+                                                       id="house_flat">
+                                            </div>
+
+                                            <div class="col-lg-4 form-group">
+                                                <label for="street" class="form-label">Street / Colony</label>
+                                                <input type="text" class="form-control" name="street" id="street">
+                                            </div>
+
+                                            <div class="col-lg-4 form-group">
+                                                <label for="city" class="form-label">City</label>
+                                                <input type="text" class="form-control" name="city" id="city">
+                                            </div>
+                                        </div>
+
+
+                                        <div class="row">
+                                            <div class="col-lg-4 form-group">
+                                                <label for="district" class="form-label">District</label>
+                                                <input type="text" class="form-control" name="district" id="district">
+                                            </div>
+
+                                            <div class="col-lg-4 form-group">
+                                                <label for="pincode" class="form-label">Pin</label>
+                                                <input type="text" class="form-control" name="pincode" id="pincode">
+                                            </div>
+
+
+                                            <div class="col-lg-4 form-group">
+                                                <label for="country" class="form-label">Country</label>
+                                                <select id="country" name="country" class="form-control"
+                                                        onchange="change_country()">
+                                                    {% for i in country %}
+                                                    <option value="{{i.id}}">{{i.name}}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+
+                                            <div class="col-lg-4 form-group">
+                                                <label for="state" class="form-label">State</label>
+                                                <select id="state" name="state" class="form-control">
+                                                </select>
                                             </div>
 
                                             <div class="col-lg-4 form-group">
                                                 <label for="degree" class="form-label">Degree</label>
-                                                <textarea class="form-control" id="degree" name="degree" rows="3"
-                                                          placeholder="Enter Degree Name Like : MBBS, BAMS, BHMS, MS ..."
-                                                          required></textarea>
+                                                <input type="text" class="form-control" id="degree"
+                                                       name="degree" placeholder="Enter Degree Name Like : MBBS, BAMS, BHMS, MS ..."
+                                                          required>
                                             </div>
                                             <div class="col-lg-4 form-group">
                                                 <label for="specialist" class="form-label">Specialist</label>
@@ -96,6 +137,31 @@
 {% endblock content %}
 
 {% block js %}
+<script>
+    $(document).ready(function(){
+        change_country()
+    })
+
+    function change_country(){
+        country_id = $('#country').val();
+        $('#loader-overlay').show(); // Show overlay
+        $('#loader').show(); // Show loader
+        $.ajax({
+          url: '/address_place/get_state/',
+          type: 'GET',
+          data: {'country_id': country_id},
+          success: function (response) {
+            $('#loader-overlay').hide(); // Show overlay
+            $('#loader').hide(); // Show loader
+            var html = ''
+            $.each(response.state, function(index, item){
+                html += '<option value="'+item.id+'">'+item.name+'</option>'
+            })
+            $('#state').html(html)
+          }
+        })
+    }
+</script>
 <script>
     $(document).ready(function(){
         $('#store_form').on('submit', function (e) {

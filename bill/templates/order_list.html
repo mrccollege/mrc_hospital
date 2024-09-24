@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block css %}
+{% endblock css %}
+
+
+{% block content %}
+<div class="wrapper">
+
+    <!-- Right side column. Contains the navbar and content of the page -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <h1>
+                All Doctor Detail
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="/"><i class="fa fa-dashboard"></i> Home</a></li>
+                <li><a href="/">Tables</a></li>
+                <li class="active">Data tables</li>
+            </ol>
+        </section>
+
+        <!-- Main content -->
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="box">
+                        <div class="box-header">
+                            <h3 class="box-title">Doctors</h3>
+                        </div><!-- /.box-header -->
+                        <div class="box-body">
+                            <table id="example1" class="table table-bordered table-striped">
+                                <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Sub total</th>
+                                    <th>Discount</th>
+                                    <th>Shipping</th>
+                                    <th>Amount</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for i in order %}
+                                <tr>
+                                    <td>{{i.doctor|title}}</td>
+                                    <td>{{i.subtotal}}</td>
+                                    <td>{{i.discount}}</td>
+                                    <td>{{i.shipping}}</td>
+                                    <td>{{i.pay_amount}}</td>
+                                    <td><a href="/bill/order_detail/{{i.id}}/">View</a></td>
+                                </tr>
+                                {% endfor %}
+
+                                </tbody>
+
+                            </table>
+                        </div><!-- /.box-body -->
+                    </div><!-- /.box -->
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+        </section><!-- /.content -->
+    </div><!-- /.content-wrapper -->
+
+</div><!-- ./wrapper -->
+{% endblock content %}
+
+{% block js %}
+<!-- DATA TABES SCRIPT -->
+<script src="/static/plugins/datatables/jquery.dataTables.js" type="text/javascript"></script>
+<script src="/static/plugins/datatables/dataTables.bootstrap.js" type="text/javascript"></script>
+<!-- page script -->
+<script type="text/javascript">
+    $(function () {
+      $("#example1").dataTable();
+      $('#example2').dataTable({
+        "bPaginate": true,
+        "bLengthChange": false,
+        "bFilter": false,
+        "bSort": true,
+        "bInfo": true,
+        "bAutoWidth": false
+      });
+    });
+</script>
+{% endblock js %}

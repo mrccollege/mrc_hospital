@@ -1,6 +1,22 @@
 {% extends 'base.html' %}
 
 {% block css %}
+<style>
+    .table-responsive tbody {
+        display: block;
+        max-height: 300px; /* Set a max height for the table body */
+        overflow-y: auto;  /* Enable vertical scrolling */
+        width: 100%;
+    }
+
+    /* Make sure the columns align properly with fixed headers */
+    .table-responsive thead, .table-responsive tbody tr {
+        display: table;
+        width: 100%;
+        table-layout: fixed; /* Ensure that columns in thead and tbody have the same width */
+    }
+</style>
+
 {% endblock css %}
 
 
@@ -92,14 +108,14 @@
                                                 <label class="form-label">state</label>
                                                 <input type="text" value="{{doctor.user.state}}" class="form-control"
                                                        id="state"
-                                                       name="state" placeholder="Enter patient address: ">
+                                                       name="state" placeholder="Enter patient address: " readonly>
                                             </div>
 
                                             <div class="col-lg-3 form-group">
                                                 <label class="form-label">country</label>
                                                 <input type="text" value="{{doctor.user.country}}" class="form-control"
                                                        id="country"
-                                                       name="country" placeholder="Enter patient address: ">
+                                                       name="country" placeholder="Enter patient address: " readonly>
                                             </div>
 
                                             <div class="col-lg-3 form-group">
@@ -124,16 +140,18 @@
                                                     <th>Order Qty</th>
                                                     <th colspan="1">MRP.</th>
                                                     <th>Amount</th>
+                                                    <th>Desc</th>
+                                                    <th>Video</th>
+                                                    <th>Action</th>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
                                                 </tbody>
                                             </table>
-                                            <div class="text-center">
-                                                <button type="button" class="btn btn-primary"
-                                                        onclick="add_medicine()"> Add
-                                                </button>
-                                            </div>
+<!--                                            <div class="text-center">-->
+<!--                                                <button type="button" class="btn btn-primary"> Add-->
+<!--                                                </button>-->
+<!--                                            </div>-->
                                             <hr>
                                             <div class="row col-lg-6">
                                                 <div class="row">
@@ -273,32 +291,37 @@
 </script>
 
 <script>
-    $(document).ready(function(){
-        add_medicine();
-    });
-
     var index = 1;
-    function add_medicine(){
-        var html = '';
-        html += '<tr id="medicine_tr'+index+'">';
-        html += '<td><input onkeyup="search_medicine('+index+');" type="text" id="medicine'+index+'" name="medicine" class="form-control" autocomplete="off" placeholder="Search medicine: " required></td>';
-        html += '<input type="hidden" name="record_id" class="form-control" id="record_id'+index+'" required>';
-        html += '<input type="hidden" name="medicine_id" class="form-control" id="medicine_id'+index+'" required>';
+    $(document).ready(function(){
+        {% for i in medicine %}
 
-        html += '<td><input type="text" id="category'+index+'" name="category" class="form-control" readonly required></td>';
+            var html = '';
+            html += '<tr id="medicine_tr'+index+'">';
+            html += '<td><input value="{{i.name}}" type="text" id="medicine'+index+'" name="medicine" class="form-control" autocomplete="off" required></td>';
+            html += '<input type="hidden" value="{{i.id}}" name="medicine_id" class="form-control" id="medicine_id'+index+'" required>';
 
-        html += '<td><input type="text" onkeyup="order_qty_function('+index+')" onkeypress="return isNumberKey(event)" id="order_qty'+index+'" name="order_qty" class="form-control" placeholder="Sell quantity" required></td>';
+            html += '<td><input value="{{i.category}}" type="text" id="category'+index+'" name="category" class="form-control" readonly required></td>';
 
-        html += '<td><input type="text" id="mrp'+index+'" name="mrp" class="form-control" value="0" readonly required></td>';
+            html += '<td><input type="text" onkeyup="order_qty_function('+index+')" onkeypress="return isNumberKey(event)" id="order_qty'+index+'" name="order_qty" class="form-control" placeholder="Sell quantity" required></td>';
 
-        html += '<td><input value="0" type="text" id="amount'+index+'" name="amount" class="total form-control" readonly></td>';
+            html += '<td><input value="{{i.price}}" type="text" id="mrp'+index+'" name="mrp" class="form-control" value="0" readonly required></td>';
 
-        html += '<td><button onclick="remove_row('+index+')"><i class="fa fa-remove" style="font-size:24px"></i></button></td>';
-        html += '</tr>';
-        search_medicine(index)
-        $('table tbody').append(html);
-        index +=1;
-    }
+            html += '<td><input value="" type="text" id="amount'+index+'" name="amount" class="total form-control" readonly></td>';
+            html += '<td><input value="{{i.desc}}" type="text" id="desc'+index+'" name="desc" class="total form-control" readonly></td>';
+            html += '<td><a target="_blank" href="{{i.video_link|safe}}">Video</td>';
+
+
+
+
+            html += '<td><button onclick="remove_row('+index+')"><i class="fa fa-remove" style="font-size:24px"></i></button></td>';
+            html += '</tr>';
+            search_medicine(index)
+            $('table tbody').append(html);
+            index +=1;
+
+        {% endfor %}
+
+    });
 
     function remove_row(index){
         $('#medicine_tr'+index).remove()

@@ -16,6 +16,8 @@ from bill.models import PatientBill, PatientBillDetail
 
 from bill.models import SGST, CGST
 
+from my_order.models import MedicineOrderHead, MedicineOrderDetail
+
 
 # Create your views here.
 def main_store(request):
@@ -280,7 +282,7 @@ def search_medicine(request):
 
 
 @login_required(login_url='/account/user_login/')
-def create_bill(request):
+def create_bill(request, type, id):
     if request.method == 'POST':
         # User.objects.filter(username='rajat').delete()
         form = request.POST
@@ -392,14 +394,21 @@ def create_bill(request):
             'msg': msg,
         }
         return JsonResponse(context)
+
     else:
-        sgst = SGST.objects.all()
-        cgst = CGST.objects.all()
+        user = MedicineOrderHead.objects.get(id=id)
+        medicine = MedicineOrderDetail.objects.filter(head_id=id)
 
         context = {
-            'sgst': sgst,
-            'cgst': cgst,
+            'user': user,
+            'medicine': medicine,
         }
-        # return render(request, 'tax_invoice_in_state.html', context)
-        # return render(request, 'new_tax_invoice_other_state.html', context)
-        return render(request, 'new_bill_of_supply.html', context)
+
+        if type == 1:
+            return render(request, 'tax_invoice_in_state.html', context)
+        elif type == 2:
+            return render(request, 'new_tax_invoice_other_state.html', context)
+        elif type == 3:
+            return render(request, 'new_bill_of_supply.html', context)
+        else:
+            return render(request, 'new_bill_of_supply.html', context)

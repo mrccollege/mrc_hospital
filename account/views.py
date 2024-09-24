@@ -102,7 +102,15 @@ def doctor_registration(request):
         mobile = form.get('mobile')
         email = mobile + '@yopmail.com'
         phone = form.get('phone')
-        address = form.get('address')
+
+        house_flat = form.get('house_flat')
+        street = form.get('street')
+        city = form.get('city')
+        district = form.get('district')
+        pincode = form.get('pincode')
+        country = form.get('country')
+        state = form.get('state')
+
         specialist = form.get('specialist')
         degree = form.get('degree')
         status = 'failed'
@@ -113,7 +121,14 @@ def doctor_registration(request):
                                                 password='12345',
                                                 mobile=mobile,
                                                 phone=phone,
-                                                city=address)
+                                                house_flat=house_flat,
+                                                street_colony=street,
+                                                city=city,
+                                                district=district,
+                                                pin=pincode,
+                                                state_id=state,
+                                                country_id=country,
+                                                )
             if user_obj:
                 doctor_id = user_obj.id
                 Doctor.objects.create(user_id=doctor_id,
@@ -132,7 +147,12 @@ def doctor_registration(request):
             'msg': msg,
         }
         return JsonResponse(context)
-    return render(request, 'doctor_registration.html')
+    else:
+        country = Country.objects.all()
+        context = {
+            'country': country,
+        }
+        return render(request, 'doctor_registration.html', context)
 
 
 def patient_registration(request):

@@ -77,19 +77,27 @@ def all_medicine_category(request):
 def add_medicine(request):
     if request.method == 'POST':
         form = request.POST
+        form1 = request.FILES
         name = form.get('name')
+        price = float(form.get('price'))
+        image = form1.get('image')
         category = form.get('category')
+        video_link = form.get('video_link')
         manufacture = form.get('manufacture')
         mobile = form.get('mobile')
         status = 'failed'
         msg = 'Something went wrong.'
         try:
             medicine_obj = Medicine.objects.create(name=name.title(),
+                                                   price=price,
                                                    category_id=category,
+                                                   video_link=video_link,
                                                    manufacture=manufacture.title(),
                                                    mobile=mobile,
                                                    )
             if medicine_obj:
+                medicine_obj.image = image
+                medicine_obj.save()
                 status = 'success'
                 msg = 'Medicine Added Successfully.'
 
@@ -113,19 +121,29 @@ def add_medicine(request):
 def medicine_update(request, id):
     if request.method == 'POST':
         form = request.POST
+        form1 = request.FILES
         name = form.get('name')
+        price = float(form.get('price'))
+        image = form1.get('image')
         category = form.get('category')
+        video_link = form.get('video_link')
         manufacture = form.get('manufacture')
         mobile = form.get('mobile')
         msg = 'Medicine Update Failed'
         status = 'Failed'
         try:
             medicine_obj = Medicine.objects.filter(id=id).update(name=name.title(),
+                                                                 price=price,
                                                                  category=category,
+                                                                 video_link=video_link,
                                                                  manufacture=manufacture.title(),
                                                                  mobile=mobile,
                                                                  )
             if medicine_obj:
+                if image:
+                    medicine_obj = Medicine.objects.filter(id=id)
+                    medicine_obj.image = image
+                    medicine_obj.save()
                 msg = 'Medicine Update Successfully.'
                 status = 'success'
         except Exception as e:

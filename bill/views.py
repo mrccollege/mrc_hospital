@@ -49,7 +49,15 @@ def appointment_patient_bill_detail(request, id):
     return render(request, 'appointment_patient_bill.html', context)
 
 
-def order_received(request, id):
+def order_list(request):
+    order = MedicineOrderHead.objects.all()
+    context = {
+        'order': order
+    }
+    return render(request, 'order_list.html', context)
+
+
+def order_detail(request, id):
     user = MedicineOrderHead.objects.get(id=id)
     medicine = MedicineOrderDetail.objects.filter(head_id=id)
     context = {
@@ -57,4 +65,4 @@ def order_received(request, id):
         'user': user,
         'medicine': medicine,
     }
-    return render(request, 'order_received.html', context)
+    return render(request, 'order_detail.html', context)

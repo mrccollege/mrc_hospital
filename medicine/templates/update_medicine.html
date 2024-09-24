@@ -32,32 +32,55 @@
                                 <!-- form start -->
                                 <form id="medicine_form" role="form">{% csrf_token %}
                                     <div class="box-body">
-                                        <div class="form-group">
-                                            <label for="name" class="form-label">Medicine Name</label>
-                                            <input type="text" class="form-control" id="name" name="name" value="{{medicine.name}}" required>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="category" class="form-label">Medicine Category</label>
-                                            <select name="category" id="category" class="form-control">
-                                                {% for i in category %}
-                                                <option value="{{i.id}}">{{i.name}}</option>
-                                                {% endfor %}
-                                            </select>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="manufacture" class="form-label">Manufacture</label>
-                                            <input type="text" class="form-control" id="manufacture" name="manufacture"value="{{medicine.manufacture}}" required>
+                                        <div class="row">
+                                            <div class="col-lg-6 form-group">
+                                                <label for="name" class="form-label">Medicine Name</label>
+                                                <input type="text" class="form-control" id="name" name="name"
+                                                       value="{{medicine.name}}" required>
+                                            </div>
+
+                                            <div class="col-lg-3 form-group">
+                                                <label for="name" class="form-label">Medicine Price</label>
+                                                <input value="{{medicine.price}}" type="text" class="form-control" id="price" name="price"
+                                                       required>
+                                            </div>
+
+                                            <div class="col-lg-3 form-group">
+                                                <label for="name" class="form-label">Medicine Image</label>
+                                                <input type="file" class="form-control" id="image" name="image">
+                                            </div>
                                         </div>
 
-                                        <div class="form-group">
-                                            <label for="mobile" class="form-label">Manufacture Mobile</label>
-                                            <input type="text" class="form-control" id="mobile" name="mobile" value="{{medicine.mobile}}" maxlength="10" required>
+                                        <div class="row">
+                                            <div class="col-lg-3 form-group">
+                                                <label for="category" class="form-label">Medicine Category</label>
+                                                <select name="category" id="category" class="form-control">
+                                                    {% for i in category %}
+                                                    <option value="{{i.id}}">{{i.name}}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+
+                                            <div class="col-lg-3 form-group">
+                                                <label for="video_link" class="form-label">Video link</label>
+                                                <input value="{{medicine.video_link}}" type="text" class="form-control" id="video_link"
+                                                       name="video_link"
+                                                       required>
+                                            </div>
+
+                                            <div class="col-lg-3 form-group">
+                                                <label for="manufacture" class="form-label">Manufacture</label>
+                                                <input type="text" class="form-control" id="manufacture"
+                                                       name="manufacture"
+                                                       value="{{medicine.manufacture}}" required>
+                                            </div>
+
+                                            <div class="col-lg-3 form-group">
+                                                <label for="mobile" class="form-label">Manufacture Mobile</label>
+                                                <input type="text" class="form-control" id="mobile" name="mobile"
+                                                       value="{{medicine.mobile}}" maxlength="10" required>
+                                            </div>
                                         </div>
-                                        <!--                                        <div class="form-group">-->
-                                        <!--                                            <label for="medicine_expiry" class="form-label">Medicine Expiry</label>-->
-                                        <!--                                            <input type="text" class="form-control" id="medicine_expiry"-->
-                                        <!--                                                   name="medicine_expiry">-->
-                                        <!--                                        </div>-->
                                     </div><!-- /.box-body -->
 
                                     <div class="box-footer">
@@ -89,11 +112,13 @@
         $('#loader-overlay').show(); // Show overlay
         $('#loader').show(); // Show loader
         e.preventDefault();
-        var formData = $('#medicine_form').serialize();
+        var formData = new FormData($('#medicine_form')[0]);
         $.ajax({
           url: '/medicine/medicine_update/{{id}}/',
           type: 'POST',
           data: formData,
+          contentType: false,
+          processData: false,
           success: function (response) {
             $('#loader-overlay').hide(); // Show overlay
             $('#loader').hide(); // Show loader
