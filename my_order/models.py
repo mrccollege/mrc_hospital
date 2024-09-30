@@ -16,7 +16,7 @@ class MedicineOrderHead(models.Model):
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 
     def __str__(self):
-        return str(self.doctor.user.username)
+        return str(self.doctor)
 
     class Meta:
         db_table = 'medicine_order_head'
@@ -32,7 +32,7 @@ class MedicineOrderDetail(models.Model):
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 
     def __str__(self):
-        return str(self.head.doctor.user.username)
+        return str(self.head.doctor)
 
     class Meta:
         db_table = 'medicine_order_detail'

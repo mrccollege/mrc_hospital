@@ -1,3 +1,5 @@
+import json
+
 from django.http import JsonResponse
 from django.shortcuts import render
 
@@ -43,43 +45,47 @@ def search_medicine(request):
 def medicine_order(request):
     if request.method == 'POST':
         form = request.POST
+        medicines = json.loads(request.POST.get('medicines'))
         doctor_id = form.get('doctor_id')
         subtotal = form.get('sub_total')
         discount = form.get('total_discount')
         shipping = form.get('shipping_packing')
         pay_amount = form.get('total')
 
-        medicine_id = form.getlist('medicine_id')
-        mrp = form.getlist('mrp')
-        amount = form.getlist('amount')
-        order_qty = form.getlist('order_qty')
-        try:
-            order_head = MedicineOrderHead.objects.create(doctor_id=doctor_id,
-                                                          subtotal=subtotal,
-                                                          discount=discount,
-                                                          shipping=shipping,
-                                                          pay_amount=pay_amount,
-                                                          )
+        print(doctor_id, '===========doctor_id')
+        print(shipping, '===========shipping')
+        # try:
+        order_head = MedicineOrderHead.objects.create(doctor_id=doctor_id,
+                                                      subtotal=subtotal,
+                                                      discount=discount,
+                                                      shipping=shipping,
+                                                      pay_amount=pay_amount,
+                                                      )
 
-            if order_head:
-                for i in range(len(medicine_id)):
-                    MedicineOrderDetail.objects.create(head_id=order_head.id,
-                                                       medicine_id=medicine_id[i],
-                                                       mrp=mrp[i],
-                                                       order_qty=order_qty[i],
-                                                       amount=amount[i],
-                                                       )
+        if order_head:
+            for medicine_data in medicines:
+                medicine_id = medicine_data['medicine_id']
+                order_qty = medicine_data['order_qty']
+                mrp = medicine_data['mrp']
+                amount = medicine_data['amount']
 
-                status = 'success'
-                msg = 'order successfully created.'
+                MedicineOrderDetail.objects.create(head_id=order_head.id,
+                                                   medicine_id=medicine_id,
+                                                   mrp=mrp,
+                                                   order_qty=order_qty,
+                                                   amount=amount,
+                                                   )
 
-            else:
-                status = 'failed'
-                msg = 'order failed.'
+            status = 'success'
+            msg = 'order successfully created.'
 
-        except Exception as e:
+        else:
             status = 'failed'
-            msg = str(e)
+            msg = 'order failed.'
+
+        # except Exception as e:
+        #     status = 'failed'
+        #     msg = str(e)
 
         context = {
             'status': status,
@@ -108,6 +114,3 @@ def medicine_order(request):
             'doctor_id': doctor_id,
         }
         return render(request, 'medicine_order.html', context)
-
-
-
