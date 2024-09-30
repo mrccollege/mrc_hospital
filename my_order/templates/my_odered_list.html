@@ -49,7 +49,11 @@
                                     <td>{{i.discount}}</td>
                                     <td>{{i.shipping}}</td>
                                     <td>{{i.pay_amount}}</td>
-                                    <td><a href="/bill/patient_bill_detail/{{i.id}}/">View</a></td>
+                                    <td>
+                                        <a href="/my_order/update_medicine_order/{{i.id}}/">View</a>
+                                        &nbsp; &nbsp;
+                                        <a type="button" onclick="delete_record('{{i.id}}')">delete</a>
+                                    </td>
                                 </tr>
                                 {% endfor %}
                                 </tbody>
@@ -81,5 +85,143 @@
         "bAutoWidth": false
       });
     });
+
+    function delete_record(id){
+        $.ajax({
+            url: '/my_order/delete_medicine_order/'+id+'/',
+            success: function (response) {
+                $('#loader-overlay').hide();
+                $('#loader').hide();
+
+                if(response.status == 'success'){
+                  Swal.fire({
+                    title: 'Success',
+                    text: response.msg,
+                    icon: 'success',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'OK'
+                  }).then((result) => {
+                    window.location.href = '/my_order/my_medicine_ordered_list/';
+                  });
+                }else{
+                  Swal.fire({
+                      title: 'Error',
+                      text: response.msg,
+                      icon: 'error',
+                      confirmButtonColor: '#3085d6',
+                      confirmButtonText: 'OK'
+                  });
+                  $('#password').val('');
+                  return false;
+                }
+            },
+            error: function() {
+                $('#loader-overlay').hide();
+                $('#loader').hide();
+                Swal.fire({
+                    title: 'Error',
+                    text: 'An error occurred during submission.',
+                    icon: 'error',
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'OK'
+                });
+            }
+        });
+    }
+</script>
+
+<script>
+    $('#medicine_form').on('submit', function (e) {
+        $('#loader-overlay').show(); // Show overlay
+        $('#loader').show(); // Show loader
+
+        e.preventDefault();
+
+        var selectedMedicines = [];
+
+        $('input[name="order_qty"]').each(function() {
+            var qty = $(this).val();
+            if (qty && qty > 0) {  // Check if qty is entered
+                var row = $(this).closest('tr');  // Get the closest row to this input
+                var medicineData = {
+                    medicine_id: row.find('input[name="medicine_id"]').val(),
+                    order_qty: qty,
+                    mrp: row.find('input[name="mrp"]').val(),
+                    amount: row.find('input[name="amount"]').val(),
+                    desc: row.find('input[name="desc"]').val(),
+                };
+                selectedMedicines.push(medicineData);
+            }
+        });
+
+        var formData = {
+            medicines: JSON.stringify(selectedMedicines),  // Selected medicines data
+            doctor_id: $('#doctor_id').val(),
+            sub_total: $('#sub_total').val(),
+            total_discount: $('#total_discount').val(),
+            shipping_packing: $('#shipping_packing').val(),
+            total: $('#total').val(),
+            csrfmiddlewaretoken: '{{ csrf_token }}'  // Add CSRF token
+        };
+
+        if (selectedMedicines.length > 0) {
+            $.ajax({
+                url: '/my_order/medicine_order/',
+                type: 'POST',
+                data: formData,  // Send the form data with medicine and other inputs
+                success: function (response) {
+                    $('#loader-overlay').hide();
+                    $('#loader').hide();
+
+                    if(response.status == 'success'){
+                      Swal.fire({
+                        title: 'Success',
+                        text: response.msg,
+                        icon: 'success',
+                        showCancelButton: false,
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'OK'
+                      }).then((result) => {
+                        window.location.href = '/my_order/medicine_order/';
+                      });
+                    }else{
+                      Swal.fire({
+                          title: 'Error',
+                          text: response.msg,
+                          icon: 'error',
+                          confirmButtonColor: '#3085d6',
+                          confirmButtonText: 'OK'
+                      });
+                      $('#password').val('');
+                      return false;
+                    }
+                },
+                error: function() {
+                    $('#loader-overlay').hide();
+                    $('#loader').hide();
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'An error occurred during submission.',
+                        icon: 'error',
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            });
+        } else {
+            $('#loader-overlay').hide();
+            $('#loader').hide();
+            Swal.fire({
+                title: 'Error',
+                text: 'No quantities entered.',
+                icon: 'error',
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'OK'
+            });
+        }
+    });
+
+
 </script>
 {% endblock js %}
