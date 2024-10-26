@@ -282,7 +282,7 @@ def update_medicine_record(request):
                 else:
                     minus_medicine_qty = 0
                 # main_store_medicine_obj = MedicineStore.objects.filter(query).update(qty=int(total_qty), expiry=medicine_expiry)
-                main_store_medicine_obj = MedicineStore.objects.filter(query).update(qty=int(total_qty))
+                main_store_medicine_obj = MedicineStore.objects.filter(query).update(qty=int(total_qty), price=price)
                 if main_store_medicine_obj:
                     MedicineStoreTransactionHistory.objects.create(from_store_id=to_store_id,
                                                                    to_store_id=to_store_id,

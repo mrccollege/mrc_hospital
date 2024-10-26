@@ -18,11 +18,11 @@ from doctor.models import Doctor
 
 from my_order.models import MedicineOrderHead
 
-from bill.models import PatientBill, PatientBillDetail
-from patient.models import Patient
 from store.models import Store, MedicineStoreTransactionHistory
 
 from my_order.models import MedicineOrderBillHead
+
+from my_order.models import MedicineOrderBillDetail
 
 
 # Create your views here.
@@ -64,6 +64,7 @@ def medicine_order(request):
                                                           subtotal=subtotal,
                                                           discount=discount,
                                                           pay_amount=pay_amount,
+                                                          status=0,
                                                           )
 
             if order_head:
@@ -252,6 +253,7 @@ def delete_medicine_order(request, id):
 def create_bill(request, order_type, id):
     if request.method == 'POST':
         form = request.POST
+        print(form, '============form========')
         user_id = request.session['user_id']
         try:
             store = Store.objects.get(user_id=user_id)
@@ -263,16 +265,28 @@ def create_bill(request, order_type, id):
         msg = 'Bill Creation failed.'
 
         invoice_number = datetime.now().strftime("%Y%d%H%M%S")
+        medicines = json.loads(request.POST.get('medicines'))
         doctor_id = form.get('doctor_id')
-        subtotal = form.get('subtotal')
+        subtotal = float(form.get('sub_total'))
         sgst = form.get('sgst')
         cgst = form.get('cgst')
-        credit = form.get('credit')
-        cash = form.get('cash')
-        online = form.get('online')
-        shipping_packing = form.get('shipping_packing')
-        discount = form.get('discount')
-        total = form.get('total')
+        cash = float(form.get('cash'))
+        online = float(form.get('online'))
+        shipping_packing = int(form.get('shipping_packing'))
+        discount = int(form.get('total_discount'))
+        total = float(form.get('total'))
+        old_credit = float(form.get('old_credit'))
+        new_credit = float(form.get('new_credit'))
+
+        # record_id = form.getlist('record_id')
+        # medicine_id = form.getlist('medicine_id')
+        # record_qty = form.getlist('record_qty')
+        # mrp = form.getlist('mrp')
+        # discount = form.getlist('discount')
+        # sale_rate = form.getlist('sale_rate')
+        # hsn = form.getlist('hsn')
+        # gst = form.getlist('gst')
+        # amount = form.getlist('amount')
 
         obj = MedicineOrderBillHead.objects.create(doctor_id=doctor_id,
                                                    store_id=store_id,
@@ -280,7 +294,7 @@ def create_bill(request, order_type, id):
                                                    sgst=sgst,
                                                    cgst=cgst,
                                                    subtotal=subtotal,
-                                                   credit=credit,
+                                                   credit=new_credit,
                                                    cash=cash,
                                                    online=online,
                                                    shipping=shipping_packing,
@@ -288,46 +302,27 @@ def create_bill(request, order_type, id):
                                                    pay_amount=total,
                                                    )
         if obj:
-            record_id = form.getlist('record_id')
-            medicine_id = form.getlist('medicine_id')
-            record_qty = form.getlist('record_qty')
-            sell_qty = form.getlist('sell_qty')
-            mrp = form.getlist('mrp')
-            discount = form.getlist('discount')
-            sale_rate = form.getlist('sale_rate')
-            hsn = form.getlist('hsn')
-            gst = form.getlist('gst')
-            amount = form.getlist('amount')
+            for medicine_data in medicines:
+                medicine_id = medicine_data['medicine_id']
+                record_qty = int(medicine_data['record_qty'])
+                sell_qty = int(medicine_data['sell_qty'])
+                discount = int( medicine_data['discount'])
+                mrp = float(medicine_data['mrp'])
+                sale_rate = float(medicine_data['sale_rate'])
+                amount = float(medicine_data['amount'])
 
-            for i in range(len(medicine_id)):
-                PatientBillDetail.objects.create(patient_bill_id=obj.id,
-                                                 medicine_id=medicine_id[i],
-                                                 record_qty=record_qty[i],
-                                                 sell_qty=sell_qty[i],
-                                                 mrp=mrp[i],
-                                                 discount=discount[i],
-                                                 sale_rate=sale_rate[i],
-                                                 hsn=hsn[i],
-                                                 gst=gst[i],
-                                                 amount=amount[i],
-                                                 )
-                remaining_qty = int(record_qty[i]) - int(sell_qty[i])
-                obj = MedicineStore.objects.filter(to_store_id=store_id, medicine_id=medicine_id[i]).update(
+                MedicineOrderBillDetail.objects.create(head_id=obj.id,
+                                                       medicine_id=medicine_id,
+                                                       record_qty=record_qty,
+                                                       sell_qty=sell_qty,
+                                                       mrp=mrp,
+                                                       discount=discount,
+                                                       sale_rate=sale_rate,
+                                                       amount=amount,
+                                                       )
+                remaining_qty = int(record_qty) - int(sell_qty)
+                obj = MedicineStore.objects.filter(to_store_id=store_id, medicine_id=medicine_id).update(
                     qty=remaining_qty)
-                if obj:
-                    medicine = MedicineStore.objects.get(id=record_id)
-                    MedicineStoreTransactionHistory.objects.create(from_store_id=store_id,
-                                                                   to_store_id=store_id,
-                                                                   medicine_id=medicine_id,
-                                                                   medicine_name=medicine.medicine.name,
-                                                                   category=medicine.category,
-                                                                   price=medicine.price,
-                                                                   batch_no=medicine.batch_no,
-                                                                   available_qty=remaining_qty,
-                                                                   sell_qty=sell_qty[i],
-                                                                   medicine_manufacture=medicine.manufacture,
-                                                                   medicine_expiry=medicine.expiry,
-                                                                   )
 
             status = 'success'
             msg = 'Bill creation Successfully.'
@@ -348,11 +343,27 @@ def create_bill(request, order_type, id):
 
         user = MedicineOrderHead.objects.get(id=id)
         medicine = MedicineOrderDetail.objects.filter(head_id=id)
+        medicine_list = []
+
+        for i in medicine:
+            data_dict = {}
+            query = Q(to_store_id=store_id, medicine_id=i.medicine.id)
+            store_medicine = MedicineStore.objects.filter(query).values('qty',
+                                                                        'price'
+                                                                        )
+            data_dict['medicine_id'] = i.medicine.id
+            data_dict['medicine_name'] = i.medicine.name
+            data_dict['order_qty'] = i.order_qty
+            data_dict['record_qty'] = store_medicine[0]['qty']
+            data_dict['mrp'] = store_medicine[0]['price']
+            medicine_list.append(data_dict)
 
         context = {
+            'id': id,
+            'order_type': order_type,
             'store_id': store_id,
             'user': user,
-            'medicine': medicine,
+            'medicine': medicine_list,
         }
         if order_type == 1:
             return render(request, 'order_tax_invoice_in_state.html', context)

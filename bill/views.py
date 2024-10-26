@@ -50,7 +50,7 @@ def appointment_patient_bill_detail(request, id):
 
 
 def order_list(request):
-    order = MedicineOrderHead.objects.all()
+    order = MedicineOrderHead.objects.filter(status=0)
     context = {
         'order': order
     }

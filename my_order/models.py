@@ -14,6 +14,7 @@ class MedicineOrderHead(models.Model):
     discount = models.IntegerField(default=0, null=True)
     shipping = models.FloatField(default=0, null=True)
     pay_amount = models.FloatField(default=0, null=True)
+    status = models.IntegerField(help_text='0=pending,1=inprocess,2=packing,3=dispatch,4=out of delivery,5=delivered')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 
@@ -48,12 +49,12 @@ class MedicineOrderBillHead(models.Model):
     discount = models.IntegerField(default=0, null=True)
     shipping = models.FloatField(default=0, null=True)
     pay_amount = models.FloatField(default=0, null=True)
-    sgst = models.IntegerField(default=0, null=True, blank=True)
-    cgst = models.IntegerField(default=0, null=True, blank=True)
-    credit = models.IntegerField(default=0, null=True, blank=True)
-    cash = models.IntegerField(default=0, null=True, blank=True)
-    online = models.IntegerField(default=0, null=True, blank=True)
-
+    sgst = models.FloatField(default=0, null=True, blank=True)
+    cgst = models.FloatField(default=0, null=True, blank=True)
+    credit = models.FloatField(default=0, null=True, blank=True)
+    cash = models.FloatField(default=0, null=True, blank=True)
+    online = models.FloatField(default=0, null=True, blank=True)
+    status = models.IntegerField(help_text='0=pending,1=inprocess,2=packing,3=dispatch,4=out of delivery,5=delivered')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 
