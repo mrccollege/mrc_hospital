@@ -300,13 +300,14 @@ def create_bill(request, order_type, id):
                                                    shipping=shipping_packing,
                                                    discount=discount,
                                                    pay_amount=total,
+                                                   status=1,
                                                    )
         if obj:
             for medicine_data in medicines:
                 medicine_id = medicine_data['medicine_id']
                 record_qty = int(medicine_data['record_qty'])
                 sell_qty = int(medicine_data['sell_qty'])
-                discount = int( medicine_data['discount'])
+                discount = int(medicine_data['discount'])
                 mrp = float(medicine_data['mrp'])
                 sale_rate = float(medicine_data['sale_rate'])
                 amount = float(medicine_data['amount'])
@@ -320,10 +321,11 @@ def create_bill(request, order_type, id):
                                                        sale_rate=sale_rate,
                                                        amount=amount,
                                                        )
-                remaining_qty = int(record_qty) - int(sell_qty)
-                obj = MedicineStore.objects.filter(to_store_id=store_id, medicine_id=medicine_id).update(
-                    qty=remaining_qty)
-
+                if sell_qty < record_qty:
+                    remaining_qty = int(record_qty) - int(sell_qty)
+                    obj = MedicineStore.objects.filter(to_store_id=store_id, medicine_id=medicine_id).update(
+                        qty=remaining_qty)
+            MedicineOrderHead.objects.filter(id=id).update(status=1)
             status = 'success'
             msg = 'Bill creation Successfully.'
 
@@ -348,14 +350,21 @@ def create_bill(request, order_type, id):
         for i in medicine:
             data_dict = {}
             query = Q(to_store_id=store_id, medicine_id=i.medicine.id)
-            store_medicine = MedicineStore.objects.filter(query).values('qty',
-                                                                        'price'
-                                                                        )
+            store_medicine = MedicineStore.objects.filter(query).values('qty', 'price')
             data_dict['medicine_id'] = i.medicine.id
             data_dict['medicine_name'] = i.medicine.name
             data_dict['order_qty'] = i.order_qty
-            data_dict['record_qty'] = store_medicine[0]['qty']
-            data_dict['mrp'] = store_medicine[0]['price']
+
+            try:
+                data_dict['record_qty'] = store_medicine[0]['qty']
+            except:
+                data_dict['record_qty'] = 0
+
+            try:
+                data_dict['mrp'] = store_medicine[0]['price']
+            except:
+                data_dict['mrp'] = 0
+
             medicine_list.append(data_dict)
 
         context = {
