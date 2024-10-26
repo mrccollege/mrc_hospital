@@ -282,7 +282,7 @@ def search_medicine(request):
 
 
 @login_required(login_url='/account/user_login/')
-def create_bill(request, type, id):
+def create_bill(request, order_type, id):
     if request.method == 'POST':
         # User.objects.filter(username='rajat').delete()
         form = request.POST
@@ -404,11 +404,11 @@ def create_bill(request, type, id):
             'medicine': medicine,
         }
 
-        if type == 1:
+        if order_type == 1:
             return render(request, 'tax_invoice_in_state.html', context)
-        elif type == 2:
+        elif order_type == 2:
             return render(request, 'new_tax_invoice_other_state.html', context)
-        elif type == 3:
+        elif order_type == 3:
             return render(request, 'new_bill_of_supply.html', context)
         else:
             return render(request, 'new_bill_of_supply.html', context)

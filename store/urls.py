@@ -14,7 +14,7 @@ urlpatterns = [
     path('transfer_mini_store_medicine_detail/<int:record_id>/', views.transfer_mini_store_medicine_detail, name='transfer_mini_store_medicine_detail'),
     path('transfer_medicine_from_mini/', views.transfer_medicine_from_mini, name='transfer_medicine_from_mini'),
 
-    path('create_bill/<int:type>/<int:id>/', views.create_bill, name='create_bill'),
+    path('create_bill/<int:order_type>/<int:id>/', views.create_bill, name='create_bill'),
     path('search_medicine/', views.search_medicine, name='search_medicine'),
 
 ]

@@ -29,13 +29,13 @@
                             <h3 class="box-title" style="margin-bottom:10px;">Fill Complete Medicine Details</h3>
                             <div class="row text-center">
                                 <div class="col-lg-2">
-                                    <a href="/store/create_bill/1/{{id}}/" class="btn btn-primary">Bill of In State</a>
+                                    <a href="/my_order/create_bill/1/{{id}}/" class="btn btn-primary">Bill of In State</a>
                                 </div>
                                 <div class="col-lg-2">
-                                    <a href="/store/create_bill/2/{{id}}/" class="btn btn-primary">Bill of Other State</a>
+                                    <a href="/my_order/create_bill/2/{{id}}/" class="btn btn-primary">Bill of Other State</a>
                                 </div>
                                 <div class="col-lg-2">
-                                    <a href="/store/create_bill/3/{{id}}/" class="btn btn-primary">Bill Of Supply</a>
+                                    <a href="/my_order/create_bill/3/{{id}}/" class="btn btn-primary">Bill Of Supply</a>
                                 </div>
                             </div>
                         </div><!-- /.box-header -->
@@ -149,7 +149,7 @@
                                                     <div class="col-lg-6">
                                                         <label for="total_discount">Discount %</label>
                                                         <input type="text" class="form-control" name="total_discount"
-                                                               id="total_discount" value="0"
+                                                               id="total_discount" value="{{user.discount}}"
                                                                onkeypress="return isNumberKey(event)"
                                                                onkeyup="total_discount_apply_function()">
                                                     </div>
@@ -210,7 +210,6 @@
 
             html += '<td><button onclick="remove_row('+index+')"><i class="fa fa-remove" style="font-size:24px"></i></button></td>';
             html += '</tr>';
-            search_medicine(index)
             $('table tbody').append(html);
             index +=1;
 
@@ -225,75 +224,6 @@
         cash_online_function()
 
     });
-</script>
-
-<script>
-    function search_medicine(indexID) {
-
-        $('#medicine'+indexID).on('keydown', function(event) {
-            if (event.key === 'Backspace' || event.key === 'Delete') {
-                $('#record_id' + indexID).val('');
-                $('#medicine_id' + indexID).val('');
-                $('#mrp' + indexID).val('');
-                $('#category' + indexID).val('');
-                $('#amount' + indexID).val(0);
-            }
-        });
-
-        $('#medicine'+indexID).on('input', function() {
-            var value = $(this).val();
-            var leadingSpaces = value.match(/^ */)[0].length;
-            if (leadingSpaces > 2) {
-                $(this).val(value.slice(0, leadingSpaces - 1) + value.slice(leadingSpaces));
-            }
-        });
-
-        var medicineIds = [];
-
-        $('input[name="medicine_id"]').each(function() {
-            medicineIds.push($(this).val());
-        });
-        medicineIds = medicineIds.filter(function(id) {
-            return id.trim() !== '';
-        });
-
-        $('#medicine' + indexID).autocomplete({
-            source: function (request, response) {
-                $.ajax({
-                    url: '/my_order/search_medicine/',
-                    type: 'GET',
-                    data: {
-                        search_value: request.term,
-                        medicineIds: medicineIds,
-                    },
-                    success: function (result) {
-                        if (result.results) {
-                            var suggestedProducts = result.results.map(function (results) {
-                                return {
-                                    label: results.name,
-                                    value: results.name,
-                                    medicine_id: results.medicine_id,
-                                    category: results.category,
-                                    mrp:results.mrp
-                                };
-                            });
-                            response(suggestedProducts);
-                        }
-                    },
-                    error: function (xhr, errmsg, err) {
-                        console.log(xhr.status + ": " + xhr.responseText);
-                    }
-                });
-            },
-            minLength: 2,
-            select: function (event, ui) {
-                $('#medicine_id' + indexID).val(ui.item.medicine_id);
-                $('#mrp' + indexID).val(ui.item.mrp);
-                $('#category' + indexID).val(ui.item.category);
-                //add_medicine()
-            }
-        })
-    }
 </script>
 
 <script>
