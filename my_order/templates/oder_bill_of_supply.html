@@ -34,14 +34,13 @@
                                     <div class="box-body">
                                         <div class="row">
                                             <div class="col-lg-3 form-group">
+                                                <input type="hidden" name="store_id" id="store_id"
+                                                       value="{{store_id}}">
                                                 <label class="form-label">Doctor Name</label>
-                                                <input type="hidden" name="user_id" id="user_id"
-                                                       value="{{user_id}}">
                                                 <input type="hidden" name="doctor_id" id="doctor_id"
-                                                       value="{{doctor_id}}">
+                                                       value="{{user.doctor.id}}">
                                                 <input type="text" class="form-control" id="name" name="name"
-                                                       value="{{user.doctor.user.username}}"
-                                                       placeholder="Enter patient address: ">
+                                                       value="{{user.doctor.user.username}}">
                                             </div>
 
                                             <div class="col-lg-3 form-group">
@@ -357,7 +356,7 @@
 
             html += '<td><input value="{{i.mrp}}" type="text" id="mrp'+index+'" name="mrp" class="form-control" value="0" readonly required></td>';
 
-            html += '<td><input type="text" onkeyup="discount_function('+index+')" onkeypress="return isNumberKey(event)" id="discount'+index+'" name="discount" class="form-control" required></td>';
+            html += '<td><input type="text" onkeyup="discount_function('+index+')" onkeypress="return isNumberKey(event)" id="discount'+index+'" name="discount" class="form-control"></td>';
 
             html += '<td><input type="text" id="sale_rate'+index+'" name="sale_rate" class="form-control" readonly required></td>';
 

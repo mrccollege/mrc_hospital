@@ -22,6 +22,8 @@ from bill.models import PatientBill, PatientBillDetail
 from patient.models import Patient
 from store.models import Store, MedicineStoreTransactionHistory
 
+from my_order.models import MedicineOrderBillHead
+
 
 # Create your views here.
 def search_medicine(request):
@@ -243,14 +245,12 @@ def delete_medicine_order(request, id):
         'status': status,
         'msg': msg,
     }
-    print(context, '==========context')
     return JsonResponse(context)
 
 
 @login_required(login_url='/account/user_login/')
 def create_bill(request, order_type, id):
     if request.method == 'POST':
-        # User.objects.filter(username='rajat').delete()
         form = request.POST
         user_id = request.session['user_id']
         try:
@@ -258,102 +258,79 @@ def create_bill(request, order_type, id):
             store_id = store.id
         except:
             store_id = 0
-        username = form.get('patient_name')
-        mobile = form.get('mobile')
-        address = form.get('address')
-        email = mobile + '@yopmail.com'
-        password = '12345'
-        patient_code = datetime.now().strftime("%Y%d%H%M%S")
-        obj_id = 0
+
         status = 'failed'
-        msg = 'Patient Registration failed.'
+        msg = 'Bill Creation failed.'
 
-        is_registered = User.objects.filter(mobile=mobile)
-        if is_registered:
-            context = {
-                'status': 'failed',
-                'msg': 'this mobile number already exists.',
-            }
-            return JsonResponse(context)
+        invoice_number = datetime.now().strftime("%Y%d%H%M%S")
+        doctor_id = form.get('doctor_id')
+        subtotal = form.get('subtotal')
+        sgst = form.get('sgst')
+        cgst = form.get('cgst')
+        credit = form.get('credit')
+        cash = form.get('cash')
+        online = form.get('online')
+        shipping_packing = form.get('shipping_packing')
+        discount = form.get('discount')
+        total = form.get('total')
 
-        user_obj = User.objects.create_user(username=username,
-                                            email=email,
-                                            password=password,
-                                            mobile=mobile,
-                                            address=address, )
-        if user_obj:
-            patient_id = user_obj.id
-            obj = Patient.objects.create(user_id=patient_id,
-                                         patient_code=patient_code, )
-            if obj:
-                obj_id = obj.id
+        obj = MedicineOrderBillHead.objects.create(doctor_id=doctor_id,
+                                                   store_id=store_id,
+                                                   invoice_number=invoice_number,
+                                                   sgst=sgst,
+                                                   cgst=cgst,
+                                                   subtotal=subtotal,
+                                                   credit=credit,
+                                                   cash=cash,
+                                                   online=online,
+                                                   shipping=shipping_packing,
+                                                   discount=discount,
+                                                   pay_amount=total,
+                                                   )
+        if obj:
+            record_id = form.getlist('record_id')
+            medicine_id = form.getlist('medicine_id')
+            record_qty = form.getlist('record_qty')
+            sell_qty = form.getlist('sell_qty')
+            mrp = form.getlist('mrp')
+            discount = form.getlist('discount')
+            sale_rate = form.getlist('sale_rate')
+            hsn = form.getlist('hsn')
+            gst = form.getlist('gst')
+            amount = form.getlist('amount')
 
-        if obj_id != 0:
-            invoice_number = datetime.now().strftime("%Y%d%H%M%S")
-            sgst = form.get('sgst')
-            cgst = form.get('cgst')
-            credit = form.get('credit')
-            cash = form.get('cash')
-            online = form.get('online')
-            shipping_packing = form.get('shipping_packing')
-            discount = form.get('discount')
-            total = form.get('total')
+            for i in range(len(medicine_id)):
+                PatientBillDetail.objects.create(patient_bill_id=obj.id,
+                                                 medicine_id=medicine_id[i],
+                                                 record_qty=record_qty[i],
+                                                 sell_qty=sell_qty[i],
+                                                 mrp=mrp[i],
+                                                 discount=discount[i],
+                                                 sale_rate=sale_rate[i],
+                                                 hsn=hsn[i],
+                                                 gst=gst[i],
+                                                 amount=amount[i],
+                                                 )
+                remaining_qty = int(record_qty[i]) - int(sell_qty[i])
+                obj = MedicineStore.objects.filter(to_store_id=store_id, medicine_id=medicine_id[i]).update(
+                    qty=remaining_qty)
+                if obj:
+                    medicine = MedicineStore.objects.get(id=record_id)
+                    MedicineStoreTransactionHistory.objects.create(from_store_id=store_id,
+                                                                   to_store_id=store_id,
+                                                                   medicine_id=medicine_id,
+                                                                   medicine_name=medicine.medicine.name,
+                                                                   category=medicine.category,
+                                                                   price=medicine.price,
+                                                                   batch_no=medicine.batch_no,
+                                                                   available_qty=remaining_qty,
+                                                                   sell_qty=sell_qty[i],
+                                                                   medicine_manufacture=medicine.manufacture,
+                                                                   medicine_expiry=medicine.expiry,
+                                                                   )
 
-            obj = PatientBill.objects.create(patient_id=obj_id,
-                                             store_id=store_id,
-                                             invoice_number=invoice_number,
-                                             sgst=sgst,
-                                             cgst=cgst,
-                                             credit=credit,
-                                             cash=cash,
-                                             online=online,
-                                             shipping_packing=shipping_packing,
-                                             discount=discount,
-                                             total=total, )
-            if obj:
-                record_id = form.getlist('record_id')
-                medicine_id = form.getlist('medicine_id')
-                record_qty = form.getlist('record_qty')
-                sell_qty = form.getlist('sell_qty')
-                mrp = form.getlist('mrp')
-                discount = form.getlist('discount')
-                sale_rate = form.getlist('sale_rate')
-                hsn = form.getlist('hsn')
-                gst = form.getlist('gst')
-                amount = form.getlist('amount')
-
-                for i in range(len(medicine_id)):
-                    PatientBillDetail.objects.create(patient_bill_id=obj.id,
-                                                     medicine_id=medicine_id[i],
-                                                     record_qty=record_qty[i],
-                                                     sell_qty=sell_qty[i],
-                                                     mrp=mrp[i],
-                                                     discount=discount[i],
-                                                     sale_rate=sale_rate[i],
-                                                     hsn=hsn[i],
-                                                     gst=gst[i],
-                                                     amount=amount[i],
-                                                     )
-                    remaining_qty = int(record_qty[i]) - int(sell_qty[i])
-                    obj = MedicineStore.objects.filter(to_store_id=store_id, medicine_id=medicine_id[i]).update(
-                        qty=remaining_qty)
-                    if obj:
-                        medicine = MedicineStore.objects.get(id=record_id)
-                        MedicineStoreTransactionHistory.objects.create(from_store_id=store_id,
-                                                                       to_store_id=store_id,
-                                                                       medicine_id=medicine_id,
-                                                                       medicine_name=medicine.medicine.name,
-                                                                       category=medicine.category,
-                                                                       price=medicine.price,
-                                                                       batch_no=medicine.batch_no,
-                                                                       available_qty=remaining_qty,
-                                                                       sell_qty=sell_qty[i],
-                                                                       medicine_manufacture=medicine.manufacture,
-                                                                       medicine_expiry=medicine.expiry,
-                                                                       )
-
-                status = 'success'
-                msg = 'Bill Generated Successfully.'
+            status = 'success'
+            msg = 'Bill creation Successfully.'
 
         context = {
             'status': status,
@@ -362,14 +339,21 @@ def create_bill(request, order_type, id):
         return JsonResponse(context)
 
     else:
+        user_id = request.session['user_id']
+        try:
+            store = Store.objects.get(user_id=user_id)
+            store_id = store.id
+        except:
+            store_id = 0
+
         user = MedicineOrderHead.objects.get(id=id)
         medicine = MedicineOrderDetail.objects.filter(head_id=id)
 
         context = {
+            'store_id': store_id,
             'user': user,
             'medicine': medicine,
         }
-
         if order_type == 1:
             return render(request, 'order_tax_invoice_in_state.html', context)
         elif order_type == 2:
