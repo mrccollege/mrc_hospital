@@ -476,8 +476,6 @@
 
             sub_total_function()
             total_discount_apply_function()
-
-
         }else{
             console.log('sell qty is not here')
         }
@@ -507,6 +505,7 @@
 </script>
 
 <script>
+
     function sub_total_function(){
         var amountElements = document.querySelectorAll('[name="amount"]');
         var totalSum = 0;
@@ -515,7 +514,22 @@
             console.log('Amount:', amt);
             totalSum += amt;
         });
+
+        console.log(totalSum, '=========totalSum')
         $('#sub_total').val(totalSum.toFixed(2))
+        if(totalSum > 2000 && totalSum < 15000){
+            $('#total_discount').val(30)
+        }
+        else if(totalSum > 15001 && totalSum < 16999){
+            $('#total_discount').val(35)
+        }
+        else if(totalSum > 17000){
+            $('#total_discount').val(40)
+        }
+        else{
+            $('#total_discount').val(0)
+        }
+        total_discount_apply_function()
     }
 </script>
 
