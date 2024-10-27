@@ -469,13 +469,13 @@
             totalSum += amt;
         });
         $('#sub_total').val(totalSum.toFixed(2))
-        if(totalSum > 2000 && totalSum < 15000){
+        if(totalSum >= 2000 && totalSum <= 15000){
             $('#total_discount').val(30)
         }
-        else if(totalSum > 15001 && totalSum < 16999){
+        else if(totalSum >= 15001 && totalSum <= 16999){
             $('#total_discount').val(35)
         }
-        else if(totalSum > 17000){
+        else if(totalSum >= 16999){
             $('#total_discount').val(40)
         }
         else{
