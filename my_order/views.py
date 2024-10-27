@@ -288,46 +288,50 @@ def create_bill(request, order_type, id):
         # gst = form.getlist('gst')
         # amount = form.getlist('amount')
 
-        obj = MedicineOrderBillHead.objects.create(doctor_id=doctor_id,
-                                                   store_id=store_id,
-                                                   invoice_number=invoice_number,
-                                                   sgst=sgst,
-                                                   cgst=cgst,
-                                                   subtotal=subtotal,
-                                                   credit=new_credit,
-                                                   cash=cash,
-                                                   online=online,
-                                                   shipping=shipping_packing,
-                                                   discount=discount,
-                                                   pay_amount=total,
-                                                   status=1,
-                                                   )
-        if obj:
-            for medicine_data in medicines:
-                medicine_id = medicine_data['medicine_id']
-                record_qty = int(medicine_data['record_qty'])
-                sell_qty = int(medicine_data['sell_qty'])
-                discount = int(medicine_data['discount'])
-                mrp = float(medicine_data['mrp'])
-                sale_rate = float(medicine_data['sale_rate'])
-                amount = float(medicine_data['amount'])
-
-                MedicineOrderBillDetail.objects.create(head_id=obj.id,
-                                                       medicine_id=medicine_id,
-                                                       record_qty=record_qty,
-                                                       sell_qty=sell_qty,
-                                                       mrp=mrp,
-                                                       discount=discount,
-                                                       sale_rate=sale_rate,
-                                                       amount=amount,
-                                                       )
-                if sell_qty < record_qty:
-                    remaining_qty = int(record_qty) - int(sell_qty)
-                    obj = MedicineStore.objects.filter(to_store_id=store_id, medicine_id=medicine_id).update(
-                        qty=remaining_qty)
-            MedicineOrderHead.objects.filter(id=id).update(status=1)
-            status = 'success'
-            msg = 'Bill creation Successfully.'
+        # obj = MedicineOrderBillHead.objects.create(doctor_id=doctor_id,
+        #                                            store_id=store_id,
+        #                                            invoice_number=invoice_number,
+        #                                            sgst=sgst,
+        #                                            cgst=cgst,
+        #                                            subtotal=subtotal,
+        #                                            credit=new_credit,
+        #                                            cash=cash,
+        #                                            online=online,
+        #                                            shipping=shipping_packing,
+        #                                            discount=discount,
+        #                                            pay_amount=total,
+        #                                            status=1,
+        #                                            )
+        # if obj:
+        #     for medicine_data in medicines:
+        #         medicine_id = medicine_data['medicine_id']
+        #         record_qty = int(medicine_data['record_qty'])
+        #         sell_qty = int(medicine_data['sell_qty'])
+        #         discount = int(medicine_data['discount'])
+        #         mrp = float(medicine_data['mrp'])
+        #         sale_rate = float(medicine_data['sale_rate'])
+        #         hsn = float(medicine_data['hsn'])
+        #         gst = float(medicine_data['gst'])
+        #         taxable_amount = float(medicine_data['taxable_amount'])
+        #         tax = float(medicine_data['tax'])
+        #         amount = float(medicine_data['amount'])
+        #
+        #         MedicineOrderBillDetail.objects.create(head_id=obj.id,
+        #                                                medicine_id=medicine_id,
+        #                                                record_qty=record_qty,
+        #                                                sell_qty=sell_qty,
+        #                                                mrp=mrp,
+        #                                                discount=discount,
+        #                                                sale_rate=sale_rate,
+        #                                                amount=amount,
+        #                                                )
+        #         if sell_qty < record_qty:
+        #             remaining_qty = int(record_qty) - int(sell_qty)
+        #             obj = MedicineStore.objects.filter(to_store_id=store_id, medicine_id=medicine_id).update(
+        #                 qty=remaining_qty)
+        #     MedicineOrderHead.objects.filter(id=id).update(status=1)
+        #     status = 'success'
+        #     msg = 'Bill creation Successfully.'
 
         context = {
             'status': status,
