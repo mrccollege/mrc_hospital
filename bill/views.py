@@ -9,6 +9,8 @@ from appointment.models import PatientAppointment
 
 from my_order.models import MedicineOrderHead, MedicineOrderDetail
 
+from my_order.models import MedicineOrderBillHead
+
 
 # Create your views here.
 @login_required(login_url='/account/user_login/')
@@ -55,6 +57,22 @@ def order_list(request):
         'order': order
     }
     return render(request, 'order_list.html', context)
+
+
+def normal_order_bill_list(request):
+    order = MedicineOrderBillHead.objects.all().order_by('-id')
+    context = {
+        'order': order
+    }
+    return render(request, 'normal_order_bill_list.html', context)
+
+
+def estimate_order_bill_list(request):
+    order = MedicineOrderHead.objects.filter(status=0)
+    context = {
+        'order': order
+    }
+    return render(request, 'estimate_order_bill_list.html', context)
 
 
 def order_detail(request, id):

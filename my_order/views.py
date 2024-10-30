@@ -23,6 +23,7 @@ from store.models import Store, MedicineStoreTransactionHistory
 from my_order.models import MedicineOrderBillHead
 
 from my_order.models import MedicineOrderBillDetail
+from django.db.models import Sum
 
 
 # Create your views here.
@@ -202,7 +203,7 @@ def update_medicine_order(request, id):
             'doctor': doctor,
             'doctor_id': doctor_id,
         }
-        return render(request, 'update_medicine_order.html', context)
+        return render(request, 'update_medicine_order_bill_instate.html', context)
 
 
 def my_medicine_ordered_list(request):
@@ -275,63 +276,58 @@ def create_bill(request, order_type, id):
         shipping_packing = int(form.get('shipping_packing'))
         discount = int(form.get('total_discount'))
         total = float(form.get('total'))
-        old_credit = float(form.get('old_credit'))
         new_credit = float(form.get('new_credit'))
 
-        # record_id = form.getlist('record_id')
-        # medicine_id = form.getlist('medicine_id')
-        # record_qty = form.getlist('record_qty')
-        # mrp = form.getlist('mrp')
-        # discount = form.getlist('discount')
-        # sale_rate = form.getlist('sale_rate')
-        # hsn = form.getlist('hsn')
-        # gst = form.getlist('gst')
-        # amount = form.getlist('amount')
+        obj = MedicineOrderBillHead.objects.create(doctor_id=doctor_id,
+                                                   store_id=store_id,
+                                                   invoice_number=invoice_number,
+                                                   sgst=sgst,
+                                                   cgst=cgst,
+                                                   subtotal=subtotal,
+                                                   old_credit=new_credit,
+                                                   cash=cash,
+                                                   online=online,
+                                                   shipping=shipping_packing,
+                                                   discount=discount,
+                                                   pay_amount=total,
+                                                   status=1,
+                                                   order_type=order_type,
+                                                   )
+        if obj:
+            head_id = obj.id
+            for medicine_data in medicines:
+                medicine_id = medicine_data['medicine_id']
+                record_qty = int(medicine_data['record_qty'])
+                sell_qty = int(medicine_data['sell_qty'])
+                discount = int(medicine_data['discount'])
+                mrp = float(medicine_data['mrp'])
+                sale_rate = float(medicine_data['sale_rate'])
+                hsn = float(medicine_data['hsn'])
+                gst = float(medicine_data['gst'])
+                taxable_amount = float(medicine_data['taxable_amount'])
+                tax = float(medicine_data['tax'])
+                amount = float(medicine_data['amount'])
 
-        # obj = MedicineOrderBillHead.objects.create(doctor_id=doctor_id,
-        #                                            store_id=store_id,
-        #                                            invoice_number=invoice_number,
-        #                                            sgst=sgst,
-        #                                            cgst=cgst,
-        #                                            subtotal=subtotal,
-        #                                            credit=new_credit,
-        #                                            cash=cash,
-        #                                            online=online,
-        #                                            shipping=shipping_packing,
-        #                                            discount=discount,
-        #                                            pay_amount=total,
-        #                                            status=1,
-        #                                            )
-        # if obj:
-        #     for medicine_data in medicines:
-        #         medicine_id = medicine_data['medicine_id']
-        #         record_qty = int(medicine_data['record_qty'])
-        #         sell_qty = int(medicine_data['sell_qty'])
-        #         discount = int(medicine_data['discount'])
-        #         mrp = float(medicine_data['mrp'])
-        #         sale_rate = float(medicine_data['sale_rate'])
-        #         hsn = float(medicine_data['hsn'])
-        #         gst = float(medicine_data['gst'])
-        #         taxable_amount = float(medicine_data['taxable_amount'])
-        #         tax = float(medicine_data['tax'])
-        #         amount = float(medicine_data['amount'])
-        #
-        #         MedicineOrderBillDetail.objects.create(head_id=obj.id,
-        #                                                medicine_id=medicine_id,
-        #                                                record_qty=record_qty,
-        #                                                sell_qty=sell_qty,
-        #                                                mrp=mrp,
-        #                                                discount=discount,
-        #                                                sale_rate=sale_rate,
-        #                                                amount=amount,
-        #                                                )
-        #         if sell_qty < record_qty:
-        #             remaining_qty = int(record_qty) - int(sell_qty)
-        #             obj = MedicineStore.objects.filter(to_store_id=store_id, medicine_id=medicine_id).update(
-        #                 qty=remaining_qty)
-        #     MedicineOrderHead.objects.filter(id=id).update(status=1)
-        #     status = 'success'
-        #     msg = 'Bill creation Successfully.'
+                MedicineOrderBillDetail.objects.create(head_id=head_id,
+                                                       medicine_id=medicine_id,
+                                                       record_qty=record_qty,
+                                                       sell_qty=sell_qty,
+                                                       mrp=mrp,
+                                                       discount=discount,
+                                                       sale_rate=sale_rate,
+                                                       hsn=hsn,
+                                                       gst=gst,
+                                                       taxable_amount=taxable_amount,
+                                                       tax=tax,
+                                                       amount=amount,
+                                                       )
+                if sell_qty < record_qty:
+                    remaining_qty = int(record_qty) - int(sell_qty)
+                    MedicineStore.objects.filter(to_store_id=store_id, medicine_id=medicine_id).update(
+                        qty=remaining_qty)
+            MedicineOrderHead.objects.filter(id=id).update(status=1)
+            status = 'success'
+            msg = 'Bill creation Successfully.'
 
         context = {
             'status': status,
@@ -348,6 +344,10 @@ def create_bill(request, order_type, id):
             store_id = 0
 
         user = MedicineOrderHead.objects.get(id=id)
+        old_credit_sum = \
+            MedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).exclude(id=id).aggregate(Sum('old_credit'))[
+                'old_credit__sum'] or 0
+        print(old_credit_sum, '===============old_credit_sum@')
         medicine = MedicineOrderDetail.objects.filter(head_id=id)
         medicine_list = []
 
@@ -377,9 +377,332 @@ def create_bill(request, order_type, id):
             'store_id': store_id,
             'user': user,
             'medicine': medicine_list,
+            'old_credit_sum': old_credit_sum,
         }
         if order_type == 1:
             return render(request, 'order_tax_invoice_in_state.html', context)
+        elif order_type == 2:
+            return render(request, 'order_tax_invoice_other_state.html', context)
+        elif order_type == 3:
+            return render(request, 'oder_bill_of_supply.html', context)
+        else:
+            return render(request, 'oder_bill_of_supply.html', context)
+
+
+@login_required(login_url='/account/user_login/')
+def update_medicine_order_bill(request, order_type, id):
+    if request.method == 'POST':
+        form = request.POST
+        print(form, '============form========')
+        user_id = request.session['user_id']
+        try:
+            store = Store.objects.get(user_id=user_id)
+            store_id = store.id
+        except:
+            store_id = 0
+
+        status = 'failed'
+        msg = 'Bill Creation failed.'
+        medicines = json.loads(request.POST.get('medicines'))
+        doctor_id = form.get('doctor_id')
+        subtotal = float(form.get('sub_total'))
+        sgst = form.get('sgst')
+        cgst = form.get('cgst')
+        cash = float(form.get('cash'))
+        online = float(form.get('online'))
+        shipping_packing = int(form.get('shipping_packing'))
+        discount = int(form.get('total_discount'))
+        total = float(form.get('total'))
+        new_credit = float(form.get('new_credit'))
+
+        obj = MedicineOrderBillHead.objects.filter(id=id).update(store_id=store_id,
+                                                                 sgst=sgst,
+                                                                 cgst=cgst,
+                                                                 subtotal=subtotal,
+                                                                 old_credit=new_credit,
+                                                                 cash=cash,
+                                                                 online=online,
+                                                                 shipping=shipping_packing,
+                                                                 discount=discount,
+                                                                 pay_amount=total,
+                                                                 )
+        if obj:
+            head_id = id
+            medicine_ids = []
+            for medicine_data in medicines:
+                medicine_id = medicine_data['medicine_id']
+                medicine_ids.append(medicine_id)
+                record_qty = int(medicine_data['record_qty'])
+                sell_qty = int(medicine_data['sell_qty'])
+                discount = int(medicine_data['discount'])
+                mrp = float(medicine_data['mrp'])
+                sale_rate = float(medicine_data['sale_rate'])
+                hsn = float(medicine_data['hsn'])
+                gst = float(medicine_data['gst'])
+                taxable_amount = float(medicine_data['taxable_amount'])
+                tax = float(medicine_data['tax'])
+                amount = float(medicine_data['amount'])
+                query = Q(head_id=head_id, medicine_id=medicine_id)
+                already_obj = MedicineOrderBillDetail.objects.filter(query)
+                if already_obj:
+                    MedicineOrderBillDetail.objects.filter(query).update(record_qty=record_qty,
+                                                                         sell_qty=sell_qty,
+                                                                         mrp=mrp,
+                                                                         discount=discount,
+                                                                         sale_rate=sale_rate,
+                                                                         hsn=hsn,
+                                                                         gst=gst,
+                                                                         taxable_amount=taxable_amount,
+                                                                         tax=tax,
+                                                                         amount=amount,
+                                                                         )
+
+                    if sell_qty < record_qty:
+                        pre_sell_qty = already_obj[0].sell_qty
+                        remaining_qty = int(record_qty + pre_sell_qty) - int(sell_qty)
+                        MedicineStore.objects.filter(to_store_id=store_id, medicine_id=medicine_id).update(
+                            qty=remaining_qty)
+                else:
+                    MedicineOrderBillDetail.objects.create(head_id=head_id,
+                                                           medicine_id=medicine_id,
+                                                           record_qty=record_qty,
+                                                           sell_qty=sell_qty,
+                                                           mrp=mrp,
+                                                           discount=discount,
+                                                           sale_rate=sale_rate,
+                                                           hsn=hsn,
+                                                           gst=gst,
+                                                           taxable_amount=taxable_amount,
+                                                           tax=tax,
+                                                           amount=amount,
+                                                           )
+                if sell_qty <= record_qty:
+                    remaining_qty = int(record_qty) - int(sell_qty)
+                    print(remaining_qty, '==========remaining_qty')
+                    MedicineStore.objects.filter(to_store_id=store_id, medicine_id=medicine_id).update(
+                        qty=remaining_qty)
+            MedicineOrderHead.objects.filter(id=id).update(status=1)
+            MedicineOrderBillDetail.objects.filter(head_id=id).exclude(medicine_id__in=medicine_ids).delete()
+            status = 'success'
+            msg = 'Bill creation Successfully.'
+
+        context = {
+            'status': status,
+            'msg': msg,
+        }
+        return JsonResponse(context)
+
+    else:
+        user_id = request.session['user_id']
+        try:
+            store = Store.objects.get(user_id=user_id)
+            store_id = store.id
+        except:
+            store_id = 0
+
+        user = MedicineOrderBillHead.objects.get(id=id)
+        old_credit_sum = \
+            MedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).exclude(id=id).aggregate(Sum('old_credit'))[
+                'old_credit__sum'] or 0
+        medicine = MedicineOrderBillDetail.objects.filter(head_id=id)
+        medicine_list = []
+
+        for i in medicine:
+            data_dict = {}
+            query = Q(to_store_id=store_id, medicine_id=i.medicine.id)
+            store_medicine = MedicineStore.objects.filter(query).values('qty', 'price')
+            data_dict['medicine_id'] = i.medicine.id
+            data_dict['medicine_name'] = i.medicine.name
+            data_dict['order_qty'] = i.order_qty
+            data_dict['sell_qty'] = i.sell_qty
+            data_dict['discount'] = i.discount
+            data_dict['hsn'] = i.hsn
+            data_dict['gst'] = i.gst
+            data_dict['taxable_amount'] = i.taxable_amount
+            data_dict['tax'] = i.tax
+
+            try:
+                data_dict['record_qty'] = store_medicine[0]['qty']
+            except:
+                data_dict['record_qty'] = 0
+            try:
+                data_dict['mrp'] = store_medicine[0]['price']
+            except:
+                data_dict['mrp'] = 0
+
+            medicine_list.append(data_dict)
+
+        context = {
+            'id': id,
+            'order_type': order_type,
+            'store_id': store_id,
+            'user': user,
+            'medicine': medicine_list,
+            'old_credit_sum': old_credit_sum,
+        }
+        if order_type == 1:
+            return render(request, 'update_medicine_order_bill_instate.html', context)
+        elif order_type == 2:
+            return render(request, 'order_tax_invoice_other_state.html', context)
+        elif order_type == 3:
+            return render(request, 'oder_bill_of_supply.html', context)
+        else:
+            return render(request, 'oder_bill_of_supply.html', context)
+
+
+@login_required(login_url='/account/user_login/')
+def estimate_medicine_order_bill(request, order_type, id):
+    if request.method == 'POST':
+        form = request.POST
+        print(form, '============form========')
+        user_id = request.session['user_id']
+        try:
+            store = Store.objects.get(user_id=user_id)
+            store_id = store.id
+        except:
+            store_id = 0
+
+        status = 'failed'
+        msg = 'Bill Creation failed.'
+        medicines = json.loads(request.POST.get('medicines'))
+        doctor_id = form.get('doctor_id')
+        subtotal = float(form.get('sub_total'))
+        sgst = form.get('sgst')
+        cgst = form.get('cgst')
+        cash = float(form.get('cash'))
+        online = float(form.get('online'))
+        shipping_packing = int(form.get('shipping_packing'))
+        discount = int(form.get('total_discount'))
+        total = float(form.get('total'))
+        new_credit = float(form.get('new_credit'))
+
+        obj = MedicineOrderBillHead.objects.filter(id=id).update(store_id=store_id,
+                                                                 sgst=sgst,
+                                                                 cgst=cgst,
+                                                                 subtotal=subtotal,
+                                                                 old_credit=new_credit,
+                                                                 cash=cash,
+                                                                 online=online,
+                                                                 shipping=shipping_packing,
+                                                                 discount=discount,
+                                                                 pay_amount=total,
+                                                                 )
+        if obj:
+            head_id = id
+            medicine_ids = []
+            for medicine_data in medicines:
+                medicine_id = medicine_data['medicine_id']
+                medicine_ids.append(medicine_id)
+                record_qty = int(medicine_data['record_qty'])
+                sell_qty = int(medicine_data['sell_qty'])
+                discount = int(medicine_data['discount'])
+                mrp = float(medicine_data['mrp'])
+                sale_rate = float(medicine_data['sale_rate'])
+                hsn = float(medicine_data['hsn'])
+                gst = float(medicine_data['gst'])
+                taxable_amount = float(medicine_data['taxable_amount'])
+                tax = float(medicine_data['tax'])
+                amount = float(medicine_data['amount'])
+                query = Q(head_id=head_id, medicine_id=medicine_id)
+                already_obj = MedicineOrderBillDetail.objects.filter(query)
+                if already_obj:
+                    MedicineOrderBillDetail.objects.filter(query).update(record_qty=record_qty,
+                                                                         sell_qty=sell_qty,
+                                                                         mrp=mrp,
+                                                                         discount=discount,
+                                                                         sale_rate=sale_rate,
+                                                                         hsn=hsn,
+                                                                         gst=gst,
+                                                                         taxable_amount=taxable_amount,
+                                                                         tax=tax,
+                                                                         amount=amount,
+                                                                         )
+
+                    if sell_qty < record_qty:
+                        pre_sell_qty = already_obj[0].sell_qty
+                        remaining_qty = int(record_qty + pre_sell_qty) - int(sell_qty)
+                        MedicineStore.objects.filter(to_store_id=store_id, medicine_id=medicine_id).update(
+                            qty=remaining_qty)
+                else:
+                    MedicineOrderBillDetail.objects.create(head_id=head_id,
+                                                           medicine_id=medicine_id,
+                                                           record_qty=record_qty,
+                                                           sell_qty=sell_qty,
+                                                           mrp=mrp,
+                                                           discount=discount,
+                                                           sale_rate=sale_rate,
+                                                           hsn=hsn,
+                                                           gst=gst,
+                                                           taxable_amount=taxable_amount,
+                                                           tax=tax,
+                                                           amount=amount,
+                                                           )
+                if sell_qty <= record_qty:
+                    remaining_qty = int(record_qty) - int(sell_qty)
+                    print(remaining_qty, '==========remaining_qty')
+                    MedicineStore.objects.filter(to_store_id=store_id, medicine_id=medicine_id).update(
+                        qty=remaining_qty)
+            MedicineOrderHead.objects.filter(id=id).update(status=1)
+            MedicineOrderBillDetail.objects.filter(head_id=id).exclude(medicine_id__in=medicine_ids).delete()
+            status = 'success'
+            msg = 'Bill creation Successfully.'
+
+        context = {
+            'status': status,
+            'msg': msg,
+        }
+        return JsonResponse(context)
+
+    else:
+        user_id = request.session['user_id']
+        try:
+            store = Store.objects.get(user_id=user_id)
+            store_id = store.id
+        except:
+            store_id = 0
+
+        user = MedicineOrderBillHead.objects.get(id=id)
+        old_credit_sum = \
+            MedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).exclude(id=id).aggregate(Sum('old_credit'))[
+                'old_credit__sum'] or 0
+        medicine = MedicineOrderBillDetail.objects.filter(head_id=id)
+        medicine_list = []
+
+        for i in medicine:
+            data_dict = {}
+            query = Q(to_store_id=store_id, medicine_id=i.medicine.id)
+            store_medicine = MedicineStore.objects.filter(query).values('qty', 'price')
+            data_dict['medicine_id'] = i.medicine.id
+            data_dict['medicine_name'] = i.medicine.name
+            data_dict['order_qty'] = i.order_qty
+            data_dict['sell_qty'] = i.sell_qty
+            data_dict['discount'] = i.discount
+            data_dict['hsn'] = i.hsn
+            data_dict['gst'] = i.gst
+            data_dict['taxable_amount'] = i.taxable_amount
+            data_dict['tax'] = i.tax
+
+            try:
+                data_dict['record_qty'] = store_medicine[0]['qty']
+            except:
+                data_dict['record_qty'] = 0
+            try:
+                data_dict['mrp'] = store_medicine[0]['price']
+            except:
+                data_dict['mrp'] = 0
+
+            medicine_list.append(data_dict)
+
+        context = {
+            'id': id,
+            'order_type': order_type,
+            'store_id': store_id,
+            'user': user,
+            'medicine': medicine_list,
+            'old_credit_sum': old_credit_sum,
+        }
+        if order_type == 1:
+            return render(request, 'estimate_medicine_order_bill_instate.html', context)
         elif order_type == 2:
             return render(request, 'order_tax_invoice_other_state.html', context)
         elif order_type == 3:
