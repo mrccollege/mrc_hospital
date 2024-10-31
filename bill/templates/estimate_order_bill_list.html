@@ -12,7 +12,7 @@
         <!-- Content Header (Page header) -->
         <section class="content-header">
             <h1>
-                All Doctor Detail
+                Normal Oder Bill List
             </h1>
             <ol class="breadcrumb">
                 <li><a href="/"><i class="fa fa-dashboard"></i> Home</a></li>
@@ -27,29 +27,33 @@
                 <div class="col-xs-12">
                     <div class="box">
                         <div class="box-header">
-                            <h3 class="box-title">Doctors</h3>
+                            <h3 class="box-title">Bill List</h3>
                         </div><!-- /.box-header -->
                         <div class="box-body">
                             <table id="example1" class="table table-bordered table-striped">
                                 <thead>
                                 <tr>
+                                    <th>Date</th>
                                     <th>Name</th>
-                                    <th>Sub total</th>
-                                    <th>Discount</th>
-                                    <th>Shipping</th>
-                                    <th>Amount</th>
-                                    <th>Action</th>
+                                    <th>Mobile</th>
+                                    <th>Address</th>
+                                    <th>Bill Amount</th>
+                                    <th>Pending</th>
+                                    <th>Update</th>
+                                    <th>Reminder</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 {% for i in order %}
                                 <tr>
+                                    <td>{{ i.created_at|date:"d-M-Y h:i A" }}</td>
                                     <td>{{i.doctor|title}}</td>
-                                    <td>{{i.subtotal}}</td>
-                                    <td>{{i.discount}}</td>
-                                    <td>{{i.shipping}}</td>
+                                    <td>{{i.doctor.user.mobile}}</td>
+                                    <td>{{i.doctor.user.district}}, {{i.doctor.user.state}}</td>
                                     <td>{{i.pay_amount}}</td>
-                                    <td><a href="/bill/order_detail/{{i.id}}/">View</a></td>
+                                    <td>{{i.old_credit}}</td>
+                                    <td><a href="/my_order/update_estimate_medicine_order_bill/{{i.order_type}}/{{i.id}}/" class="btn btn-primary">Update Bill</a></td>
+                                    <td><button class="btn btn-primary">Reminder</button></td>
                                 </tr>
                                 {% endfor %}
 

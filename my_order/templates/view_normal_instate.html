@@ -36,8 +36,6 @@
                                             <div class="col-lg-3 form-group">
                                                 <input type="hidden" name="store_id" id="store_id"
                                                        value="{{store_id}}">
-                                                <input type="text" name="invoice_number" id="invoice_number"
-                                                       value="{{invoice_number}}">
                                                 <label class="form-label">Doctor Name</label>
                                                 <input type="hidden" name="doctor_id" id="doctor_id"
                                                        value="{{user.doctor.id}}">
@@ -117,7 +115,6 @@
                                                 <thead>
                                                 <tr>
                                                     <th>Medicine Name</th>
-                                                    <th>Record Qty</th>
                                                     <th>Sell Qty</th>
                                                     <th colspan="1">MRP.</th>
                                                     <th>Disc.%</th>
@@ -132,11 +129,6 @@
                                                 <tbody>
                                                 </tbody>
                                             </table>
-                                            <div class="text-center">
-                                                <button type="button" class="btn btn-primary"
-                                                        onclick="add_medicine()"> Add
-                                                </button>
-                                            </div>
                                             <hr>
                                             <div class="row col-lg-6">
                                                 <div class="row">
@@ -181,7 +173,7 @@
                                                     <div class="col-lg-6">
                                                         <label for="old_credit">Old Credit</label>
                                                         <input type="text" class="form-control" name="old_credit"
-                                                               id="old_credit" value="{{old_credit_sum}}" readonly>
+                                                               id="old_credit" readonly value="{{old_credit_sum}}">
                                                     </div>
 
                                                     <div class="col-lg-6">
@@ -219,7 +211,7 @@
                                         </div>
                                     </div><!-- /.box-body -->
                                     <div class="box-footer">
-                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                        <button type="submit" class="btn btn-primary" disabled>Submit</button>
                                     </div>
                                 </form>
                             </div>
@@ -250,7 +242,6 @@
                 var row = $(this).closest('tr');  // Get the closest row to this input
                 var medicineData = {
                     medicine_id: row.find('input[name="medicine_id"]').val(),
-                    record_qty: row.find('input[name="record_qty"]').val(),
                     sell_qty: row.find('input[name="sell_qty"]').val(),
                     discount: row.find('input[name="discount"]').val(),
                     mrp: row.find('input[name="mrp"]').val(),
@@ -278,14 +269,13 @@
             online: $('#online').val(),
             old_credit: $('#old_credit').val(),
             new_credit: $('#new_credit').val(),
-            invoice_number: $('#invoice_number').val(),
 
             csrfmiddlewaretoken: '{{ csrf_token }}'  // Add CSRF token
         };
 
         if (selectedMedicines.length > 0) {
             $.ajax({
-                url: '/my_order/create_bill/{{order_type}}/{{id}}/',
+                url: '/my_order/update_medicine_order_bill/{{order_type}}/{{id}}/',
                 type: 'POST',
                 data: formData,  // Send the form data with medicine and other inputs
                 success: function (response) {
@@ -301,7 +291,7 @@
                         confirmButtonColor: '#3085d6',
                         confirmButtonText: 'OK'
                       }).then((result) => {
-                        window.location.href = '/bill/order_list/';
+                        window.location.href = '/bill/normal_order_bill_list/';
                       });
                     }else{
                       Swal.fire({
@@ -344,9 +334,7 @@
 <script>
 
     var index = 1;
-
     $(document).ready(function(){
-        //add_medicine();
         {% for i in medicine %}
             var html = '';
             html += '<tr id="medicine_tr'+index+'">';
@@ -354,23 +342,21 @@
             html += '<input type="hidden" name="record_id" class="form-control" id="record_id'+index+'" required>';
             html += '<input value="{{i.medicine_id}}" type="hidden" name="medicine_id" class="form-control" id="medicine_id'+index+'" required>';
 
-            html += '<td><input value="{{i.record_qty}}" type="text" id="record_qty'+index+'" name="record_qty" class="form-control" readonly required></td>';
-
-            html += '<td><input value="{{i.order_qty}}" type="text" onkeyup="sell_qty_function('+index+')" onkeypress="return isNumberKey(event)" id="sell_qty'+index+'" name="sell_qty" class="form-control" placeholder="Sell quantity" required></td>';
+            html += '<td><input value="{{i.sell_qty}}" type="text" onkeyup="sell_qty_function('+index+')" onkeypress="return isNumberKey(event)" id="sell_qty'+index+'" name="sell_qty" class="form-control" placeholder="Sell quantity" required></td>';
 
             html += '<td><input value="{{i.mrp}}" type="text" id="mrp'+index+'" name="mrp" class="form-control" value="0" readonly required></td>';
 
-            html += '<td><input value="0" type="text" onkeyup="discount_function('+index+')" onkeypress="return isNumberKey(event)" id="discount'+index+'" name="discount" class="form-control" required></td>';
+            html += '<td><input value="{{i.discount}}" type="text" onkeyup="discount_function('+index+')" onkeypress="return isNumberKey(event)" id="discount'+index+'" name="discount" class="form-control" required></td>';
 
-            html += '<td><input type="text" id="sale_rate'+index+'" name="sale_rate" class="form-control" readonly required></td>';
+            html += '<td><input value="{{i.sale_rate}}" type="text" id="sale_rate'+index+'" name="sale_rate" class="form-control" readonly required></td>';
 
-            html += '<td><input value="0" type="text" onkeypress="return isNumberKey(event)" id="hsn'+index+'" name="hsn" class="form-control" readonly required></td>';
+            html += '<td><input value="{{i.hsn}}" value="0" type="text" onkeypress="return isNumberKey(event)" id="hsn'+index+'" name="hsn" class="form-control" readonly required></td>';
 
-            html += '<td><input value="0" type="text" onkeyup="gst_function('+index+')" onkeypress="return isNumberKey(event)" id="gst'+index+'" name="gst" class="form-control" required></td>';
+            html += '<td><input value="{{i.gst}}" type="text" onkeyup="gst_function('+index+')" onkeypress="return isNumberKey(event)" id="gst'+index+'" name="gst" class="form-control" required></td>';
 
-            html += '<td><input value="0" type="text" id="taxable_amount'+index+'" name="taxable_amount" class="total form-control" readonly></td>';
-            html += '<td><input value="0" type="text" id="tax'+index+'" name="tax" class="total form-control" readonly></td>';
-            html += '<td><input value="0" type="text" id="amount'+index+'" name="amount" class="total form-control" readonly></td>';
+            html += '<td><input type="text" id="taxable_amount'+index+'" name="taxable_amount" class="total form-control" readonly></td>';
+            html += '<td><input type="text" id="tax'+index+'" name="tax" class="total form-control" readonly></td>';
+            html += '<td><input type="text" id="amount'+index+'" name="amount" class="total form-control" readonly></td>';
 
             html += '<td><button onclick="remove_row('+index+')"><i class="fa fa-remove" style="font-size:24px"></i></button></td>';
             html += '</tr>';
@@ -388,44 +374,12 @@
         {% endfor %}
     });
 
-
-    function add_medicine(){
-        var html = '';
-        html += '<tr id="medicine_tr'+index+'">';
-        html += '<td><input onkeyup="search_medicine('+index+');" type="text" id="medicine'+index+'" name="medicine" class="form-control" autocomplete="off" placeholder="Search medicine: " required></td>';
-        html += '<input type="hidden" name="record_id" class="form-control" id="record_id'+index+'" required>';
-        html += '<input type="hidden" name="medicine_id" class="form-control" id="medicine_id'+index+'" required>';
-
-        html += '<td><input type="text" id="record_qty'+index+'" name="record_qty" class="form-control" readonly required></td>';
-
-        html += '<td><input type="text" onkeyup="sell_qty_function('+index+')" onkeypress="return isNumberKey(event)" id="sell_qty'+index+'" name="sell_qty" class="form-control" placeholder="Sell quantity" required></td>';
-
-        html += '<td><input type="text" id="mrp'+index+'" name="mrp" class="form-control" value="0" readonly required></td>';
-
-        html += '<td><input value="0" type="text" onkeyup="discount_function('+index+')" onkeypress="return isNumberKey(event)" id="discount'+index+'" name="discount" class="form-control" required></td>';
-
-        html += '<td><input type="text" id="sale_rate'+index+'" name="sale_rate" class="form-control" readonly required></td>';
-
-        html += '<td><input value="0" type="text" onkeypress="return isNumberKey(event)" id="hsn'+index+'" name="hsn" class="form-control" readonly required></td>';
-
-        html += '<td><input value="0" type="text" onkeyup="gst_function('+index+')" onkeypress="return isNumberKey(event)" id="gst'+index+'" name="gst" class="form-control" required></td>';
-
-        html += '<td><input value="0" type="text" id="taxable_amount'+index+'" name="taxable_amount" class="total form-control" readonly></td>';
-        html += '<td><input value="0" type="text" id="tax'+index+'" name="tax" class="total form-control" readonly></td>';
-        html += '<td><input value="0" type="text" id="amount'+index+'" name="amount" class="total form-control" readonly></td>';
-
-        html += '<td><button onclick="remove_row('+index+')"><i class="fa fa-remove" style="font-size:24px"></i></button></td>';
-        html += '</tr>';
-
-        // Append the new row to the table body
-        $('table tbody').append(html);
-        index +=1;
-    }
-
     function remove_row(index){
         $('#medicine_tr'+index).remove()
         sub_total_function()
         sgst_and_cgst_function()
+        total_discount_apply_function()
+        cash_online_function()
     }
 </script>
 
@@ -437,7 +391,6 @@
                 $('#record_id' + indexID).val('');
                 $('#medicine_id' + indexID).val('');
                 $('#mrp' + indexID).val('');
-                $('#record_qty' + indexID).val('');
                 $('#amount' + indexID).val(0);
             }
         });
@@ -476,7 +429,6 @@
                                     value: results.name,
                                     record_id: results.record_id,
                                     medicine_id: results.medicine_id,
-                                    record_qty: results.record_qty,
                                     price:results.price
                                 };
                             });
@@ -493,8 +445,6 @@
                 $('#record_id' + indexID).val(ui.item.record_id);
                 $('#medicine_id' + indexID).val(ui.item.medicine_id);
                 $('#mrp' + indexID).val(ui.item.price);
-                $('#record_qty' + indexID).val(ui.item.record_qty);
-                //add_medicine()
             }
         })
     }
@@ -503,6 +453,7 @@
 <script>
     function sell_qty_function(index){
         var sell_qty = parseInt($('#sell_qty' + index).val()) || 0;
+
         var mrp = parseInt($('#mrp' + index).val()) || 0;
         var sell_amt = sell_qty * mrp
 
@@ -641,16 +592,15 @@
 
         var total_pay_bill = old_credit + total
         parseFloat($('#total_pay_bill_amount').val(total_pay_bill.toFixed(2)))
-
         cash_online_function()
     }
 </script>
 
 <script>
     function cash_online_function(){
-        var cash = parseFloat($('#cash').val()) || 0;
-        var online  = parseFloat($('#online').val()) || 0;
-        total_pay_bill = parseFloat($('#total_pay_bill_amount').val()) || 0;
+        var cash = Number($('#cash').val()) || 0;
+        var online  = Number($('#online').val()) || 0;
+        total_pay_bill = Number($('#total_pay_bill_amount').val()) || 0;
 
         var paid_amt = total_pay_bill - (cash + online)
         $('#new_credit').val(paid_amt.toFixed(2))

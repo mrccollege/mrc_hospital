@@ -11,6 +11,8 @@ from my_order.models import MedicineOrderHead, MedicineOrderDetail
 
 from my_order.models import MedicineOrderBillHead
 
+from my_order.models import EstimateMedicineOrderBillHead
+
 
 # Create your views here.
 @login_required(login_url='/account/user_login/')
@@ -68,7 +70,7 @@ def normal_order_bill_list(request):
 
 
 def estimate_order_bill_list(request):
-    order = MedicineOrderHead.objects.filter(status=0)
+    order = EstimateMedicineOrderBillHead.objects.filter(status=1)
     context = {
         'order': order
     }
