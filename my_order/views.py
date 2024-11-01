@@ -114,7 +114,9 @@ def medicine_order(request):
             doctor_id = 0
             user_id = 0
 
-        medicine = Medicine.objects.filter()
+        medicine = Medicine.objects.filter(recom_to_doctor=True)
+        for i in medicine:
+            print(i.recom_to_doctor, '=============medicine')
         context = {
             'medicine': medicine,
             'user_id': user_id,

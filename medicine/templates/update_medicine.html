@@ -41,7 +41,8 @@
 
                                             <div class="col-lg-3 form-group">
                                                 <label for="name" class="form-label">Medicine Price</label>
-                                                <input value="{{medicine.price}}" type="text" class="form-control" id="price" name="price"
+                                                <input value="{{medicine.price}}" type="text" class="form-control"
+                                                       id="price" name="price"
                                                        required>
                                             </div>
 
@@ -63,7 +64,8 @@
 
                                             <div class="col-lg-3 form-group">
                                                 <label for="video_link" class="form-label">Video link</label>
-                                                <input value="{{medicine.video_link}}" type="text" class="form-control" id="video_link"
+                                                <input value="{{medicine.video_link}}" type="text" class="form-control"
+                                                       id="video_link"
                                                        name="video_link"
                                                        required>
                                             </div>
@@ -80,6 +82,17 @@
                                                 <input type="text" class="form-control" id="mobile" name="mobile"
                                                        value="{{medicine.mobile}}" maxlength="10" required>
                                             </div>
+
+                                            <div>
+                                                <label>Recommend To doctor</label>
+                                                <input type="radio" class="" checked name="recommend_medicine"
+                                                       id="recommend_medicine_yes" value="True">
+                                                <label>Yes</label>
+                                                <input type="radio" class="" name="recommend_medicine"
+                                                       id="recommend_medicine_no" value="False">
+                                                <label>No</label>
+                                            </div>
+
                                         </div>
                                     </div><!-- /.box-body -->
 

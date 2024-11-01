@@ -23,6 +23,7 @@ class Medicine(models.Model):
     image = models.ImageField(upload_to='medicine_image/', null=True, blank=True)
     manufacture = models.CharField(max_length=500, null=True)
     mobile = models.CharField(max_length=500, null=True)
+    recom_to_doctor = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 

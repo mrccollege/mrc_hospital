@@ -85,6 +85,7 @@ def add_medicine(request):
         video_link = form.get('video_link')
         manufacture = form.get('manufacture')
         mobile = form.get('mobile')
+        recommend_medicine = form.get('recommend_medicine')
         status = 'failed'
         msg = 'Something went wrong.'
         try:
@@ -94,6 +95,7 @@ def add_medicine(request):
                                                    video_link=video_link,
                                                    manufacture=manufacture.title(),
                                                    mobile=mobile,
+                                                   recom_to_doctor=recommend_medicine
                                                    )
             if medicine_obj:
                 medicine_obj.image = image
@@ -129,6 +131,8 @@ def medicine_update(request, id):
         video_link = form.get('video_link')
         manufacture = form.get('manufacture')
         mobile = form.get('mobile')
+        recommend_medicine = form.get('recommend_medicine')
+        print(recommend_medicine, '=======recommend_medicine====')
         msg = 'Medicine Update Failed'
         status = 'Failed'
         try:
@@ -138,6 +142,7 @@ def medicine_update(request, id):
                                                                  video_link=video_link,
                                                                  manufacture=manufacture.title(),
                                                                  mobile=mobile,
+                                                                 recom_to_doctor=recommend_medicine
                                                                  )
             if medicine_obj:
                 if image:
