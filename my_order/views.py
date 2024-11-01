@@ -553,9 +553,9 @@ def update_medicine_order_bill(request, order_type, id):
         elif order_type == 2:
             return render(request, 'normal_bill/update_medicine_order_bill_other_state.html', context)
         elif order_type == 3:
-            return render(request, 'normal_bill/oder_bill_of_supply.html', context)
+            return render(request, 'normal_bill/update_order_bill_of_supply.html', context)
         else:
-            return render(request, 'normal_bill/oder_bill_of_supply.html', context)
+            return render(request, 'normal_bill/update_order_bill_of_supply.html', context)
 
 
 @login_required(login_url='/account/user_login/')
