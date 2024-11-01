@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'address_place',
     'previous_treatment',
     'my_order',
+    'order_payment_detail',
 
 ]
 

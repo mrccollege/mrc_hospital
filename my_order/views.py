@@ -25,6 +25,8 @@ from my_order.models import MedicineOrderBillHead, MedicineOrderBillDetail
 from my_order.models import EstimateMedicineOrderBillHead, EstimateMedicineOrderBillDetail
 from django.db.models import Sum
 
+from order_payment_detail.models import PaymentDetail
+
 
 # Create your views here.
 def search_medicine(request):
@@ -848,7 +850,8 @@ def view_normal(request, id):
         store_id = store.id
     except:
         store_id = 0
-    print(id, '==============id=============')
+
+    pay_detail = PaymentDetail.objects.filter()
     user = MedicineOrderBillHead.objects.get(order_id_id=id)
     order_type = user.order_type
     old_credit_sum = \
@@ -871,7 +874,6 @@ def view_normal(request, id):
         data_dict['taxable_amount'] = i.taxable_amount
         data_dict['tax'] = i.tax
         medicine_list.append(data_dict)
-    print(medicine_list, '==================medicine_list')
     context = {
         'id': id,
         'order_type': order_type,
@@ -879,6 +881,7 @@ def view_normal(request, id):
         'user': user,
         'medicine': medicine_list,
         'old_credit_sum': old_credit_sum,
+        'pay_detail': pay_detail[0],
     }
     if order_type == 1:
         return render(request, 'view_normal_instate.html', context)
@@ -900,6 +903,7 @@ def view_estimate(request, id):
         store_id = 0
 
     user = EstimateMedicineOrderBillHead.objects.get(order_id_id=id)
+    pay_detail = PaymentDetail.objects.filter()
     order_type = user.order_type
     old_credit_sum = \
         EstimateMedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).exclude(id=id).aggregate(Sum('old_credit'))[
@@ -929,6 +933,7 @@ def view_estimate(request, id):
         'user': user,
         'medicine': medicine_list,
         'old_credit_sum': old_credit_sum,
+        'pay_detail': pay_detail[0],
     }
     if order_type == 1:
         return render(request, 'view_estimate_instate.html', context)
