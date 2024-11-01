@@ -183,14 +183,14 @@
                                                     <div class="col-lg-4">
                                                         <label for="cash">Cash</label>
                                                         <input type="text" class="form-control" name="cash"
-                                                               id="cash" onkeypress="return isNumberKey(event)"
-                                                               onkeyup="cash_online_function()()">
+                                                               id="cash" value="0" onkeypress="return isNumberKey(event)"
+                                                               onkeyup="cash_online_function()">
                                                     </div>
                                                     <div class="col-lg-4">
                                                         <label for="online">Online</label>
                                                         <input type="text" class="form-control" name="online"
                                                                id="online" onkeypress="return isNumberKey(event)"
-                                                               onkeyup="cash_online_function()">
+                                                               onkeyup="cash_online_function()" value="0">
                                                     </div>
 
                                                     <div class="col-lg-4">
@@ -292,51 +292,6 @@
         })
     }
 </script>
-
-<!--<script>-->
-<!--    $('#medicine_form').on('submit', function (e) {-->
-<!--        $('#loader-overlay').show(); // Show overlay-->
-<!--        $('#loader').show(); // Show loader-->
-<!--        store_id = $('#store_id').val();-->
-<!--        if(store_id == 0){-->
-<!--            return false;-->
-<!--        }-->
-<!--        e.preventDefault();-->
-<!--        var formData = $('#medicine_form').serialize();-->
-<!--        $.ajax({-->
-<!--          url: '/my_order/create_bill/{{order_type}}/{{id}}/',-->
-<!--          type: 'POST',-->
-<!--          data: formData,-->
-<!--          success: function (response) {-->
-<!--            if(response.status == 'success'){-->
-<!--                $('#loader-overlay').hide(); // Show overlay-->
-<!--                $('#loader').hide(); // Show loader-->
-
-<!--              Swal.fire({-->
-<!--                title: 'Success',-->
-<!--                text: response.msg,-->
-<!--                icon: 'success',-->
-<!--                showCancelButton: false,-->
-<!--                confirmButtonColor: '#3085d6',-->
-<!--                confirmButtonText: 'OK'-->
-<!--              }).then((result) => {-->
-<!--                window.location.href = '/store/create_bill/';-->
-<!--              });-->
-<!--            }else{-->
-<!--              Swal.fire({-->
-<!--                  title: 'Error',-->
-<!--                  text: response.msg,-->
-<!--                  icon: 'error',-->
-<!--                  confirmButtonColor: '#3085d6',-->
-<!--                  confirmButtonText: 'OK'-->
-<!--              });-->
-<!--              $('#password').val('');-->
-<!--              return false;-->
-<!--            }-->
-<!--          },-->
-<!--        });-->
-<!--    });-->
-<!--</script>-->
 
 <script>
     $('#medicine_form').on('submit', function (e) {
@@ -470,6 +425,8 @@
 
             sub_total_function()
             sell_qty_function(index)
+            discount_function(index)
+            cash_online_function()
 
             index +=1;
 
@@ -509,6 +466,8 @@
     function remove_row(index){
         $('#medicine_tr'+index).remove()
         sub_total_function()
+        total_discount_apply_function()
+        cash_online_function()
     }
 </script>
 
@@ -527,6 +486,7 @@
 
         sub_total_function()
         total_discount_apply_function()
+        cash_online_function()
 
     }
 </script>
@@ -547,6 +507,7 @@
 
             sub_total_function()
             total_discount_apply_function()
+            cash_online_function()
 
 
         }else{
@@ -608,6 +569,8 @@
 
         var total_pay_bill = old_credit + total
         parseFloat($('#total_pay_bill_amount').val(total_pay_bill.toFixed(2)))
+
+        cash_online_function()
     }
 </script>
 

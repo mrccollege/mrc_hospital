@@ -261,7 +261,6 @@ def delete_medicine_order(request, id):
 def create_bill(request, order_type, id):
     if request.method == 'POST':
         form = request.POST
-        print(form, '============form========')
         user_id = request.session['user_id']
         try:
             store = Store.objects.get(user_id=user_id)
@@ -388,13 +387,13 @@ def create_bill(request, order_type, id):
             'old_credit_sum': old_credit_sum,
         }
         if order_type == 1:
-            return render(request, 'order_tax_invoice_in_state.html', context)
+            return render(request, 'normal_bill/order_tax_invoice_in_state.html', context)
         elif order_type == 2:
-            return render(request, 'order_tax_invoice_other_state.html', context)
+            return render(request, 'normal_bill/order_tax_invoice_other_state.html', context)
         elif order_type == 3:
-            return render(request, 'oder_bill_of_supply.html', context)
+            return render(request, 'normal_bill/oder_bill_of_supply.html', context)
         else:
-            return render(request, 'oder_bill_of_supply.html', context)
+            return render(request, 'normal_bill/oder_bill_of_supply.html', context)
 
 
 @login_required(login_url='/account/user_login/')
@@ -548,14 +547,15 @@ def update_medicine_order_bill(request, order_type, id):
             'medicine': medicine_list,
             'old_credit_sum': old_credit_sum,
         }
+
         if order_type == 1:
-            return render(request, 'update_medicine_order_bill_instate.html', context)
+            return render(request, 'normal_bill/update_medicine_order_bill_instate.html', context)
         elif order_type == 2:
-            return render(request, 'order_tax_invoice_other_state.html', context)
+            return render(request, 'normal_bill/update_medicine_order_bill_other_state.html', context)
         elif order_type == 3:
-            return render(request, 'oder_bill_of_supply.html', context)
+            return render(request, 'normal_bill/oder_bill_of_supply.html', context)
         else:
-            return render(request, 'oder_bill_of_supply.html', context)
+            return render(request, 'normal_bill/oder_bill_of_supply.html', context)
 
 
 @login_required(login_url='/account/user_login/')
@@ -711,7 +711,6 @@ def estimate_medicine_order_bill(request, order_type, id):
 def update_estimate_medicine_order_bill(request, order_type, id):
     if request.method == 'POST':
         form = request.POST
-        print(form, '============form========')
         user_id = request.session['user_id']
         try:
             store = Store.objects.get(user_id=user_id)
@@ -833,13 +832,13 @@ def update_estimate_medicine_order_bill(request, order_type, id):
             'old_credit_sum': old_credit_sum,
         }
         if order_type == 1:
-            return render(request, 'update_estimate_medicine_order_bill_instate.html', context)
+            return render(request, 'estimate_bill/update_estimate_medicine_order_bill_instate.html', context)
         elif order_type == 2:
-            return render(request, 'order_tax_invoice_other_state.html', context)
+            return render(request, 'estimate_bill/order_tax_invoice_other_state.html', context)
         elif order_type == 3:
-            return render(request, 'oder_bill_of_supply.html', context)
+            return render(request, 'estimate_bill/oder_bill_of_supply.html', context)
         else:
-            return render(request, 'oder_bill_of_supply.html', context)
+            return render(request, 'estimate_bill/oder_bill_of_supply.html', context)
 
 
 @login_required(login_url='/account/user_login/')

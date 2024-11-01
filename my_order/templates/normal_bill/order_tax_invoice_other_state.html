@@ -11,7 +11,7 @@
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
         <section class="content-header">
-            <h1>Create New Bill (Tax Invoice)</h1>
+            <h1>Create New Bill (Tax Invoice Other State)</h1>
             <ol class="breadcrumb">
                 <li><a href="/"><i class="fa fa-dashboard"></i> Home</a></li>
                 <li><a href="/">Tables</a></li>
@@ -36,8 +36,6 @@
                                             <div class="col-lg-3 form-group">
                                                 <input type="hidden" name="store_id" id="store_id"
                                                        value="{{store_id}}">
-                                                <input type="text" name="invoice_number" id="invoice_number"
-                                                       value="{{invoice_number}}">
                                                 <label class="form-label">Doctor Name</label>
                                                 <input type="hidden" name="doctor_id" id="doctor_id"
                                                        value="{{user.doctor.id}}">
@@ -181,7 +179,7 @@
                                                     <div class="col-lg-6">
                                                         <label for="old_credit">Old Credit</label>
                                                         <input type="text" class="form-control" name="old_credit"
-                                                               id="old_credit" value="{{old_credit_sum}}" readonly>
+                                                               id="old_credit" readonly>
                                                     </div>
 
                                                     <div class="col-lg-6">
@@ -210,8 +208,8 @@
                                                     <div class="col-lg-4">
                                                         <label for="new_credit">New Credit</label>
                                                         <input type="text" class="form-control" name="new_credit"
-                                                               id="new_credit" value="0" onkeypress="return isNumberKey(event)"
-                                                               readonly>
+                                                               id="new_credit" onkeypress="return isNumberKey(event)"
+                                                               readonly value="0">
                                                     </div>
                                                 </div>
 
@@ -235,6 +233,7 @@
 {% endblock content %}
 
 {% block js %}
+
 <script>
     $('#medicine_form').on('submit', function (e) {
         $('#loader-overlay').show(); // Show overlay
@@ -278,7 +277,6 @@
             online: $('#online').val(),
             old_credit: $('#old_credit').val(),
             new_credit: $('#new_credit').val(),
-            invoice_number: $('#invoice_number').val(),
 
             csrfmiddlewaretoken: '{{ csrf_token }}'  // Add CSRF token
         };
@@ -342,12 +340,11 @@
 </script>
 
 <script>
-
-    var index = 1;
-
     $(document).ready(function(){
         //add_medicine();
+
         {% for i in medicine %}
+
             var html = '';
             html += '<tr id="medicine_tr'+index+'">';
             html += '<td><input value="{{i.medicine_name}}" type="text" id="medicine'+index+'" name="medicine" class="form-control" autocomplete="off" placeholder="Search medicine: " required></td>';
@@ -375,7 +372,6 @@
             html += '<td><button onclick="remove_row('+index+')"><i class="fa fa-remove" style="font-size:24px"></i></button></td>';
             html += '</tr>';
 
-            // Append the new row to the table body
             $('table tbody').append(html);
 
             sell_qty_function(index)
@@ -385,10 +381,11 @@
             cash_online_function()
 
             index +=1;
+
         {% endfor %}
     });
 
-
+    var index = 1;
     function add_medicine(){
         var html = '';
         html += '<tr id="medicine_tr'+index+'">';
@@ -406,7 +403,7 @@
 
         html += '<td><input type="text" id="sale_rate'+index+'" name="sale_rate" class="form-control" readonly required></td>';
 
-        html += '<td><input value="0" type="text" onkeypress="return isNumberKey(event)" id="hsn'+index+'" name="hsn" class="form-control" readonly required></td>';
+        html += '<td><input type="text" onkeypress="return isNumberKey(event)" id="hsn'+index+'" name="hsn" class="form-control" readonly required></td>';
 
         html += '<td><input value="0" type="text" onkeyup="gst_function('+index+')" onkeypress="return isNumberKey(event)" id="gst'+index+'" name="gst" class="form-control" required></td>';
 
@@ -426,6 +423,8 @@
         $('#medicine_tr'+index).remove()
         sub_total_function()
         sgst_and_cgst_function()
+        total_discount_apply_function()
+        cash_online_function()
     }
 </script>
 
@@ -502,17 +501,17 @@
 
 <script>
     function sell_qty_function(index){
-        var sell_qty = parseInt($('#sell_qty' + index).val()) || 0;
-        var mrp = parseInt($('#mrp' + index).val()) || 0;
+        var sell_qty = Number($('#sell_qty' + index).val()) || 0;
+        var mrp = Number($('#mrp' + index).val()) || 0;
         var sell_amt = sell_qty * mrp
 
-        var discount = parseInt($('#discount'+index).val()) || 0;
+        var discount = Number($('#discount'+index).val()) || 0;
         var disc_amt = (discount / 100) * sell_amt;
         var amt =  sell_amt - disc_amt
 
         $('#sale_rate'+index).val(amt.toFixed(2));
 
-        var gst = parseInt($('#gst'+index).val()) || 0;
+        var gst = Number($('#gst'+index).val()) || 0;
         var result = amt / (1 + (gst / 100));
 
         var tax = amt - result
@@ -531,48 +530,12 @@
 
 <script>
     function discount_function(index){
-        var sell_qty = parseInt($('#sell_qty' + index).val()) || 0;
-        var mrp = parseInt($('#mrp' + index).val()) || 0;
+        var sell_qty = Number($('#sell_qty' + index).val()) || 0;
+        var mrp = Number($('#mrp' + index).val()) || 0;
         var sell_amt = sell_qty * mrp
 
         if (sell_qty){
-            var discount = parseInt($('#discount'+index).val()) || 0;
-            var disc_amt = (discount / 100) * sell_amt;
-            var amt =  sell_amt - disc_amt
-
-            $('#sale_rate'+index).val(amt);
-
-            var gst = parseInt($('#gst'+index).val()) || 0;
-            var result = amt / (1 + (gst / 100));
-
-            var tax = amt - result
-            $('#tax'+index).val(tax.toFixed(2));
-
-            $('#taxable_amount'+index).val(result.toFixed(2));
-            $('#amount'+index).val(amt.toFixed(2));
-
-            sub_total_function()
-            sgst_and_cgst_function()
-            total_discount_apply_function()
-            cash_online_function()
-
-
-        }else{
-            console.log('sell qty is not here')
-        }
-
-
-    }
-</script>
-
-<script>
-    function gst_function(index){
-        var sell_qty = parseInt($('#sell_qty' + index).val()) || 0;
-        var mrp = parseInt($('#mrp' + index).val()) || 0;
-        var sell_amt = sell_qty * mrp
-
-        if (sell_qty){
-            var discount = parseInt($('#discount'+index).val()) || 0;
+            var discount = Number($('#discount'+index).val()) || 0;
             var disc_amt = (discount / 100) * sell_amt;
             var amt =  sell_amt - disc_amt
 
@@ -598,11 +561,43 @@
 </script>
 
 <script>
+    function gst_function(index){
+        var sell_qty = Number($('#sell_qty' + index).val()) || 0;
+        var mrp = Number($('#mrp' + index).val()) || 0;
+        var sell_amt = sell_qty * mrp
+
+        if (sell_qty){
+            var discount = Number($('#discount'+index).val()) || 0;
+            var disc_amt = (discount / 100) * sell_amt;
+            var amt =  sell_amt - disc_amt
+
+            $('#sale_rate'+index).val(amt.toFixed(2));
+
+            var gst = Number($('#gst'+index).val()) || 0;
+            var result = amt / (1 + (gst / 100));
+
+            var tax = amt - result
+            $('#tax'+index).val(tax.toFixed(2));
+
+            $('#taxable_amount'+index).val(result.toFixed(2));
+            $('#amount'+index).val(amt.toFixed(2));
+
+            sub_total_function()
+            sgst_and_cgst_function()
+            total_discount_apply_function()
+            cash_online_function()
+        }else{
+            console.log('sell qty is not here')
+        }
+    }
+</script>
+
+<script>
     function sub_total_function(){
         var amountElements = document.querySelectorAll('[name="amount"]');
         var totalSum = 0;
         amountElements.forEach(function(element) {
-            var amt = parseFloat(element.value) || 0;
+            var amt = Number(element.value) || 0;
             console.log('Amount:', amt);
             totalSum += amt;
         });
@@ -615,9 +610,10 @@
         var taxElements = document.querySelectorAll('[name="tax"]');
         var total_tax_Sum = 0;
         taxElements.forEach(function(element) {
-            var tax_amt = parseFloat(element.value) || 0;
+            var tax_amt = Number(element.value) || 0;
             total_tax_Sum += tax_amt;
         });
+        total_tax_Sum = total_tax_Sum / 2
         $('#sgst').val(total_tax_Sum.toFixed(2))
         $('#cgst').val(total_tax_Sum.toFixed(2))
     }
@@ -625,18 +621,17 @@
 
 <script>
     function total_discount_apply_function(){
-        var dis_apply = parseFloat($('#total_discount').val()) || 0;
-        var shipping_packing = parseFloat($('#shipping_packing').val()) || 0;
+        var dis_apply = Number($('#total_discount').val()) || 0;
+        var shipping_packing = Number($('#shipping_packing').val()) || 0;
 
-        var sub_total = parseFloat($('#sub_total').val())
-        //var sub_total = shipping_packing +  sub_total
+        var sub_total = Number($('#sub_total').val())
 
         var disc_amt = (dis_apply / 100) * sub_total;
         var amt =  sub_total - disc_amt
         var amt =  amt +  shipping_packing
         $('#total').val(amt.toFixed(2))
 
-        var old_credit = parseFloat($('#old_credit').val()) || 0;
+        var old_credit = Number($('#old_credit').val()) || 0;
         var total = parseFloat($('#total').val()) || 0;
 
         var total_pay_bill = old_credit + total
@@ -648,9 +643,9 @@
 
 <script>
     function cash_online_function(){
-        var cash = parseFloat($('#cash').val()) || 0;
-        var online  = parseFloat($('#online').val()) || 0;
-        total_pay_bill = parseFloat($('#total_pay_bill_amount').val()) || 0;
+        var cash = Number($('#cash').val()) || 0;
+        var online  = Number($('#online').val()) || 0;
+        total_pay_bill = Number($('#total_pay_bill_amount').val()) || 0;
 
         var paid_amt = total_pay_bill - (cash + online)
         $('#new_credit').val(paid_amt.toFixed(2))
