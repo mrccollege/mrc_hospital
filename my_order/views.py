@@ -309,10 +309,26 @@ def create_bill(request, order_type, id):
                 discount = int(medicine_data['discount'])
                 mrp = float(medicine_data['mrp'])
                 sale_rate = float(medicine_data['sale_rate'])
-                hsn = float(medicine_data['hsn'])
-                gst = float(medicine_data['gst'])
-                taxable_amount = float(medicine_data['taxable_amount'])
-                tax = float(medicine_data['tax'])
+                try:
+                    hsn = float(medicine_data['hsn'])
+                except:
+                    hsn = 0
+
+                try:
+                    gst = float(medicine_data['gst'])
+                except:
+                    gst = 0
+
+                try:
+                    taxable_amount = float(medicine_data['taxable_amount'])
+                except:
+                    taxable_amount = 0
+
+                try:
+                    tax = float(medicine_data['tax'])
+                except:
+                    tax = 0
+
                 amount = float(medicine_data['amount'])
 
                 MedicineOrderBillDetail.objects.create(head_id=head_id,
@@ -444,10 +460,25 @@ def update_medicine_order_bill(request, order_type, id):
                 discount = int(medicine_data['discount'])
                 mrp = float(medicine_data['mrp'])
                 sale_rate = float(medicine_data['sale_rate'])
-                hsn = float(medicine_data['hsn'])
-                gst = float(medicine_data['gst'])
-                taxable_amount = float(medicine_data['taxable_amount'])
-                tax = float(medicine_data['tax'])
+                try:
+                    hsn = float(medicine_data['hsn'])
+                except:
+                    hsn = 0
+
+                try:
+                    gst = float(medicine_data['gst'])
+                except:
+                    gst = 0
+
+                try:
+                    taxable_amount = float(medicine_data['taxable_amount'])
+                except:
+                    taxable_amount = 0
+
+                try:
+                    tax = float(medicine_data['tax'])
+                except:
+                    tax = 0
                 amount = float(medicine_data['amount'])
                 query = Q(head_id=head_id, medicine_id=medicine_id)
                 already_obj = MedicineOrderBillDetail.objects.filter(query)
@@ -485,7 +516,6 @@ def update_medicine_order_bill(request, order_type, id):
                                                            )
                 if sell_qty <= record_qty:
                     remaining_qty = int(record_qty) - int(sell_qty)
-                    print(remaining_qty, '==========remaining_qty')
                     MedicineStore.objects.filter(to_store_id=store_id, medicine_id=medicine_id).update(
                         qty=remaining_qty)
             MedicineOrderHead.objects.filter(id=id).update(status=1)
@@ -538,7 +568,7 @@ def update_medicine_order_bill(request, order_type, id):
                 data_dict['mrp'] = 0
 
             medicine_list.append(data_dict)
-        print(medicine_list, '==============medicine_list=========')
+
         context = {
             'id': id,
             'order_type': order_type,
@@ -611,10 +641,25 @@ def estimate_medicine_order_bill(request, order_type, id):
                 discount = int(medicine_data['discount'])
                 mrp = float(medicine_data['mrp'])
                 sale_rate = float(medicine_data['sale_rate'])
-                hsn = float(medicine_data['hsn'])
-                gst = float(medicine_data['gst'])
-                taxable_amount = float(medicine_data['taxable_amount'])
-                tax = float(medicine_data['tax'])
+                try:
+                    hsn = float(medicine_data['hsn'])
+                except:
+                    hsn = 0
+
+                try:
+                    gst = float(medicine_data['gst'])
+                except:
+                    gst = 0
+
+                try:
+                    taxable_amount = float(medicine_data['taxable_amount'])
+                except:
+                    taxable_amount = 0
+
+                try:
+                    tax = float(medicine_data['tax'])
+                except:
+                    tax = 0
                 amount = float(medicine_data['amount'])
 
                 EstimateMedicineOrderBillDetail.objects.create(head_id=head_id,
@@ -701,9 +746,9 @@ def estimate_medicine_order_bill(request, order_type, id):
         elif order_type == 2:
             return render(request, 'estimate_bill/estimate_medicine_order_bill_other_state.html', context)
         elif order_type == 3:
-            return render(request, 'estimate_bill/oder_bill_of_supply.html', context)
+            return render(request, 'estimate_bill/estimate_medicine_order_bill_of_supply.html', context)
         else:
-            return render(request, 'estimate_bill/oder_bill_of_supply.html', context)
+            return render(request, 'estimate_bill/estimate_medicine_order_bill_of_supply.html', context)
 
 
 @login_required(login_url='/account/user_login/')
@@ -751,10 +796,25 @@ def update_estimate_medicine_order_bill(request, order_type, id):
                 discount = int(medicine_data['discount'])
                 mrp = float(medicine_data['mrp'])
                 sale_rate = float(medicine_data['sale_rate'])
-                hsn = float(medicine_data['hsn'])
-                gst = float(medicine_data['gst'])
-                taxable_amount = float(medicine_data['taxable_amount'])
-                tax = float(medicine_data['tax'])
+                try:
+                    hsn = float(medicine_data['hsn'])
+                except:
+                    hsn = 0
+
+                try:
+                    gst = float(medicine_data['gst'])
+                except:
+                    gst = 0
+
+                try:
+                    taxable_amount = float(medicine_data['taxable_amount'])
+                except:
+                    taxable_amount = 0
+
+                try:
+                    tax = float(medicine_data['tax'])
+                except:
+                    tax = 0
                 amount = float(medicine_data['amount'])
                 query = Q(head_id=head_id, medicine_id=medicine_id)
                 already_obj = EstimateMedicineOrderBillDetail.objects.filter(query)
@@ -835,9 +895,9 @@ def update_estimate_medicine_order_bill(request, order_type, id):
         elif order_type == 2:
             return render(request, 'estimate_bill/update_estimate_medicine_order_bill_other_state.html', context)
         elif order_type == 3:
-            return render(request, 'estimate_bill/oder_bill_of_supply.html', context)
+            return render(request, 'estimate_bill/update_estimate_medicine_order_bill_of_supply.html', context)
         else:
-            return render(request, 'estimate_bill/oder_bill_of_supply.html', context)
+            return render(request, 'estimate_bill/update_estimate_medicine_order_bill_of_supply.html', context)
 
 
 @login_required(login_url='/account/user_login/')
@@ -887,9 +947,9 @@ def view_normal(request, id):
     elif order_type == 2:
         return render(request, 'normal_bill/view_normal_other_state.html', context)
     elif order_type == 3:
-        return render(request, 'normal_bill/oder_bill_of_supply.html', context)
+        return render(request, 'normal_bill/view_normal_bill_of_supply.html', context)
     else:
-        return render(request, 'normal_bill/oder_bill_of_supply.html', context)
+        return render(request, 'normal_bill/view_normal_bill_of_supply.html', context)
 
 
 @login_required(login_url='/account/user_login/')
@@ -940,6 +1000,6 @@ def view_estimate(request, id):
     elif order_type == 2:
         return render(request, 'estimate_bill/view_estimate_other_state.html', context)
     elif order_type == 3:
-        return render(request, 'estimate_bill/oder_bill_of_supply.html', context)
+        return render(request, 'estimate_bill/view_estimate_bill_of_supply.html', context)
     else:
-        return render(request, 'estimate_bill/oder_bill_of_supply.html', context)
+        return render(request, 'estimate_bill/view_estimate_bill_of_supply.html', context)

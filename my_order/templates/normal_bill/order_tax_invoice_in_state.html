@@ -638,7 +638,7 @@
         var total = parseFloat($('#total').val()) || 0;
 
         var total_pay_bill = old_credit + total
-        parseFloat($('#total_pay_bill_amount').val(total_pay_bill.toFixed(2)))
+        Number($('#total_pay_bill_amount').val(total_pay_bill.toFixed(2)))
 
         cash_online_function()
     }

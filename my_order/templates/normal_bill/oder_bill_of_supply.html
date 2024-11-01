@@ -473,11 +473,11 @@
 
 <script>
     function sell_qty_function(index){
-        var sell_qty = parseInt($('#sell_qty' + index).val()) || 0;
-        var mrp = parseInt($('#mrp' + index).val()) || 0;
+        var sell_qty = Number($('#sell_qty' + index).val()) || 0;
+        var mrp = Number($('#mrp' + index).val()) || 0;
         var sell_amt = sell_qty * mrp
 
-        var discount = parseInt($('#discount'+index).val()) || 0;
+        var discount = Number($('#discount'+index).val()) || 0;
         var disc_amt = (discount / 100) * sell_amt;
         var amt =  sell_amt - disc_amt
 
@@ -493,23 +493,21 @@
 
 <script>
     function discount_function(index){
-        var sell_qty = parseInt($('#sell_qty' + index).val()) || 0;
-        var mrp = parseInt($('#mrp' + index).val()) || 0;
+        var sell_qty = Number($('#sell_qty' + index).val()) || 0;
+        var mrp = Number($('#mrp' + index).val()) || 0;
         var sell_amt = sell_qty * mrp
 
         if (sell_qty){
-            var discount = parseInt($('#discount'+index).val()) || 0;
+            var discount = Number($('#discount'+index).val()) || 0;
             var disc_amt = (discount / 100) * sell_amt;
             var amt =  sell_amt - disc_amt
 
-            $('#sale_rate'+index).val(amt);
+            $('#sale_rate'+index).val(amt.toFixed(2));
             $('#amount'+index).val(amt.toFixed(2));
 
             sub_total_function()
             total_discount_apply_function()
             cash_online_function()
-
-
         }else{
             console.log('sell qty is not here')
         }
@@ -518,12 +516,12 @@
 
 <script>
     function gst_function(index){
-        var sell_qty = parseInt($('#sell_qty' + index).val()) || 0;
-        var mrp = parseInt($('#mrp' + index).val()) || 0;
+        var sell_qty = Number($('#sell_qty' + index).val()) || 0;
+        var mrp = Number($('#mrp' + index).val()) || 0;
         var sell_amt = sell_qty * mrp
 
         if (sell_qty){
-            var discount = parseInt($('#discount'+index).val()) || 0;
+            var discount = Number($('#discount'+index).val()) || 0;
             var disc_amt = (discount / 100) * sell_amt;
             var amt =  sell_amt - disc_amt
 
@@ -543,7 +541,7 @@
         var amountElements = document.querySelectorAll('[name="amount"]');
         var totalSum = 0;
         amountElements.forEach(function(element) {
-            var amt = parseFloat(element.value) || 0;
+            var amt = Number(element.value) || 0;
             console.log('Amount:', amt);
             totalSum += amt;
         });
@@ -553,10 +551,10 @@
 
 <script>
     function total_discount_apply_function(){
-        var dis_apply = parseFloat($('#total_discount').val()) || 0;
-        var shipping_packing = parseFloat($('#shipping_packing').val()) || 0;
+        var dis_apply = Number($('#total_discount').val()) || 0;
+        var shipping_packing = Number($('#shipping_packing').val()) || 0;
 
-        var sub_total = parseFloat($('#sub_total').val())
+        var sub_total = Number($('#sub_total').val())
         //var sub_total = shipping_packing +  sub_total
 
         var disc_amt = (dis_apply / 100) * sub_total;
@@ -564,11 +562,11 @@
         var amt =  amt +  shipping_packing
         $('#total').val(amt.toFixed(2))
 
-        var old_credit = parseFloat($('#old_credit').val()) || 0;
-        var total = parseFloat($('#total').val()) || 0;
+        var old_credit = Number($('#old_credit').val()) || 0;
+        var total = Number($('#total').val()) || 0;
 
         var total_pay_bill = old_credit + total
-        parseFloat($('#total_pay_bill_amount').val(total_pay_bill.toFixed(2)))
+        Number($('#total_pay_bill_amount').val(total_pay_bill.toFixed(2)))
 
         cash_online_function()
     }
@@ -576,9 +574,9 @@
 
 <script>
     function cash_online_function(){
-        var cash = parseFloat($('#cash').val()) || 0;
-        var online  = parseFloat($('#online').val()) || 0;
-        total_pay_bill = parseFloat($('#total_pay_bill_amount').val()) || 0;
+        var cash = Number($('#cash').val()) || 0;
+        var online  = Number($('#online').val()) || 0;
+        total_pay_bill = Number($('#total_pay_bill_amount').val()) || 0;
 
         var paid_amt = total_pay_bill - (cash + online)
         $('#new_credit').val(paid_amt.toFixed(2))
