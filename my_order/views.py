@@ -538,7 +538,7 @@ def update_medicine_order_bill(request, order_type, id):
                 data_dict['mrp'] = 0
 
             medicine_list.append(data_dict)
-
+        print(medicine_list, '==============medicine_list=========')
         context = {
             'id': id,
             'order_type': order_type,
@@ -562,7 +562,6 @@ def update_medicine_order_bill(request, order_type, id):
 def estimate_medicine_order_bill(request, order_type, id):
     if request.method == 'POST':
         form = request.POST
-        print(form, '============form========')
         user_id = request.session['user_id']
         try:
             store = Store.objects.get(user_id=user_id)
@@ -698,13 +697,13 @@ def estimate_medicine_order_bill(request, order_type, id):
             'oder_id': oder_id,
         }
         if order_type == 1:
-            return render(request, 'estimate_medicine_order_bill_instate.html', context)
+            return render(request, 'estimate_bill/estimate_medicine_order_bill_instate.html', context)
         elif order_type == 2:
-            return render(request, 'order_tax_invoice_other_state.html', context)
+            return render(request, 'estimate_bill/estimate_medicine_order_bill_other_state.html', context)
         elif order_type == 3:
-            return render(request, 'oder_bill_of_supply.html', context)
+            return render(request, 'estimate_bill/oder_bill_of_supply.html', context)
         else:
-            return render(request, 'oder_bill_of_supply.html', context)
+            return render(request, 'estimate_bill/oder_bill_of_supply.html', context)
 
 
 @login_required(login_url='/account/user_login/')
@@ -834,7 +833,7 @@ def update_estimate_medicine_order_bill(request, order_type, id):
         if order_type == 1:
             return render(request, 'estimate_bill/update_estimate_medicine_order_bill_instate.html', context)
         elif order_type == 2:
-            return render(request, 'estimate_bill/order_tax_invoice_other_state.html', context)
+            return render(request, 'estimate_bill/update_estimate_medicine_order_bill_other_state.html', context)
         elif order_type == 3:
             return render(request, 'estimate_bill/oder_bill_of_supply.html', context)
         else:
@@ -873,6 +872,7 @@ def view_normal(request, id):
         data_dict['taxable_amount'] = i.taxable_amount
         data_dict['tax'] = i.tax
         medicine_list.append(data_dict)
+
     context = {
         'id': id,
         'order_type': order_type,
@@ -883,13 +883,13 @@ def view_normal(request, id):
         'pay_detail': pay_detail[0],
     }
     if order_type == 1:
-        return render(request, 'view_normal_instate.html', context)
+        return render(request, 'normal_bill/view_normal_instate.html', context)
     elif order_type == 2:
-        return render(request, 'order_tax_invoice_other_state.html', context)
+        return render(request, 'normal_bill/view_normal_other_state.html', context)
     elif order_type == 3:
-        return render(request, 'oder_bill_of_supply.html', context)
+        return render(request, 'normal_bill/oder_bill_of_supply.html', context)
     else:
-        return render(request, 'oder_bill_of_supply.html', context)
+        return render(request, 'normal_bill/oder_bill_of_supply.html', context)
 
 
 @login_required(login_url='/account/user_login/')
@@ -923,6 +923,7 @@ def view_estimate(request, id):
         data_dict['gst'] = i.gst
         data_dict['taxable_amount'] = i.taxable_amount
         data_dict['tax'] = i.tax
+
         medicine_list.append(data_dict)
 
     context = {
@@ -935,10 +936,10 @@ def view_estimate(request, id):
         'pay_detail': pay_detail[0],
     }
     if order_type == 1:
-        return render(request, 'view_estimate_instate.html', context)
+        return render(request, 'estimate_bill/view_estimate_instate.html', context)
     elif order_type == 2:
-        return render(request, 'order_tax_invoice_other_state.html', context)
+        return render(request, 'estimate_bill/view_estimate_other_state.html', context)
     elif order_type == 3:
-        return render(request, 'oder_bill_of_supply.html', context)
+        return render(request, 'estimate_bill/oder_bill_of_supply.html', context)
     else:
-        return render(request, 'oder_bill_of_supply.html', context)
+        return render(request, 'estimate_bill/oder_bill_of_supply.html', context)
