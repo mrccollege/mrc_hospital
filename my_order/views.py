@@ -117,8 +117,6 @@ def medicine_order(request):
             user_id = 0
 
         medicine = Medicine.objects.filter(recom_to_doctor=True)
-        for i in medicine:
-            print(i.recom_to_doctor, '=============medicine')
         context = {
             'medicine': medicine,
             'user_id': user_id,
@@ -209,7 +207,7 @@ def update_medicine_order(request, id):
             'doctor': doctor,
             'doctor_id': doctor_id,
         }
-        return render(request, 'update_medicine_order_bill_instate.html', context)
+        return render(request, 'update_medicine_order.html', context)
 
 
 def my_medicine_ordered_list(request):
