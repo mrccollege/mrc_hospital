@@ -566,6 +566,13 @@
 <script>
     function gst_function(index){
         var sell_qty = Number($('#sell_qty' + index).val()) || 0;
+        var record_qty = parseInt($('#record_qty' + index).val()) || 0;
+
+        if (sell_qty > record_qty){
+            $('#sell_qty' + index).val(0)
+        }
+        var sell_qty = Number($('#sell_qty' + index).val()) || 0;
+
         var mrp = Number($('#mrp' + index).val()) || 0;
         var sell_amt = sell_qty * mrp
 

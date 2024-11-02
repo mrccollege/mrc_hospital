@@ -38,7 +38,7 @@
                                                        value="{{store_id}}">
                                                 <input type="hidden" name="oder_id" id="oder_id"
                                                        value="{{oder_id}}">
-                                                <input type="text" name="invoice_number" id="invoice_number"
+                                                <input type="hidden" name="invoice_number" id="invoice_number"
                                                        value="{{invoice_number}}">
                                                 <label class="form-label">Doctor Name</label>
                                                 <input type="hidden" name="doctor_id" id="doctor_id"
@@ -146,7 +146,7 @@
                                                     <div class="col-lg-3">
                                                         <label for="total_discount">Discount %</label>
                                                         <input type="text" class="form-control" name="total_discount"
-                                                               id="total_discount" value="0" onkeypress="return isNumberKey(event)"
+                                                               id="total_discount" value="{{user.discount}}" onkeypress="return isNumberKey(event)"
                                                                onkeyup="total_discount_apply_function()">
                                                     </div>
                                                     <div class="col-lg-3">
@@ -163,7 +163,7 @@
                                                     <div class="col-lg-6">
                                                         <label for="shipping_packing">Shipping & Packing</label>
                                                         <input type="text" class="form-control" name="shipping_packing"
-                                                               id="shipping_packing" value="0"
+                                                               id="shipping_packing" value="{{user.shipping}}"
                                                                onkeypress="return isNumberKey(event)"
                                                                onkeyup="total_discount_apply_function()">
                                                     </div>

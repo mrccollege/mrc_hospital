@@ -142,7 +142,7 @@
                                                     <div class="col-lg-3">
                                                         <label for="total_discount">Discount %</label>
                                                         <input type="text" class="form-control" name="total_discount"
-                                                               id="total_discount" value="0" onkeypress="return isNumberKey(event)"
+                                                               id="total_discount" value="{{user.discount}}" onkeypress="return isNumberKey(event)"
                                                                onkeyup="total_discount_apply_function()">
                                                     </div>
                                                     <div class="col-lg-3">
@@ -159,7 +159,7 @@
                                                     <div class="col-lg-6">
                                                         <label for="shipping_packing">Shipping & Packing</label>
                                                         <input type="text" class="form-control" name="shipping_packing"
-                                                               id="shipping_packing" value="0"
+                                                               id="shipping_packing" value="{{user.shipping}}"
                                                                onkeypress="return isNumberKey(event)"
                                                                onkeyup="total_discount_apply_function()">
                                                     </div>
@@ -334,7 +334,6 @@
 </script>
 
 <script>
-
     var index = 1;
 
     $(document).ready(function(){
@@ -348,7 +347,7 @@
 
             html += '<td><input value="{{i.record_qty}}" type="text" id="record_qty'+index+'" name="record_qty" class="form-control" readonly required></td>';
 
-            html += '<td><input value="{{i.sell_qty}}" type="text" onkeyup="sell_qty_function('+index+')" onkeypress="return isNumberKey(event)" id="sell_qty'+index+'" name="sell_qty" class="form-control" placeholder="Sell quantity" required></td>';
+            html += '<td><input value="{{i.sell_qty}}" type="text" onkeyup="sell_qty_function('+index+')" onkeypress="return isNumberKey(event)" id="sell_qty'+index+'" name="sell_qty" class="form-control" placeholder="Sell quantity" required><input value="{{i.sell_qty}}" type="hidden" id="pre_sell_qty'+index+'" class="form-control" required></td>';
 
             html += '<td><input value="{{i.mrp}}" type="text" id="mrp'+index+'" name="mrp" class="form-control" value="0" readonly required></td>';
 
@@ -364,7 +363,7 @@
             html += '<td><input type="text" id="tax'+index+'" name="tax" class="total form-control" readonly></td>';
             html += '<td><input type="text" id="amount'+index+'" name="amount" class="total form-control" readonly></td>';
 
-            html += '<td><button onclick="remove_row('+index+')"><i class="fa fa-remove" style="font-size:24px"></i></button></td>';
+            html += '<td><button id="remove_btn'+index+'" onclick="remove_row('+index+')"><i class="fa fa-remove" style="font-size:24px"></i></button></td>';
             html += '</tr>';
 
             // Append the new row to the table body
@@ -498,9 +497,12 @@
     function sell_qty_function(index){
         var sell_qty = parseInt($('#sell_qty' + index).val()) || 0;
         var record_qty = parseInt($('#record_qty' + index).val()) || 0;
+        var pre_sell_qty = parseInt($('#pre_sell_qty' + index).val()) || 0;
 
         if (sell_qty > record_qty){
-            $('#sell_qty' + index).val(0)
+            $('#sell_qty' + index).val(pre_sell_qty)
+            $('#sell_qty' + index).prop('readonly', true);
+            $('#remove_btn' + index).prop('disabled', true);
         }
         var mrp = parseInt($('#mrp' + index).val()) || 0;
         var sell_amt = sell_qty * mrp
