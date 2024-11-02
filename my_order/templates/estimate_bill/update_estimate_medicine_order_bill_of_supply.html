@@ -183,14 +183,14 @@
                                                     <div class="col-lg-4">
                                                         <label for="cash">Cash</label>
                                                         <input type="text" class="form-control" name="cash"
-                                                               id="cash" value="0" onkeypress="return isNumberKey(event)"
+                                                               id="cash" value="{{user.cash}}" onkeypress="return isNumberKey(event)"
                                                                onkeyup="cash_online_function()">
                                                     </div>
                                                     <div class="col-lg-4">
                                                         <label for="online">Online</label>
                                                         <input type="text" class="form-control" name="online"
                                                                id="online" onkeypress="return isNumberKey(event)"
-                                                               onkeyup="cash_online_function()" value="0">
+                                                               onkeyup="cash_online_function()" value="{{user.online}}">
                                                     </div>
 
                                                     <div class="col-lg-4">
