@@ -160,9 +160,7 @@
                                                     <div class="col-lg-6">
                                                         <label for="total_discount">Discount %</label>
                                                         <input type="text" class="form-control" name="total_discount"
-                                                               id="total_discount" value="0"
-                                                               onkeypress="return isNumberKey(event)"
-                                                               onkeyup="total_discount_apply_function()">
+                                                               id="total_discount" value="0" readonly>
                                                     </div>
                                                 </div>
 
@@ -277,7 +275,7 @@
 
         if (selectedMedicines.length > 0) {
             $.ajax({
-                url: '/my_order/medicine_order/',
+                url: '/my_order/update_medicine_order/{{id}}/',
                 type: 'POST',
                 data: formData,  // Send the form data with medicine and other inputs
                 success: function (response) {
@@ -358,8 +356,9 @@
 
             html += '<td><button onclick="remove_row('+index+')"><i class="fa fa-remove" style="font-size:24px"></i></button></td>';
             html += '</tr>';
-            order_qty_function(index);
             $('table tbody').append(html);
+
+            order_qty_function(index);
             index +=1;
 
         {% endfor %}

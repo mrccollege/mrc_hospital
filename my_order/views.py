@@ -4,7 +4,7 @@ from datetime import datetime
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 from medicine.models import Medicine
 
@@ -216,11 +216,8 @@ def my_medicine_ordered_list(request):
         user = User.objects.get(id=user_id)
         doctor = Doctor.objects.get(user_id=user.id)
         doctor_id = doctor.id
-        user_id = doctor.user.id
     except:
-        doctor = ''
         doctor_id = 0
-        user_id = 0
 
     order = MedicineOrderHead.objects.filter(doctor_id=doctor_id).order_by('-id')
     context = {
@@ -908,7 +905,10 @@ def view_normal(request, id):
         store_id = 0
 
     pay_detail = PaymentDetail.objects.filter()
-    user = MedicineOrderBillHead.objects.get(order_id_id=id)
+    try:
+        user = MedicineOrderBillHead.objects.get(order_id_id=id)
+    except:
+        return redirect('/my_order/my_medicine_ordered_list/')
     order_type = user.order_type
     old_credit_sum = \
         MedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).aggregate(Sum('old_credit'))[
@@ -958,8 +958,10 @@ def view_estimate(request, id):
         store_id = store.id
     except:
         store_id = 0
-
-    user = EstimateMedicineOrderBillHead.objects.get(order_id_id=id)
+    try:
+        user = EstimateMedicineOrderBillHead.objects.get(order_id_id=id)
+    except:
+        return redirect('/my_order/my_medicine_ordered_list/')
     pay_detail = PaymentDetail.objects.filter()
     order_type = user.order_type
     old_credit_sum = \
