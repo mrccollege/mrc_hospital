@@ -147,7 +147,7 @@
                                                     <div class="col-lg-3">
                                                         <label for="total_discount">Discount %</label>
                                                         <input type="text" class="form-control" name="total_discount"
-                                                               id="total_discount" value="0" onkeypress="return isNumberKey(event)"
+                                                               id="total_discount" value="{{user.discount}}" onkeypress="return isNumberKey(event)"
                                                                onkeyup="total_discount_apply_function()">
                                                     </div>
                                                     <div class="col-lg-3">
@@ -164,7 +164,7 @@
                                                     <div class="col-lg-6">
                                                         <label for="shipping_packing">Shipping & Packing</label>
                                                         <input type="text" class="form-control" name="shipping_packing"
-                                                               id="shipping_packing" value="0"
+                                                               id="shipping_packing" value="{{user.shipping}}"
                                                                onkeypress="return isNumberKey(event)"
                                                                onkeyup="total_discount_apply_function()">
                                                     </div>
@@ -179,7 +179,7 @@
                                                     <div class="col-lg-6">
                                                         <label for="old_credit">Old Credit</label>
                                                         <input type="text" class="form-control" name="old_credit"
-                                                               id="old_credit" readonly>
+                                                               id="old_credit" value="{{old_credit_sum}}" readonly>
                                                     </div>
 
                                                     <div class="col-lg-6">
@@ -196,13 +196,13 @@
                                                         <label for="cash">Cash</label>
                                                         <input type="text" class="form-control" name="cash"
                                                                id="cash" onkeypress="return isNumberKey(event)"
-                                                               onkeyup="cash_online_function()" value="0">
+                                                               onkeyup="cash_online_function()" value="{{user.cash}}">
                                                     </div>
                                                     <div class="col-lg-4">
                                                         <label for="online">Online</label>
                                                         <input type="text" class="form-control" name="online"
                                                                id="online" onkeypress="return isNumberKey(event)"
-                                                               onkeyup="cash_online_function()" value="0">
+                                                               onkeyup="cash_online_function()" value="{{user.online}}">
                                                     </div>
 
                                                     <div class="col-lg-4">

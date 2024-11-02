@@ -913,7 +913,7 @@ def view_normal(request, id):
     user = MedicineOrderBillHead.objects.get(order_id_id=id)
     order_type = user.order_type
     old_credit_sum = \
-        MedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).exclude(id=id).aggregate(Sum('old_credit'))[
+        MedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).aggregate(Sum('old_credit'))[
             'old_credit__sum'] or 0
     medicine = MedicineOrderBillDetail.objects.filter(head_id=user.id)
     medicine_list = []
