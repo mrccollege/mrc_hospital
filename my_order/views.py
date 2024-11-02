@@ -707,9 +707,7 @@ def estimate_medicine_order_bill(request, order_type, id):
         user = MedicineOrderBillHead.objects.get(id=id)
         oder_id = user.order_id.id
         invoice_number = user.invoice_number
-        old_credit_sum = \
-            MedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).exclude(id=id).aggregate(Sum('old_credit'))[
-                'old_credit__sum'] or 0
+        old_credit_sum = MedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).aggregate(Sum('old_credit'))['old_credit__sum'] or 0
         medicine = MedicineOrderBillDetail.objects.filter(head_id=id)
         medicine_list = []
         for i in medicine:
@@ -855,10 +853,7 @@ def update_estimate_medicine_order_bill(request, order_type, id):
             store_id = 0
 
         user = EstimateMedicineOrderBillHead.objects.get(id=id)
-        old_credit_sum = \
-            EstimateMedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).exclude(id=id).aggregate(
-                Sum('old_credit'))[
-                'old_credit__sum'] or 0
+        old_credit_sum = MedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).aggregate(Sum('old_credit'))['old_credit__sum'] or 0
         medicine = EstimateMedicineOrderBillDetail.objects.filter(head_id=id)
         medicine_list = []
 
