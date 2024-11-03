@@ -619,7 +619,7 @@ def estimate_medicine_order_bill(request, order_type, id):
         online = float(form.get('online'))
         shipping_packing = float(form.get('shipping_packing'))
         discount = int(form.get('total_discount'))
-        current = int(form.get('total'))
+        # current = float(form.get('total'))
         total = float(form.get('total_pay_bill_amount'))
         new_credit = float(form.get('new_credit'))
 
@@ -630,7 +630,7 @@ def estimate_medicine_order_bill(request, order_type, id):
                                                            sgst=sgst,
                                                            cgst=cgst,
                                                            subtotal=subtotal,
-                                                           current=current,
+                                                           # current=current,
                                                            old_credit=new_credit,
                                                            cash=cash,
                                                            online=online,
@@ -677,7 +677,6 @@ def estimate_medicine_order_bill(request, order_type, id):
                                                                mrp=mrp,
                                                                discount=discount,
                                                                sale_rate=sale_rate,
-                                                               current=current,
                                                                hsn=hsn,
                                                                gst=gst,
                                                                taxable_amount=taxable_amount,
