@@ -58,7 +58,7 @@ class MedicineOrderBillHead(models.Model):
     sgst = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     cgst = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     old_credit = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    credit = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    current = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     cash = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     online = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     status = models.IntegerField(help_text='0=pending,1=inprocess,2=packing,3=dispatch,4=out of delivery,5=delivered')
