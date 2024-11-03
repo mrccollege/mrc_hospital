@@ -177,12 +177,6 @@
 
                                                 <div class="row">
                                                     <div class="col-lg-6">
-                                                        <label for="old_credit">Old Credit</label>
-                                                        <input type="text" class="form-control" name="old_credit"
-                                                               id="old_credit" value="{{old_credit_sum}}" readonly>
-                                                    </div>
-
-                                                    <div class="col-lg-6">
                                                         <label for="current">Current</label>
                                                         <input type="text" class="form-control" name="current"
                                                                id="current" value="{{user.current}}" readonly>
@@ -195,6 +189,13 @@
                                                                id="total_pay_bill_amount"
                                                                onkeypress="return isNumberKey(event)" readonly>
                                                     </div>
+
+                                                    <div class="col-lg-6">
+                                                        <label for="old_credit">Old Credit</label>
+                                                        <input type="text" class="form-control" name="old_credit"
+                                                               id="old_credit" value="{{old_credit_sum}}" readonly>
+                                                    </div>
+
                                                 </div>
 
                                                 <div class="row">
