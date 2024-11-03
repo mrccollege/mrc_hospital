@@ -638,10 +638,11 @@
         var amt =  amt +  shipping_packing
         $('#total').val(amt.toFixed(2))
 
+        var current = Number($('#current').val()) || 0;
         var old_credit = Number($('#old_credit').val()) || 0;
-        var total = parseFloat($('#total').val()) || 0;
-
-        var total_pay_bill = old_credit + total
+        var total = Number($('#total').val()) || 0;
+        total = total - current
+        var total_pay_bill = total
         parseFloat($('#total_pay_bill_amount').val(total_pay_bill.toFixed(2)))
 
         cash_online_function()
