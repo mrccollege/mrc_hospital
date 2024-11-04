@@ -36,6 +36,8 @@
                                             <div class="col-lg-3 form-group">
                                                 <input type="hidden" name="store_id" id="store_id"
                                                        value="{{store_id}}">
+                                                <input type="hidden" name="oder_id" id="oder_id"
+                                                       value="{{oder_id}}">
                                                 <label class="form-label">Doctor Name</label>
                                                 <input type="hidden" name="doctor_id" id="doctor_id"
                                                        value="{{user.doctor.id}}">
@@ -337,6 +339,7 @@
             online: $('#online').val(),
             old_credit: $('#old_credit').val(),
             new_credit: $('#new_credit').val(),
+            oder_id: $('#oder_id').val(),
 
             csrfmiddlewaretoken: '{{ csrf_token }}'  // Add CSRF token
         };
