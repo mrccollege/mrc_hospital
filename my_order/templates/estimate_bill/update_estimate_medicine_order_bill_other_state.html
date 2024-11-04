@@ -161,14 +161,21 @@
                                                 </div>
 
                                                 <div class="row">
-                                                    <div class="col-lg-6">
+                                                    <div class="col-lg-4">
                                                         <label for="shipping_packing">Shipping & Packing</label>
                                                         <input type="text" class="form-control" name="shipping_packing"
                                                                id="shipping_packing" value="{{user.shipping}}"
                                                                onkeypress="return isNumberKey(event)"
                                                                onkeyup="total_discount_apply_function()">
                                                     </div>
-                                                    <div class="col-lg-6">
+
+                                                    <div class="col-lg-4">
+                                                        <label for="current">Current</label>
+                                                        <input type="text" class="form-control" name="current"
+                                                               id="current" value="{{user.current}}" readonly>
+                                                    </div>
+
+                                                    <div class="col-lg-4">
                                                         <label for="total">Total</label>
                                                         <input type="text" class="form-control" name="total" id="total"
                                                                onkeypress="return isNumberKey(event)" readonly>
@@ -181,6 +188,8 @@
                                                         <input type="text" class="form-control" name="old_credit"
                                                                id="old_credit" value="{{old_credit_sum}}" readonly>
                                                     </div>
+
+
 
                                                     <div class="col-lg-6">
                                                         <label for="total_pay_bill_amount">Total Pay Bill Amount</label>
@@ -272,6 +281,7 @@
             sgst: $('#sgst').val(),
             cgst: $('#cgst').val(),
             shipping_packing: $('#shipping_packing').val(),
+            current: $('#current').val(),
             total: $('#total').val(),
             total_pay_bill_amount: $('#total_pay_bill_amount').val(),
             cash: $('#cash').val(),
@@ -632,11 +642,12 @@
         var amt =  amt +  shipping_packing
         $('#total').val(amt.toFixed(2))
 
+        var current = Number($('#current').val()) || 0;
         var old_credit = Number($('#old_credit').val()) || 0;
-        var total = parseFloat($('#total').val()) || 0;
-
-        var total_pay_bill = old_credit + total
-        parseFloat($('#total_pay_bill_amount').val(total_pay_bill.toFixed(2)))
+        var total = Number($('#total').val()) || 0;
+        total = total - current
+        var total_pay_bill = total
+        Number($('#total_pay_bill_amount').val(total_pay_bill.toFixed(2)))
 
         cash_online_function()
     }

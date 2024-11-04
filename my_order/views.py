@@ -619,7 +619,7 @@ def estimate_medicine_order_bill(request, order_type, id):
         online = float(form.get('online'))
         shipping_packing = float(form.get('shipping_packing'))
         discount = int(form.get('total_discount'))
-        # current = float(form.get('total'))
+        current = float(form.get('current'))
         total = float(form.get('total_pay_bill_amount'))
         new_credit = float(form.get('new_credit'))
 
@@ -630,7 +630,7 @@ def estimate_medicine_order_bill(request, order_type, id):
                                                            sgst=sgst,
                                                            cgst=cgst,
                                                            subtotal=subtotal,
-                                                           # current=current,
+                                                           current=current,
                                                            old_credit=new_credit,
                                                            cash=cash,
                                                            online=online,
@@ -777,7 +777,7 @@ def update_estimate_medicine_order_bill(request, order_type, id):
         shipping_packing = float(form.get('shipping_packing'))
         discount = int(form.get('total_discount'))
         total = float(form.get('total_pay_bill_amount'))
-        current = float(form.get('total'))
+        current = float(form.get('current'))
         new_credit = float(form.get('new_credit'))
         obj = EstimateMedicineOrderBillHead.objects.filter(id=id).update(store_id=store_id,
                                                                          sgst=sgst,
