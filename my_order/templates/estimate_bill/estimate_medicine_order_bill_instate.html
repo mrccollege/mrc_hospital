@@ -38,8 +38,6 @@
                                                        value="{{store_id}}">
                                                 <input type="hidden" name="oder_id" id="oder_id"
                                                        value="{{oder_id}}">
-                                                <input type="hidden" name="invoice_number" id="invoice_number"
-                                                       value="{{invoice_number}}">
                                                 <label class="form-label">Doctor Name</label>
                                                 <input type="hidden" name="doctor_id" id="doctor_id"
                                                        value="{{user.doctor.id}}">
@@ -653,7 +651,7 @@
         var old_credit = Number($('#old_credit').val()) || 0;
         var total = Number($('#total').val()) || 0;
         total = total - current
-        var total_pay_bill = total
+        var total_pay_bill = total + old_credit
         Number($('#total_pay_bill_amount').val(total_pay_bill.toFixed(2)))
         cash_online_function()
     }

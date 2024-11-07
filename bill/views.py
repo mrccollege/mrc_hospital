@@ -12,7 +12,7 @@ from my_order.models import MedicineOrderHead, MedicineOrderDetail
 from my_order.models import MedicineOrderBillHead
 
 from my_order.models import EstimateMedicineOrderBillHead
-
+from django.utils.timezone import localtime
 
 # Create your views here.
 @login_required(login_url='/account/user_login/')
@@ -62,7 +62,7 @@ def order_list(request):
 
 
 def normal_order_bill_list(request):
-    order = MedicineOrderBillHead.objects.all().order_by('-id')
+    order = MedicineOrderBillHead.objects.all().order_by('-created_at__date')
     context = {
         'order': order
     }

@@ -276,7 +276,7 @@ def create_bill(request, order_type, id):
         online = float(form.get('online'))
         shipping_packing = float(form.get('shipping_packing'))
         discount = int(form.get('total_discount'))
-        current = float(form.get('total'))
+        current = float(form.get('new_credit'))
         total = float(form.get('total_pay_bill_amount'))
         new_credit = float(form.get('new_credit'))
 
@@ -433,7 +433,7 @@ def update_medicine_order_bill(request, order_type, id):
         online = float(form.get('online'))
         shipping_packing = float(form.get('shipping_packing'))
         discount = int(form.get('total_discount'))
-        current = float(form.get('total'))
+        current = float(form.get('new_credit'))
         total = float(form.get('total_pay_bill_amount'))
         new_credit = float(form.get('new_credit'))
 
@@ -708,7 +708,8 @@ def estimate_medicine_order_bill(request, order_type, id):
         user = MedicineOrderBillHead.objects.get(id=id)
         oder_id = user.order_id.id
         invoice_number = user.invoice_number
-        old_credit_sum = MedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).aggregate(Sum('old_credit'))['old_credit__sum'] or 0
+        # old_credit_sum = MedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).aggregate(Sum('old_credit'))['old_credit__sum'] or 0
+        old_credit_sum = EstimateMedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).aggregate(Sum('old_credit'))['old_credit__sum'] or 0
         medicine = MedicineOrderBillDetail.objects.filter(head_id=id)
         medicine_list = []
         for i in medicine:
@@ -856,7 +857,8 @@ def update_estimate_medicine_order_bill(request, order_type, id):
             store_id = 0
 
         user = EstimateMedicineOrderBillHead.objects.get(id=id)
-        old_credit_sum = MedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).aggregate(Sum('old_credit'))['old_credit__sum'] or 0
+        # old_credit_sum = MedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).aggregate(Sum('old_credit'))['old_credit__sum'] or 0
+        old_credit_sum = EstimateMedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).exclude(id=id).aggregate(Sum('old_credit'))['old_credit__sum'] or 0
         medicine = EstimateMedicineOrderBillDetail.objects.filter(head_id=id)
         medicine_list = []
 
@@ -919,7 +921,7 @@ def view_normal(request, id):
         return redirect('/my_order/my_medicine_ordered_list/')
     order_type = user.order_type
     old_credit_sum = \
-        MedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).aggregate(Sum('old_credit'))[
+        MedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).exclude(order_id_id=id).aggregate(Sum('old_credit'))[
             'old_credit__sum'] or 0
     medicine = MedicineOrderBillDetail.objects.filter(head_id=user.id)
     medicine_list = []
@@ -973,7 +975,7 @@ def view_estimate(request, id):
     pay_detail = PaymentDetail.objects.filter()
     order_type = user.order_type
     old_credit_sum = \
-        EstimateMedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).exclude(id=id).aggregate(
+        EstimateMedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).exclude(order_id_id=id).aggregate(
             Sum('old_credit'))[
             'old_credit__sum'] or 0
     medicine = EstimateMedicineOrderBillDetail.objects.filter(head_id=user.id)

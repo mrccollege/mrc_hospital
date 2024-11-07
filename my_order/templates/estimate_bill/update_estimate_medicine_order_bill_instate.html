@@ -38,8 +38,6 @@
                                                        value="{{store_id}}">
                                                 <input type="hidden" name="oder_id" id="oder_id"
                                                        value="{{oder_id}}">
-                                                <input type="text" name="invoice_number" id="invoice_number"
-                                                       value="{{invoice_number}}">
                                                 <label class="form-label">Doctor Name</label>
                                                 <input type="hidden" name="doctor_id" id="doctor_id"
                                                        value="{{user.doctor.id}}">
@@ -544,18 +542,18 @@
 
 <script>
     function discount_function(index){
-        var sell_qty = parseInt($('#sell_qty' + index).val()) || 0;
-        var mrp = parseInt($('#mrp' + index).val()) || 0;
+        var sell_qty = Number($('#sell_qty' + index).val()) || 0;
+        var mrp = Number($('#mrp' + index).val()) || 0;
         var sell_amt = sell_qty * mrp
 
         if (sell_qty){
-            var discount = parseInt($('#discount'+index).val()) || 0;
+            var discount = Number($('#discount'+index).val()) || 0;
             var disc_amt = (discount / 100) * sell_amt;
             var amt =  sell_amt - disc_amt
 
-            $('#sale_rate'+index).val(amt);
+            $('#sale_rate'+index).val(amt.toFixed(2));
 
-            var gst = parseInt($('#gst'+index).val()) || 0;
+            var gst = Number($('#gst'+index).val()) || 0;
             var result = amt / (1 + (gst / 100));
 
             var tax = amt - result
@@ -568,30 +566,26 @@
             sgst_and_cgst_function()
             total_discount_apply_function()
             cash_online_function()
-
-
         }else{
             console.log('sell qty is not here')
         }
-
-
     }
 </script>
 
 <script>
     function gst_function(index){
-        var sell_qty = parseInt($('#sell_qty' + index).val()) || 0;
-        var mrp = parseInt($('#mrp' + index).val()) || 0;
+        var sell_qty = Number($('#sell_qty' + index).val()) || 0;
+        var mrp = Number($('#mrp' + index).val()) || 0;
         var sell_amt = sell_qty * mrp
 
         if (sell_qty){
-            var discount = parseInt($('#discount'+index).val()) || 0;
+            var discount = Number($('#discount'+index).val()) || 0;
             var disc_amt = (discount / 100) * sell_amt;
             var amt =  sell_amt - disc_amt
 
             $('#sale_rate'+index).val(amt.toFixed(2));
 
-            var gst = parseInt($('#gst'+index).val()) || 0;
+            var gst = Number($('#gst'+index).val()) || 0;
             var result = amt / (1 + (gst / 100));
 
             var tax = amt - result
@@ -628,7 +622,7 @@
         var taxElements = document.querySelectorAll('[name="tax"]');
         var total_tax_Sum = 0;
         taxElements.forEach(function(element) {
-            var tax_amt = parseFloat(element.value) || 0;
+            var tax_amt = Number(element.value) || 0;
             total_tax_Sum += tax_amt;
         });
         $('#sgst').val(total_tax_Sum.toFixed(2))
@@ -652,7 +646,7 @@
         var old_credit = Number($('#old_credit').val()) || 0;
         var total = Number($('#total').val()) || 0;
         total = total - current
-        var total_pay_bill = total
+        var total_pay_bill = total + old_credit
         Number($('#total_pay_bill_amount').val(total_pay_bill.toFixed(2)))
 
         cash_online_function()

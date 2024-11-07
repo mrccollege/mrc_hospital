@@ -649,7 +649,7 @@
         var old_credit = Number($('#old_credit').val()) || 0;
         var total = Number($('#total').val()) || 0;
         total = total - current
-        var total_pay_bill = total
+        var total_pay_bill = total + old_credit
         Number($('#total_pay_bill_amount').val(total_pay_bill.toFixed(2)))
 
         cash_online_function()
