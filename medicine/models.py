@@ -16,7 +16,7 @@ class MedicineCategory(models.Model):
 
 class Medicine(models.Model):
     name = models.CharField(max_length=500, null=True)
-    price = models.FloatField(null=True, blank=True)
+    price = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     category = models.ForeignKey(MedicineCategory, on_delete=models.CASCADE, null=True)
     desc = models.TextField(null=True, blank=True)
     video_link = models.TextField(null=True, blank=True)

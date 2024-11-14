@@ -510,8 +510,7 @@
         var amountElements = document.querySelectorAll('[name="amount"]');
         var totalSum = 0;
         amountElements.forEach(function(element) {
-            var amt = parseFloat(element.value) || 0;
-            console.log('Amount:', amt);
+            var amt = Number(element.value) || 0;
             totalSum += amt;
         });
         $('#sub_total').val(totalSum.toFixed(2))

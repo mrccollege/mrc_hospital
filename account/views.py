@@ -62,7 +62,6 @@ def store_registration(request):
         email = mobile + '@yopmail.com'
         password = form.get('password')
         phone = form.get('phone')
-        address = form.get('address')
         status = 'failed'
         msg = 'Registration failed.'
         try:
@@ -70,8 +69,7 @@ def store_registration(request):
                                                 email=email,
                                                 password=password,
                                                 mobile=mobile,
-                                                phone=phone,
-                                                address=address)
+                                                phone=phone,)
             if user_obj:
                 store_id = user_obj.id
                 is_main_store = Store.objects.filter(type='MAIN')

@@ -341,7 +341,6 @@
 </script>
 
 <script>
-
     var index = 1;
 
     $(document).ready(function(){
@@ -510,7 +509,6 @@
         var discount = Number($('#discount'+index).val()) || 0;
         var disc_amt = (discount / 100) * sell_amt;
         var amt =  sell_amt - disc_amt
-
         $('#sale_rate'+index).val(amt.toFixed(2));
 
         var gst = Number($('#gst'+index).val()) || 0;
@@ -526,7 +524,6 @@
         sgst_and_cgst_function()
         total_discount_apply_function()
         cash_online_function()
-
     }
 </script>
 
@@ -565,7 +562,7 @@
 <script>
     function gst_function(index){
         var sell_qty = Number($('#sell_qty' + index).val()) || 0;
-        var record_qty = parseInt($('#record_qty' + index).val()) || 0;
+        var record_qty = Number($('#record_qty' + index).val()) || 0;
 
         if (sell_qty > record_qty){
             $('#sell_qty' + index).val(0)
@@ -603,11 +600,10 @@
 
 <script>
     function sub_total_function(){
-        var amountElements = document.querySelectorAll('[name="amount"]');
         var totalSum = 0;
+        var amountElements = document.querySelectorAll('[name="amount"]');
         amountElements.forEach(function(element) {
             var amt = Number(element.value) || 0;
-            console.log('Amount:', amt);
             totalSum += amt;
         });
         $('#sub_total').val(totalSum.toFixed(2))
@@ -641,7 +637,7 @@
         $('#total').val(amt.toFixed(2))
 
         var old_credit = Number($('#old_credit').val()) || 0;
-        var total = parseFloat($('#total').val()) || 0;
+        var total = Number($('#total').val()) || 0;
 
         var total_pay_bill = old_credit + total
         Number($('#total_pay_bill_amount').val(total_pay_bill.toFixed(2)))
