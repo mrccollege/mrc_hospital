@@ -88,23 +88,29 @@ WSGI_APPLICATION = 'hospital_management.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'mbdb/db.sqlite3',
-#     }
-# }
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'ayurveda',
-        'USER': 'sanjay',
+        'NAME': 'ayurveda_live',
+        'USER': 'root',
         'PASSWORD': 'Hello12345678#$@',
-        'HOST': '145.223.18.243',
+        'HOST': 'localhost',
         'PORT': '3306',
     }
 }
+
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'ayurveda',
+#         'USER': 'sanjay',
+#         'PASSWORD': 'Hello12345678#$@',
+#         'HOST': '145.223.18.243',
+#         'PORT': '3306',
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
