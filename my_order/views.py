@@ -1021,5 +1021,37 @@ def view_estimate(request, id):
         return render(request, 'estimate_bill/view_estimate_bill_of_supply.html', context)
 
 
-def view_invoice(request, id):
-    return render(request, 'invoice_instate.html')
+def view_normal_invoice(request, id):
+    user_id = request.session['user_id']
+    try:
+        store = Store.objects.get(user_id=user_id)
+        store_id = store.id
+    except:
+        store_id = 0
+    try:
+        user = MedicineOrderBillHead.objects.get(id=id)
+    except:
+        return redirect('/my_order/my_medicine_ordered_list/')
+
+    order_type = user.order_type
+    old_credit_sum = \
+        MedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).exclude(order_id_id=id).aggregate(
+            Sum('old_credit'))[
+            'old_credit__sum'] or 0
+    medicine = MedicineOrderBillDetail.objects.filter(head_id=user.id)
+    context = {
+        'id': id,
+        'order_type': order_type,
+        'store_id': store_id,
+        'user': user,
+        'medicine': medicine,
+        'old_credit_sum': old_credit_sum,
+    }
+    if order_type == 1:
+        return render(request, 'invoice/normal_invoice/instate_invoice.html', context)
+    elif order_type == 2:
+        return render(request, 'estimate_bill/view_estimate_other_state.html', context)
+    elif order_type == 3:
+        return render(request, 'estimate_bill/view_estimate_bill_of_supply.html', context)
+    else:
+        return render(request, 'estimate_bill/view_estimate_bill_of_supply.html', context)
