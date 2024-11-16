@@ -1048,10 +1048,46 @@ def view_normal_invoice(request, id):
         'old_credit_sum': old_credit_sum,
     }
     if order_type == 1:
-        return render(request, 'invoice/normal_invoice/instate_invoice.html', context)
+        return render(request, 'invoice/normal_invoice/normal_invoice_instate.html', context)
     elif order_type == 2:
-        return render(request, 'invoice/normal_invoice/other_state_invoice.html', context)
+        return render(request, 'invoice/normal_invoice/normal_invoice_other_state.html', context)
     elif order_type == 3:
-        return render(request, 'invoice/normal_invoice/bill_of_supply.html', context)
+        return render(request, 'invoice/normal_invoice/normal_invoice_bill_of_supply.html', context)
     else:
-        return render(request, 'invoice/normal_invoice/bill_of_supply.html', context)
+        return render(request, 'invoice/normal_invoice/normal_invoice_bill_of_supply.html', context)
+
+
+def view_estimate_invoice(request, id):
+    user_id = request.session['user_id']
+    try:
+        store = Store.objects.get(user_id=user_id)
+        store_id = store.id
+    except:
+        store_id = 0
+    try:
+        user = EstimateMedicineOrderBillHead.objects.get(id=id)
+    except:
+        return redirect('/my_order/my_medicine_ordered_list/')
+    order_type = user.order_type
+    old_credit_sum = \
+        EstimateMedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).exclude(order_id_id=id).aggregate(
+            Sum('old_credit'))[
+            'old_credit__sum'] or 0
+    medicine = EstimateMedicineOrderBillDetail.objects.filter(head_id=user.id)
+
+    context = {
+        'id': id,
+        'order_type': order_type,
+        'store_id': store_id,
+        'user': user,
+        'medicine': medicine,
+        'old_credit_sum': old_credit_sum,
+    }
+    if order_type == 1:
+        return render(request, 'invoice/estimate_invoice/estimate_invoice_instate.html', context)
+    elif order_type == 2:
+        return render(request, 'invoice/estimate_invoice/estimate_invoice_other_state.html', context)
+    elif order_type == 3:
+        return render(request, 'invoice/estimate_invoice/estimate_invoice_bill_of_supply.html', context)
+    else:
+        return render(request, 'invoice/estimate_invoice/estimate_invoice_bill_of_supply.html', context)
