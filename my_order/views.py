@@ -1050,8 +1050,8 @@ def view_normal_invoice(request, id):
     if order_type == 1:
         return render(request, 'invoice/normal_invoice/instate_invoice.html', context)
     elif order_type == 2:
-        return render(request, 'estimate_bill/view_estimate_other_state.html', context)
+        return render(request, 'invoice/normal_invoice/other_state_invoice.html', context)
     elif order_type == 3:
-        return render(request, 'estimate_bill/view_estimate_bill_of_supply.html', context)
+        return render(request, 'invoice/normal_invoice/bill_of_supply.html', context)
     else:
-        return render(request, 'estimate_bill/view_estimate_bill_of_supply.html', context)
+        return render(request, 'invoice/normal_invoice/bill_of_supply.html', context)
