@@ -4,9 +4,12 @@
     <meta charset="utf-8">
     <title>Bill Details</title>
     <link rel="stylesheet" href="/static/common_css/normal_bill_invoice.css" media="all"/>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
 </head>
 <body>
 <header class="clearfix">
+    <button id="download-pdf">Download PDF</button>
     <div id="logo">
         <img src="/static/logo/bill_logo/bill_detail_logo.png">
     </div>
@@ -89,6 +92,25 @@
 <footer>
     Invoice was created on a computer and is valid without the signature and seal.
 </footer>
+
+
+<script>
+        $(document).ready(function () {
+            $('#download-pdf').on('click', function () {
+                const element = document.body;
+
+                const opt = {
+                    margin: 1,
+                    filename: 'bill-details.pdf',
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2 },
+                    jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+                };
+
+                html2pdf().set(opt).from(element).save();
+            });
+        });
+    </script>
 </body>
 </html>
 

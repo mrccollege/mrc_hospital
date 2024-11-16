@@ -4,78 +4,98 @@
     <meta charset="utf-8">
     <title>Bill Details</title>
     <link rel="stylesheet" href="/static/common_css/normal_bill_of_supply.css" media="all"/>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
 </head>
 <body>
-<header class="clearfix">
-    <div id="logo">
-        <img src="/static/logo/bill_logo/bill_detail_logo.png">
-    </div>
-    <h1>INVOICE 3-2-1</h1>
-    <div id="company" class="clearfix">
-        <div>Mrc Ayurveda</div>
-        <div>Sunrakh Road Lotus Garden,<br/> Vrindavan(Mathura)</div>
-        <div>92 67 67 88 88</div>
-        <div><a href="mailto:company@example.com">mrctherapy2023@.com</a></div>
-    </div>
-    <div id="project">
-        <div><span>CLIENT</span> {{user.doctor.user.username}}</div>
-        <div><span>Mobile</span> {{user.doctor.user.mobile}}</div>
-        <div><span>ADDRESS</span>{{user.doctor.user.district}}, {{user.doctor.user.state}}</div>
-        <div><span>EMAIL</span> {{user.doctor.user.email}}</div>
-        <div><span>DATE</span> {{user.created_at}}</div>
-    </div>
-</header>
-<main>
-    <table>
-        <thead>
-        <tr>
-            <th class="service">Medicine Name</th>
-            <th class="desc">Sell Qty</th>
-            <th class="desc">Mrp.</th>
-            <th class="desc">Disc.</th>
-            <th>S.Rate.</th>
-            <th>Amount</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for i in medicine %}
-        <tr>
-            <td class="service">{{i.medicine}}</td>
-            <td class="service">{{i.sell_qty}}</td>
-            <td class="service">RS {{i.mrp}}</td>
-            <td class="service">{{i.discount}}%</td>
-            <td class="service">RS {{i.sale_rate}}</td>
-            <td class="unit">{{i.amount}}</td>
-        </tr>
-        {% endfor%}
+    <header class="clearfix">
+        <button id="download-pdf">Download PDF</button>
+        <div id="logo">
+            <img src="/static/logo/bill_logo/bill_detail_logo.png">
+        </div>
+        <h1>INVOICE 3-2-1</h1>
+        <div id="company" class="clearfix">
+            <div>Mrc Ayurveda</div>
+            <div>Sunrakh Road Lotus Garden,<br/> Vrindavan(Mathura)</div>
+            <div>92 67 67 88 88</div>
+            <div><a href="mailto:company@example.com">mrctherapy2023@.com</a></div>
+        </div>
+        <div id="project">
+            <div><span>CLIENT</span> {{user.doctor.user.username}}</div>
+            <div><span>Mobile</span> {{user.doctor.user.mobile}}</div>
+            <div><span>ADDRESS</span>{{user.doctor.user.district}}, {{user.doctor.user.state}}</div>
+            <div><span>EMAIL</span> {{user.doctor.user.email}}</div>
+            <div><span>DATE</span> {{user.created_at}}</div>
+        </div>
+    </header>
+    <main>
+        <table>
+            <thead>
+            <tr>
+                <th class="service">Medicine Name</th>
+                <th class="desc">Sell Qty</th>
+                <th class="desc">Mrp.</th>
+                <th class="desc">Disc.</th>
+                <th>S.Rate.</th>
+                <th>Amount</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for i in medicine %}
+            <tr>
+                <td class="service">{{i.medicine}}</td>
+                <td class="service">{{i.sell_qty}}</td>
+                <td class="service">RS {{i.mrp}}</td>
+                <td class="service">{{i.discount}}%</td>
+                <td class="service">RS {{i.sale_rate}}</td>
+                <td class="unit">{{i.amount}}</td>
+            </tr>
+            {% endfor%}
 
-        <tr>
-            <td colspan="5" class="grand total">Sub total</td>
-            <td class="grand total">Rs.{{user.subtotal}}</td>
-        </tr>
+            <tr>
+                <td colspan="5" class="grand total">Sub total</td>
+                <td class="grand total">Rs.{{user.subtotal}}</td>
+            </tr>
 
-        <tr>
-            <td>Disc. % {{user.discount}}</td>
-            <td>Shipping {{user.shipping}}</td>
-            <td>Pay Amount {{user.pay_amount}}</td>
-            <td>Cash {{user.cash}}</td>
-            <td>Online {{user.online}}</td>
-        </tr>
+            <tr>
+                <td>Disc. % {{user.discount}}</td>
+                <td>Shipping {{user.shipping}}</td>
+                <td>Pay Amount {{user.pay_amount}}</td>
+                <td>Cash {{user.cash}}</td>
+                <td>Online {{user.online}}</td>
+            </tr>
 
-        <tr>
-            <td colspan="5" class="grand total">Final Pay Amount</td>
-            <td class="grand total">Rs.{{user.old_credit}}</td>
-        </tr>
-        </tbody>
-    </table>
-    <div id="notices">
-        <div>NOTICE:</div>
-        <div class="notice">A finance charge of 1.5% will be made on unpaid balances after 30 days.</div>
-    </div>
-</main>
-<footer>
-    Invoice was created on a computer and is valid without the signature and seal.
-</footer>
+            <tr>
+                <td colspan="5" class="grand total">Final Pay Amount</td>
+                <td class="grand total">Rs.{{user.old_credit}}</td>
+            </tr>
+            </tbody>
+        </table>
+        <div id="notices">
+            <div>NOTICE:</div>
+            <div class="notice">A finance charge of 1.5% will be made on unpaid balances after 30 days.</div>
+        </div>
+    </main>
+    <footer>
+        Invoice was created on a computer and is valid without the signature and seal.
+    </footer>
+
+    <script>
+        $(document).ready(function () {
+            $('#download-pdf').on('click', function () {
+                const element = document.body;
+
+                const opt = {
+                    margin: 1,
+                    filename: 'bill-details.pdf',
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2 },
+                    jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+                };
+
+                html2pdf().set(opt).from(element).save();
+            });
+        });
+    </script>
 </body>
 </html>
-
