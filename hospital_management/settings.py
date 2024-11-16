@@ -104,7 +104,7 @@ DATABASES = {
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'ayurveda',
+#         'NAME': 'ayurveda_live',
 #         'USER': 'sanjay',
 #         'PASSWORD': 'Hello12345678#$@',
 #         'HOST': '145.223.18.243',

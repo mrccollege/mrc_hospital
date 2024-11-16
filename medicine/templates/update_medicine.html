@@ -33,7 +33,7 @@
                                 <form id="medicine_form" role="form">{% csrf_token %}
                                     <div class="box-body">
                                         <div class="row">
-                                            <div class="col-lg-6 form-group">
+                                            <div class="col-lg-4 form-group">
                                                 <label for="name" class="form-label">Medicine Name</label>
                                                 <input type="text" class="form-control" id="name" name="name"
                                                        value="{{medicine.name}}" required>
@@ -46,11 +46,19 @@
                                                        required>
                                             </div>
 
-                                            <div class="col-lg-3 form-group">
+                                            <div class="col-lg-2 form-group">
                                                 <label for="name" class="form-label">Medicine Image</label>
                                                 <input type="file" class="form-control" id="image" name="image">
+
+                                            </div>
+
+                                            <div class="col-lg-2 form-group">
+                                                {% if medicine.image %}
+                                                <img src="{{medicine.image.url}}" width="100">
+                                                {% endif %}
                                             </div>
                                         </div>
+
 
                                         <div class="row">
                                             <div class="col-lg-3 form-group">
@@ -92,6 +100,7 @@
                                                        id="recommend_medicine_no" value="False">
                                                 <label>No</label>
                                             </div>
+
 
                                         </div>
                                     </div><!-- /.box-body -->

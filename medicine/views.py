@@ -132,7 +132,6 @@ def medicine_update(request, id):
         manufacture = form.get('manufacture')
         mobile = form.get('mobile')
         recommend_medicine = form.get('recommend_medicine')
-        print(recommend_medicine, '=======recommend_medicine====')
         msg = 'Medicine Update Failed'
         status = 'Failed'
         try:
@@ -163,6 +162,8 @@ def medicine_update(request, id):
         medicine = Medicine.objects.get(id=id)
         category = MedicineCategory.objects.annotate(category=Case(When(id=medicine.category.id, then=0),
                                                                    default=1))
+
+        print(medicine.image, '================medicine=')
         context = {
             'id': id,
             'medicine': medicine,
