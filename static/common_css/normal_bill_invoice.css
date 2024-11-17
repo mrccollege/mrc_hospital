@@ -1,141 +1,153 @@
-.clearfix:after {
-  content: "";
-  display: table;
-  clear: both;
+/* General Reset */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #FFFFFF;
+    color: #001028;
 }
 
-a {
-  color: #5D6975;
-  text-decoration: underline;
+
+/* Container for PDF Content */
+#pdf-content {
+    width: 100%;
+    max-width: 210mm; /* A4 width */
+    margin: 0 auto;
+    padding: 0mm;
+    box-sizing: border-box;
 }
 
-/*
-body{
-  position: relative;
-  width: 21cm;
-  height: 29.7cm;
-  margin: 0 auto;
-  color: #001028;
-  background: #FFFFFF;
-  font-family: Arial, sans-serif;
-  font-size: 12px;
-  font-family: Arial;
-}
-
-*/
-
-header {
-  padding: 10px 0;
-  margin-bottom: 30px;
-}
 
 #logo {
-  text-align: center;
-  margin-bottom: 10px;
+    margin-bottom: 10px;
 }
 
 #logo img {
-  width: 90px;
+    max-width: 100px;
+    height: auto;
 }
 
 h1 {
-  border-top: 1px solid  #5D6975;
-  border-bottom: 1px solid  #5D6975;
-  color: #5D6975;
-  font-size: 2.4em;
-  line-height: 1.4em;
-  font-weight: normal;
-  text-align: center;
-  margin: 0 0 20px 0;
-  background: url('/static/logo/bill_background/dimension.png');
+    font-size: 2.4em;
+    margin: 0 0 20px;
+    color: #5D6975;
+    text-align: center;
+    border-top: 1px solid #5D6975;
+    border-bottom: 1px solid #5D6975;
+    padding: 10px 0;
+    background: url('/static/logo/bill_background/dimension.png') no-repeat center;
+    background-size: contain;
 }
 
-#project {
-  float: left;
-}
-
-#project span {
-  color: #5D6975;
-  text-align: right;
-  width: 52px;
-  margin-right: 10px;
-  display: inline-block;
-  font-size: 0.8em;
-}
-
-#company {
-  float: right;
-  text-align: right;
-}
-
-#project div,
-#company div {
-  white-space: nowrap;
-}
-
+/* Table Styling */
 table {
-  width: 100%;
-  border-collapse: collapse;
-  border-spacing: 0;
-  margin-bottom: 20px;
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
 }
 
-table tr:nth-child(2n-1) td {
-  background: #F5F5F5;
-}
-
-table th,
-table td {
-  text-align: center;
+table th, table td {
+    padding: 8px;
+    text-align: center;
+    border: 1px solid #C1CED9;
+    font-size: 12px;
 }
 
 table th {
-  padding: 5px 20px;
-  color: #5D6975;
-  border-bottom: 1px solid #C1CED9;
-  white-space: nowrap;
-  font-weight: normal;
+    background-color: #F5F5F5;
+    color: #5D6975;
+    font-weight: bold;
 }
 
-table .service,
-table .desc {
-  text-align: left;
+table tr:nth-child(even) td {
+    background-color: #F9F9F9;
 }
 
 table td {
-  padding: 20px;
-  text-align: right;
+    text-align: right;
 }
 
-table td.service,
-table td.desc {
-  vertical-align: top;
+table .desc, table .service {
+    text-align: left;
 }
 
-table td.unit,
-table td.qty,
-table td.total {
-  font-size: 1.2em;
+/* Summary Section */
+.grand {
+    font-size: 10px;
+    font-weight: bold;
+    border-top: 2px solid #5D6975;
 }
 
-table td.grand {
-  border-top: 1px solid #5D6975;;
+/* Footer */
+footer {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.8em;
+    color: #5D6975;
+    border-top: 1px solid #C1CED9;
+    padding: 10px 0;
 }
 
+/* Notice Section */
 #notices .notice {
-  color: #5D6975;
-  font-size: 1.2em;
+    color: #5D6975;
+    font-size: 1.2em;
+    margin-top: 10px;
 }
 
-/*footer {
-  color: #5D6975;
-  width: 100%;
-  height: 30px;
-  position: absolute;
-  bottom: 0;
-  border-top: 1px solid #C1CED9;
-  padding: 8px 0;
-  text-align: center;
+/* Responsive Adjustments */
+@media screen and (max-width: 768px) {
+    #project, #company {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    #project div, #company div {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    table th, table td {
+        font-size: 10px;
+        padding: 5px;
+    }
 }
 
-*/
+/* A4 Page Sizing for Print */
+@media print {
+    #pdf-content {
+        width: 210mm;
+        height: 297mm;
+        padding: 10mm;
+    }
+
+    table th, table td {
+        font-size: 10px;
+        padding: 5px;
+    }
+
+    header, footer {
+        page-break-after: avoid;
+        page-break-before: avoid;
+    }
+
+    table {
+        page-break-inside: auto;
+    }
+
+    tr {
+        page-break-inside: avoid;
+        page-break-after: auto;
+    }
+
+    td, th {
+        page-break-inside: avoid;
+    }
+}
+
+
+
+
+
+
+
