@@ -195,7 +195,7 @@ def add_medicine_to_store(request):
                                                              to_store_id=store_id,
                                                              medicine_id=int(medicine_id[i]),
                                                              qty=int(qty[i]),
-                                                             price=int(price[i]),
+                                                             price=float(price[i]),
                                                              batch_no=batch_no[i].upper(),
                                                              expiry=datetime.strptime(expiry_date[i], "%d-%B-%Y"),
                                                              )
@@ -208,7 +208,7 @@ def add_medicine_to_store(request):
                                                                    medicine_id=int(medicine_id[i]),
                                                                    medicine_name=medicine.name,
                                                                    category=medicine.category.name,
-                                                                   price=price[i],
+                                                                   price=float(price[i]),
                                                                    batch_no=batch_no[i].upper(),
                                                                    available_qty=store_qty.qty,
                                                                    add_qty=int(qty[i]),
