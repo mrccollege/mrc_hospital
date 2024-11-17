@@ -4,113 +4,163 @@
     <meta charset="utf-8">
     <title>Bill Details</title>
     <link rel="stylesheet" href="/static/common_css/normal_bill_invoice.css" media="all"/>
+    <style>
+        /* General header styles */
+        header {
+            padding: 0px;
+            border-bottom: 2px solid #000;
+        }
+
+        #logo {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .header-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* Two equal columns */
+            gap: 20px; /* Space between columns */
+            width: 100%;
+        }
+
+        #company, #client {
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        #company div, #client div {
+            margin-bottom: 5px; /* Adds spacing between rows */
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-container {
+                grid-template-columns: 1fr; /* Single-column layout on smaller screens */
+            }
+
+            #logo img {
+                width: 150px; /* Adjust logo size for smaller screens */
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 18px;
+            }
+        }
+    </style>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
 </head>
 <body>
-<header class="clearfix">
-    <button id="download-pdf">Download PDF</button>
-    <div id="logo">
-        <img src="/static/logo/bill_logo/bill_detail_logo.png">
-    </div>
-    <h1>INVOICE 3-2-1</h1>
-    <div id="company" class="clearfix">
-        <div>Mrc Ayurveda</div>
-        <div>Sunrakh Road Lotus Garden,<br/> Vrindavan(Mathura)</div>
-        <div>92 67 67 88 88</div>
-        <div><a href="mailto:company@example.com">mrctherapy2023@.com</a></div>
-    </div>
-    <div id="project">
-        <div><span>CLIENT</span> {{user.doctor.user.username}}</div>
-        <div><span>Mobile</span> {{user.doctor.user.mobile}}</div>
-        <div><span>ADDRESS</span>{{user.doctor.user.district}}, {{user.doctor.user.state}}</div>
-        <div><span>EMAIL</span> {{user.doctor.user.email}}</div>
-        <div><span>DATE</span> {{user.created_at}}</div>
-    </div>
-</header>
-<main>
-    <table>
-        <thead>
-        <tr>
-            <th class="service">Medicine Name</th>
-            <th class="desc">Sell Qty</th>
-            <th class="desc">Mrp.</th>
-            <th class="desc">Disc.</th>
-            <th>S.Rate.</th>
-            <th>Hsn</th>
-            <th>GST%</th>
-            <th>Taxable Amount</th>
-            <th>Tax</th>
-            <th>Amount</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for i in medicine %}
-        <tr>
-            <td class="service">{{i.medicine}}</td>
-            <td class="service">{{i.sell_qty}}</td>
-            <td class="service">RS {{i.mrp}}</td>
-            <td class="service">{{i.discount}}%</td>
-            <td class="service">RS {{i.sale_rate}}</td>
-            <td class="service">{{i.hsn}}</td>
-            <td class="service">{{i.gst}}</td>
-            <td class="service">{{i.taxable_amount}}</td>
-            <td class="service">{{i.tax}}</td>
-            <td class="unit">{{i.amount}}</td>
-        </tr>
-        {% endfor%}
 
-        <tr>
-            <td colspan="9" class="grand total">Sub total</td>
-            <td class="grand total">Rs.{{user.subtotal}}</td>
-        </tr>
+<div class="row">
+    <button id="download-pdf">Download Invoice</button>
+    <button id="download-address">Download Address</button>
+</div>
 
-        <tr>
-            <td>Disc. % {{user.discount}}</td>
-
-            <td>SGST % {{user.sgst}}</td>
-
-            <td>CGST % {{user.cgst}}</td>
-
-            <td>Shipping & Packing {{user.shipping}}</td>
-            <td>Pay Amount {{user.pay_amount}}</td>
-            <td>Cash {{user.cash}}</td>
-            <td>Online {{user.online}}</td>
-        </tr>
-
-        <tr>
-            <td colspan="9" class="grand total">Final Pay Amount</td>
-            <td class="grand total">Rs.{{user.old_credit}}</td>
-        </tr>
-        </tbody>
-    </table>
-    <div id="notices">
-        <div>NOTICE:</div>
-        <div class="notice">A finance charge of 1.5% will be made on unpaid balances after 30 days.</div>
-    </div>
-</main>
-<footer>
-    Invoice was created on a computer and is valid without the signature and seal.
-</footer>
-
+<div id="pdf-content">
+    <header class="clearfix" id="pdf2-content">
+        <div id="logo">
+            <img src="/static/logo/bill_logo/W1.png" alt="Company Logo">
+        </div>
+        <h1>INVOICE 3-2-1</h1>
+        <div class="header-container">
+            <div id="company">
+                <div><strong>Company:</strong> M/s Mrc Naturocare</div>
+                <div>Vrindavan (Mathura)</div>
+                <div>Phone: 741 774 17 74</div>
+                <div>Email: <a href="mailto:mrcayurveda@.com">mrcayurveda@.com</a></div>
+                <div>GSTIN: 09BRLPS1328C1ZR</div>
+            </div>
+            <div id="client">
+                <div><strong>Client:</strong> {{user.doctor.user.username}}</div>
+                <div><strong>Mobile:</strong> {{user.doctor.user.mobile}}</div>
+                <div><strong>Address:</strong> {{user.doctor.user.district}}, {{user.doctor.user.state}}</div>
+                <div><strong>Email:</strong> {{user.doctor.user.email}}</div>
+                <div><strong>Date:</strong> {{user.created_at}}</div>
+            </div>
+        </div>
+    </header>
+    <main>
+        <table>
+            <thead>
+            <tr>
+                <th>Medicine Name</th>
+                <th>Sell Qty</th>
+                <th>Mrp.</th>
+                <th>Disc.%</th>
+                <th>S.Rate.</th>
+                <th>Hsn</th>
+                <th>GST%</th>
+                <th>Taxable Amount</th>
+                <th>Tax</th>
+                <th>Amount</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for i in medicine %}
+            <tr>
+                <td>{{i.medicine}}</td>
+                <td>{{i.sell_qty}}</td>
+                <td>{{i.mrp}}</td>
+                <td>{{i.discount}}</td>
+                <td>{{i.sale_rate}}</td>
+                <td>{{i.hsn}}</td>
+                <td>{{i.gst}}</td>
+                <td>{{i.taxable_amount}}</td>
+                <td>{{i.tax}}</td>
+                <td>{{i.amount}}</td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <td colspan="9" class="grand total">Sub Total Rs.</td>
+                <td>{{user.subtotal}}</td>
+            </tr>
+            <tr>
+                <td colspan="3">Disc. {{user.discount}} %</td>
+                <td colspan="2">SGST {{user.sgst}} %</td>
+                <td colspan="2">CGST {{user.cgst}} %</td>
+                <td colspan="2">Shipping and packing Rs.</td>
+                <td colspan="2">{{user.shipping}}</td>
+            </tr>
+            <tr>
+                <td colspan="9" class="grand total">Grand Total Rs.</td>
+                <td>{{user.old_credit}}</td>
+            </tr>
+            </tbody>
+        </table>
+    </main>
+    <footer>
+        Invoice was created on a computer and is valid without the signature and seal.
+    </footer>
+</div>
 
 <script>
-        $(document).ready(function () {
-            $('#download-pdf').on('click', function () {
-                const element = document.body;
+    $('#download-pdf').on('click', function () {
+        const element = document.getElementById('pdf-content');
+        const options = {
+            margin: [10, 10, 10, 10],
+            filename: 'bill-details.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+        html2pdf().set(options).from(element).save();
+    });
 
-                const opt = {
-                    margin: 1,
-                    filename: 'bill-details.pdf',
-                    image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: { scale: 2 },
-                    jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-                };
 
-                html2pdf().set(opt).from(element).save();
-            });
-        });
-    </script>
+    $('#download-address').on('click', function () {
+        const element = document.getElementById('pdf2-content');
+        const options = {
+            margin: [10, 10, 10, 10],
+            filename: 'bill-details.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+        html2pdf().set(options).from(element).save();
+    });
+</script>
 </body>
 </html>
-
