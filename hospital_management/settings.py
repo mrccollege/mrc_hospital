@@ -89,18 +89,6 @@ WSGI_APPLICATION = 'hospital_management.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'ayurveda_live',
-#         'USER': 'root',
-#         'PASSWORD': 'Hello12345678#$@',
-#         'HOST': 'localhost',
-#         'PORT': '3306',
-#     }
-# }
-
-
 DATABASES = {
     'default': {
         'ENGINE': config('DB_ENGINE', default='django.db.backends.mysql'),
