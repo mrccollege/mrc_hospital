@@ -163,7 +163,6 @@ def medicine_update(request, id):
         category = MedicineCategory.objects.annotate(category=Case(When(id=medicine.category.id, then=0),
                                                                    default=1))
 
-        print(medicine.image, '================medicine=')
         context = {
             'id': id,
             'medicine': medicine,
@@ -319,6 +318,8 @@ def update_medicine_record(request):
 
 def all_medicine(request):
     medicine = Medicine.objects.all().order_by('-id')
+    for i in medicine:
+        print(i.name)
     context = {
         'medicine': medicine,
     }
