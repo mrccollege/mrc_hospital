@@ -318,7 +318,7 @@ def update_medicine_record(request):
 
 
 def all_medicine(request):
-    medicine = Medicine.objects.all()
+    medicine = Medicine.objects.all().order_by('-id')
     context = {
         'medicine': medicine,
     }
