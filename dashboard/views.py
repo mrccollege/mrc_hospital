@@ -6,11 +6,18 @@ from menu.models import MenuUser, MenuCategory
 
 from account.models import User
 
+from doctor.models import Doctor
+
 
 # Create your views here.
 @login_required(login_url='/account/user_login/')
 def dashboard(request):
-    return render(request, 'index.html')
+    user_id = request.session.get('user_id')
+    is_doctor = Doctor.objects.filter(user_id=user_id)
+    if is_doctor:
+        return render(request, 'doctor_dashboard.html')
+    else:
+        return render(request, 'index.html')
 
 
 def get_menus(request):

@@ -15,7 +15,6 @@ from previous_treatment.models import PreviousTreatment
 
 # Create your models here.
 class Doctor(models.Model):
-
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     specialist = models.CharField(max_length=100, null=True)
     degree = models.TextField(null=True)
