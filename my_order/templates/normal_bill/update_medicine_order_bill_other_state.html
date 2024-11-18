@@ -11,7 +11,7 @@
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
         <section class="content-header">
-            <h1>Create New Bill (Tax Invoice Other State)</h1>
+            <h1>Update Bill (Tax Invoice Other State)</h1>
             <ol class="breadcrumb">
                 <li><a href="/"><i class="fa fa-dashboard"></i> Home</a></li>
                 <li><a href="/">Tables</a></li>
@@ -151,11 +151,11 @@
                                                                onkeyup="total_discount_apply_function()">
                                                     </div>
                                                     <div class="col-lg-3">
-                                                        <label for="sgst">SGST %</label>
+                                                        <label for="sgst">SGST</label>
                                                         <input type="text" name="sgst" id="sgst" class="form-control">
                                                     </div>
                                                     <div class="col-lg-3">
-                                                        <label for="cgst">CGST %</label>
+                                                        <label for="cgst">CGST</label>
                                                         <input type="text" name="cgst" id="cgst" class="form-control">
                                                     </div>
                                                 </div>
@@ -511,6 +511,7 @@
             $('#sell_qty' + index).prop('readonly', true);
             $('#remove_btn' + index).prop('disabled', true);
         }
+        var sell_qty = parseInt($('#sell_qty' + index).val()) || 0;
 
         var mrp = Number($('#mrp' + index).val()) || 0;
         var sell_amt = sell_qty * mrp

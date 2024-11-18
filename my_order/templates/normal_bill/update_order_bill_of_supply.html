@@ -11,7 +11,7 @@
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
         <section class="content-header">
-            <h1>Create New Bill (Tax Invoice)</h1>
+            <h1>Update Bill (BILL OF SUPPLY)</h1>
             <ol class="breadcrumb">
                 <li><a href="/"><i class="fa fa-dashboard"></i> Home</a></li>
                 <li><a href="/">Tables</a></li>
@@ -483,6 +483,8 @@
             $('#sell_qty' + index).prop('readonly', true);
             $('#remove_btn' + index).prop('disabled', true);
         }
+        var sell_qty = parseInt($('#sell_qty' + index).val()) || 0;
+
         var mrp = Number($('#mrp' + index).val()) || 0;
         var sell_amt = sell_qty * mrp
 

@@ -36,6 +36,8 @@
                                             <div class="col-lg-3 form-group">
                                                 <input type="hidden" name="store_id" id="store_id"
                                                        value="{{store_id}}">
+                                                <input type="hidden" name="invoice_number" id="invoice_number"
+                                                       value="{{user.invoice_number}}">
                                                 <input type="hidden" name="oder_id" id="oder_id"
                                                        value="{{oder_id}}">
                                                 <label class="form-label">Doctor Name</label>
@@ -153,12 +155,12 @@
                                                                onkeyup="total_discount_apply_function()">
                                                     </div>
                                                     <div class="col-lg-3">
-                                                        <label for="sgst">SGST %</label>
-                                                        <input type="text" name="sgst" id="sgst" class="form-control">
+                                                        <label for="sgst">SGST</label>
+                                                        <input type="text" name="sgst" id="sgst" class="form-control" readonly>
                                                     </div>
                                                     <div class="col-lg-3">
-                                                        <label for="cgst">CGST %</label>
-                                                        <input type="text" name="cgst" id="cgst" class="form-control">
+                                                        <label for="cgst">CGST</label>
+                                                        <input type="text" name="cgst" id="cgst" class="form-control" readonly>
                                                     </div>
                                                 </div>
 
@@ -286,6 +288,7 @@
             old_credit: $('#old_credit').val(),
             new_credit: $('#new_credit').val(),
             oder_id: $('#oder_id').val(),
+            invoice_number: $('#invoice_number').val(),
 
             csrfmiddlewaretoken: '{{ csrf_token }}'  // Add CSRF token
         };

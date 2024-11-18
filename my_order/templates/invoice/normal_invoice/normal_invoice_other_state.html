@@ -21,6 +21,12 @@
             grid-template-columns: repeat(2, 1fr); /* Two equal columns */
             gap: 20px; /* Space between columns */
             width: 100%;
+
+            display: flex;
+            justify-content: space-between; /* Pushes items to the edges */
+            align-items: center; /* Vertically centers the logos */
+            width: 95%; /* Adjust as needed */
+            padding: 10px; /* Optional padding */
         }
 
         #company, #client {
@@ -48,6 +54,24 @@
                 font-size: 18px;
             }
         }
+
+         #logo {
+            display: flex;
+            justify-content: space-between; /* Pushes items to the edges */
+            align-items: center; /* Vertically centers the logos */
+            width: 90%; /* Adjust as needed */
+            padding: 10px; /* Optional padding */
+        }
+
+        .left-logo {
+            max-width: 150px; /* Adjust the size of the left logo */
+            height: auto;
+        }
+
+        .right-logo {
+            max-width: 150px; /* Adjust the size of the right logo */
+            height: auto;
+        }
     </style>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
@@ -62,25 +86,30 @@
 <div id="pdf-content">
     <header class="clearfix" id="pdf2-content">
         <div id="logo">
-            <img src="/static/logo/bill_logo/W1.png" alt="Company Logo">
+            <img src="/static/logo/bill_logo/naturo.png" alt="Company Logo" class="left-logo">
+            <img src="/static/logo/bill_logo/naturo.png" alt="Company Logo" class="right-logo">
         </div>
-        <div><h1>M/s Mrc Naturocare</h1></div>
+        <h4 style="text-align:center">(TAX INVOICE)</h4>
+        <div><h4><span style="font-size:22px">M/s Mrc Naturocare</span> &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;  &nbsp;&nbsp; &nbsp;  &nbsp; &nbsp;&nbsp; &nbsp;  &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp; Address: Vrindavan - Mathura pin: 281121</h4></div>
+
         <hr>
         <div class="header-container">
-            <div id="company">
-                <div>Vrindavan (Mathura)</div>
-                <div>Phone: 741 774 17 74</div>
-                <div>Email: <a href="mailto:mrcayurveda@.com">mrcayurveda@.com</a></div>
-                <div>GSTIN: 09BRLPS1328C1ZR</div>
-                <div>Account No: 4902002100001830</div>
-            </div>
             <div id="client">
+                <div><strong>Date:</strong> {{user.created_at}}</div>
+                <div><strong>Invoice No:</strong> {{user.invoice_number}}</div>
                 <div><strong>Client:</strong> {{user.doctor.user.username}}</div>
                 <div><strong>Mobile:</strong> {{user.doctor.user.mobile}}</div>
                 <div><strong>Address:</strong> {{user.doctor.user.district}}, {{user.doctor.user.state}}</div>
                 <div><strong>Email:</strong> {{user.doctor.user.email}}</div>
-                <div><strong>Date:</strong> {{user.created_at}}</div>
             </div>
+            <div id="company">
+                <div>Phone: 7417 7417 74</div>
+                <div>Email: <a href="mailto:mrcayurvedacenter@gamail.com">mrcayurvedacenter@gamail.com</a></div>
+                <div>GSTIN: 09BRLPS1328C1ZR</div>
+                <div>Account No: 4902002100001830</div>
+                <div>IFSC CODE: PUNB00463000</div>
+            </div>
+
         </div>
     </header>
     <main>

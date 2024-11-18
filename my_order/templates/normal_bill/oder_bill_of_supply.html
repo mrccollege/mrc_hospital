@@ -11,7 +11,7 @@
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
         <section class="content-header">
-            <h1>Create New Bill (Tax Invoice)</h1>
+            <h1>Create New Bill (BILL OF SUPPLY)</h1>
             <ol class="breadcrumb">
                 <li><a href="/"><i class="fa fa-dashboard"></i> Home</a></li>
                 <li><a href="/">Tables</a></li>
@@ -36,6 +36,8 @@
                                             <div class="col-lg-3 form-group">
                                                 <input type="hidden" name="store_id" id="store_id"
                                                        value="{{store_id}}">
+                                                <input type="hidden" name="invoice_number" id="invoice_number"
+                                                       value="{{user.invoice_number}}">
                                                 <label class="form-label">Doctor Name</label>
                                                 <input type="hidden" name="doctor_id" id="doctor_id"
                                                        value="{{user.doctor.id}}">
@@ -331,6 +333,7 @@
             online: $('#online').val(),
             old_credit: $('#old_credit').val(),
             new_credit: $('#new_credit').val(),
+            invoice_number: $('#invoice_number').val(),
 
             csrfmiddlewaretoken: '{{ csrf_token }}'  // Add CSRF token
         };

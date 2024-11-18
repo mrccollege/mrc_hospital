@@ -62,7 +62,8 @@ def medicine_order(request):
         subtotal = form.get('sub_total')
         discount = form.get('total_discount')
         pay_amount = form.get('total')
-        invoice_number = datetime.now().strftime("%Y%d%H%M%S")
+        # invoice_number = datetime.now().strftime("%Y%d%H%M%S")
+        invoice_number = datetime.now().strftime("%Y%d%H%M%S%f")[:-3]
         try:
             order_head = MedicineOrderHead.objects.create(invoice_number=invoice_number,
                                                           doctor_id=doctor_id,
@@ -687,7 +688,7 @@ def estimate_medicine_order_bill(request, order_type, id):
                     remaining_qty = int(record_qty) - int(sell_qty)
                     MedicineStore.objects.filter(to_store_id=store_id, medicine_id=medicine_id).update(
                         qty=remaining_qty)
-            MedicineOrderHead.objects.filter(id=id).update(status=1)
+            MedicineOrderBillHead.objects.filter(id=id).update(status=1, estimate_status=1)
             status = 'success'
             msg = 'Bill creation Successfully.'
 

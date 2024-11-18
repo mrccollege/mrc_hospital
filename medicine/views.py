@@ -172,6 +172,7 @@ def medicine_update(request, id):
 
 
 def add_medicine_to_store(request):
+    user_id = request.session.get('user_id')
     if request.method == 'POST':
         form = request.POST
         store_id = int(form.get('store_id'))
@@ -228,6 +229,7 @@ def add_medicine_to_store(request):
         }
         return JsonResponse(context)
     else:
+        store = Store.objects.filter(user_id=user_id)
         store = Store.objects.all()
         context = {
             'store': store

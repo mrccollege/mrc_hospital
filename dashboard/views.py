@@ -8,6 +8,8 @@ from account.models import User
 
 from doctor.models import Doctor
 
+from store.models import Store
+
 
 # Create your views here.
 @login_required(login_url='/account/user_login/')
@@ -16,6 +18,12 @@ def dashboard(request):
     is_doctor = Doctor.objects.filter(user_id=user_id)
     if is_doctor:
         return render(request, 'doctor_dashboard.html')
+    is_store = Store.objects.filter(user_id=user_id)
+    if is_store:
+        context = {
+            'store_id': is_store[0].id
+        }
+        return render(request, 'store_dashboard.html', context)
     else:
         return render(request, 'index.html')
 
