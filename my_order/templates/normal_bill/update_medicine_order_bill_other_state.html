@@ -621,10 +621,9 @@
         var taxElements = document.querySelectorAll('[name="tax"]');
         var total_tax_Sum = 0;
         taxElements.forEach(function(element) {
-            var tax_amt = Number(element.value) || 0;
+            var tax_amt = parseFloat(element.value) || 0;
             total_tax_Sum += tax_amt;
         });
-        total_tax_Sum = total_tax_Sum / 2
         $('#sgst').val(total_tax_Sum.toFixed(2))
         $('#cgst').val(total_tax_Sum.toFixed(2))
     }
