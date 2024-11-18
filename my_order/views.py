@@ -279,6 +279,7 @@ def create_bill(request, order_type, id):
         discount = int(form.get('total_discount'))
         current = float(form.get('new_credit'))
         total = float(form.get('total_pay_bill_amount'))
+        total_without_previous_bill = float(form.get('total'))
         new_credit = float(form.get('new_credit'))
 
         obj = MedicineOrderBillHead.objects.create(order_id_id=id,
@@ -288,6 +289,7 @@ def create_bill(request, order_type, id):
                                                    sgst=sgst,
                                                    cgst=cgst,
                                                    subtotal=subtotal,
+                                                   total_without_previous_bill=total_without_previous_bill,
                                                    current=current,
                                                    old_credit=new_credit,
                                                    cash=cash,
@@ -435,6 +437,7 @@ def update_medicine_order_bill(request, order_type, id):
         shipping_packing = float(form.get('shipping_packing'))
         discount = int(form.get('total_discount'))
         current = float(form.get('new_credit'))
+        total_without_previous_bill = float(form.get('total'))
         total = float(form.get('total_pay_bill_amount'))
         new_credit = float(form.get('new_credit'))
 
@@ -442,6 +445,7 @@ def update_medicine_order_bill(request, order_type, id):
                                                                  sgst=sgst,
                                                                  cgst=cgst,
                                                                  subtotal=subtotal,
+                                                                 total_without_previous_bill=total_without_previous_bill,
                                                                  current=current,
                                                                  old_credit=new_credit,
                                                                  cash=cash,

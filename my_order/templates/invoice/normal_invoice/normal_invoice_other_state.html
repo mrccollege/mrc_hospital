@@ -150,20 +150,21 @@
             </tr>
             <tr>
                 <td colspan="3">Disc. {{user.discount}} %</td>
-                <td colspan="2">SGST {{user.sgst}} %</td>
-                <td colspan="2">CGST {{user.cgst}} %</td>
+                <td colspan="2">IGST {{user.sgst}}</td>
                 <td colspan="2">Shipping and packing Rs.</td>
                 <td colspan="2">{{user.shipping}}</td>
             </tr>
             <tr>
                 <td colspan="9" class="grand total">Grand Total Rs.</td>
-                <td>{{user.old_credit}}</td>
+<!--                <td>{{user.old_credit}}</td>-->
+                <td>{{user.total_without_previous_bill}}</td>
             </tr>
             </tbody>
         </table>
     </main>
     <footer>
-        Invoice was created on a computer and is valid without the signature and seal.
+        <p>This is an electronically generated invoice, no signature required.</p>
+        <p>All Disputes Subject to MATHURA Jurisdiction Only.</p>
     </footer>
 </div>
 
