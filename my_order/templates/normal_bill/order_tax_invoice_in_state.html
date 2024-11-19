@@ -116,10 +116,11 @@
                                             <table class="table table-condensed">
                                                 <thead>
                                                 <tr>
-                                                    <th>Medicine Name</th>
-                                                    <th>Record Qty</th>
-                                                    <th>Sell Qty</th>
-                                                    <th colspan="1">MRP.</th>
+                                                    <th>Name</th>
+                                                    <th>Expiry</th>
+                                                    <th>R. Qty</th>
+                                                    <th>Qty</th>
+                                                    <th>MRP.</th>
                                                     <th>Disc.%</th>
                                                     <th>S.Rate.</th>
                                                     <th>HSN</th>
@@ -352,7 +353,9 @@
             html += '<tr id="medicine_tr'+index+'">';
             html += '<td><input value="{{i.medicine_name}}" type="text" id="medicine'+index+'" name="medicine" class="form-control" autocomplete="off" placeholder="Search medicine: " required></td>';
             html += '<input type="hidden" name="record_id" class="form-control" id="record_id'+index+'" required>';
-            html += '<input value="{{i.medicine_id}}" type="hidden" name="medicine_id" class="form-control" id="medicine_id'+index+'" required>';
+            html += '<input type="hidden" name="medicine_id" value="{{i.medicine_id}}" class="form-control" id="medicine_id'+index+'" required>';
+
+            html += '<td><input value="{{ i.expiry|date:"d-m-Y" }}" type="text" id="expiry'+index+'" name="expiry" class="form-control" readonly required></td>';
 
             html += '<td><input value="{{i.record_qty}}" type="text" id="record_qty'+index+'" name="record_qty" class="form-control" readonly required></td>';
 
@@ -364,9 +367,9 @@
 
             html += '<td><input type="text" id="sale_rate'+index+'" name="sale_rate" class="form-control" readonly required></td>';
 
-            html += '<td><input value="0" type="text" onkeypress="return isNumberKey(event)" id="hsn'+index+'" name="hsn" class="form-control" readonly required></td>';
+            html += '<td><input value="{{i.hsn}}" type="text" onkeypress="return isNumberKey(event)" id="hsn'+index+'" name="hsn" class="form-control" readonly required></td>';
 
-            html += '<td><input value="0" type="text" onkeyup="gst_function('+index+')" onkeypress="return isNumberKey(event)" id="gst'+index+'" name="gst" class="form-control" required></td>';
+            html += '<td><input value="{% if i.gst %}{{i.gst}}{% else %}0{% endif %}" type="text" onkeyup="gst_function('+index+')" onkeypress="return isNumberKey(event)" id="gst'+index+'" name="gst" class="form-control" required></td>';
 
             html += '<td><input value="0" type="text" id="taxable_amount'+index+'" name="taxable_amount" class="total form-control" readonly></td>';
             html += '<td><input value="0" type="text" id="tax'+index+'" name="tax" class="total form-control" readonly></td>';
@@ -396,6 +399,8 @@
         html += '<input type="hidden" name="record_id" class="form-control" id="record_id'+index+'" required>';
         html += '<input type="hidden" name="medicine_id" class="form-control" id="medicine_id'+index+'" required>';
 
+        html += '<td><input type="text" id="expiry'+index+'" name="expiry" class="form-control" readonly required></td>';
+
         html += '<td><input type="text" id="record_qty'+index+'" name="record_qty" class="form-control" readonly required></td>';
 
         html += '<td><input type="text" onkeyup="sell_qty_function('+index+')" onkeypress="return isNumberKey(event)" id="sell_qty'+index+'" name="sell_qty" class="form-control" placeholder="Sell quantity" required></td>';
@@ -406,7 +411,7 @@
 
         html += '<td><input type="text" id="sale_rate'+index+'" name="sale_rate" class="form-control" readonly required></td>';
 
-        html += '<td><input value="0" type="text" onkeypress="return isNumberKey(event)" id="hsn'+index+'" name="hsn" class="form-control" readonly required></td>';
+        html += '<td><input value="" type="text" onkeypress="return isNumberKey(event)" id="hsn'+index+'" name="hsn" class="form-control" readonly required></td>';
 
         html += '<td><input value="0" type="text" onkeyup="gst_function('+index+')" onkeypress="return isNumberKey(event)" id="gst'+index+'" name="gst" class="form-control" required></td>';
 
@@ -439,8 +444,15 @@
                 $('#record_id' + indexID).val('');
                 $('#medicine_id' + indexID).val('');
                 $('#mrp' + indexID).val('');
+                $('#hsn' + indexID).val('');
+                $('#gst' + indexID).val(0);
+                $('#expiry' + indexID).val('');
                 $('#record_qty' + indexID).val('');
                 $('#amount' + indexID).val(0);
+                $('#sell_qty' + indexID).val(0);
+                $('#sale_rate' + indexID).val(0);
+                $('#taxable_amount' + indexID).val(0);
+                $('#tax' + indexID).val(0);
             }
         });
 
@@ -479,7 +491,10 @@
                                     record_id: results.record_id,
                                     medicine_id: results.medicine_id,
                                     record_qty: results.record_qty,
-                                    price:results.price
+                                    expiry: results.expiry,
+                                    price: results.price,
+                                    hsn: results.hsn,
+                                    gst: results.gst,
                                 };
                             });
                             response(suggestedProducts);
@@ -492,9 +507,12 @@
             },
             minLength: 2,
             select: function (event, ui) {
+                $('#expiry' + indexID).val(ui.item.expiry);
                 $('#record_id' + indexID).val(ui.item.record_id);
                 $('#medicine_id' + indexID).val(ui.item.medicine_id);
                 $('#mrp' + indexID).val(ui.item.price);
+                $('#hsn' + indexID).val(ui.item.hsn);
+                $('#gst' + indexID).val(ui.item.gst);
                 $('#record_qty' + indexID).val(ui.item.record_qty);
                 //add_medicine()
             }
@@ -511,7 +529,6 @@
             $('#sell_qty' + index).val(0)
         }
         var sell_qty = Number($('#sell_qty' + index).val()) || 0;
-
 
         var mrp = Number($('#mrp' + index).val()) || 0;
         var sell_amt = sell_qty * mrp

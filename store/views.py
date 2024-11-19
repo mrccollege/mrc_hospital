@@ -266,7 +266,7 @@ def search_medicine(request):
             for term in search_terms:
                 query &= Q(medicine__name__icontains=term)
 
-        medicines = MedicineStore.objects.filter(query).values('id', 'medicine__id', 'medicine__name', 'price', 'qty')
+        medicines = MedicineStore.objects.filter(query).values('id', 'medicine__id', 'medicine__name', 'price', 'qty', 'medicine__hsn', 'medicine__gst', 'expiry')
         data_list = [
             {
                 'record_id': i['id'],
@@ -274,6 +274,9 @@ def search_medicine(request):
                 'name': i['medicine__name'].capitalize(),
                 'price': i['price'],
                 'record_qty': i['qty'],
+                'hsn': i['medicine__hsn'],
+                'gst': i['medicine__gst'],
+                'expiry': i['expiry'],
             }
             for i in medicines
         ]

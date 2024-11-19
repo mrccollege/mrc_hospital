@@ -22,6 +22,8 @@ class Medicine(models.Model):
     video_link = models.TextField(null=True, blank=True)
     image = models.ImageField(upload_to='medicine_image/', null=True, blank=True)
     manufacture = models.CharField(max_length=500, null=True)
+    hsn = models.CharField(max_length=10, null=True, blank=True)
+    gst = models.IntegerField(default=0, null=True, blank=True)
     mobile = models.CharField(max_length=500, null=True)
     recom_to_doctor = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)

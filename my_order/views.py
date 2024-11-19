@@ -310,12 +310,12 @@ def create_bill(request, order_type, id):
                 mrp = float(medicine_data['mrp'])
                 sale_rate = float(medicine_data['sale_rate'])
                 try:
-                    hsn = float(medicine_data['hsn'])
+                    hsn = medicine_data['hsn']
                 except:
-                    hsn = 0
+                    hsn = ''
 
                 try:
-                    gst = float(medicine_data['gst'])
+                    gst = int(medicine_data['gst'])
                 except:
                     gst = 0
 
@@ -370,20 +370,25 @@ def create_bill(request, order_type, id):
             store_id = 0
 
         user = MedicineOrderHead.objects.get(id=id)
-        old_credit_sum = \
-            MedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).exclude(id=id).aggregate(Sum('old_credit'))[
-                'old_credit__sum'] or 0
+        old_credit_sum = MedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).exclude(id=id).order_by('-id')
+        if old_credit_sum:
+            old_credit_sum = old_credit_sum[0].old_credit
+        else:
+            old_credit_sum = 0
         medicine = MedicineOrderDetail.objects.filter(head_id=id)
         medicine_list = []
 
         for i in medicine:
             data_dict = {}
             query = Q(to_store_id=store_id, medicine_id=i.medicine.id)
-            store_medicine = MedicineStore.objects.filter(query).values('qty', 'price')
+            store_medicine = MedicineStore.objects.filter(query).values('qty', 'price', 'expiry')
             data_dict['medicine_id'] = i.medicine.id
             data_dict['medicine_name'] = i.medicine.name
             data_dict['order_qty'] = i.order_qty
-
+            data_dict['hsn'] = i.medicine.hsn
+            data_dict['gst'] = i.medicine.gst
+            data_dict['gst'] = i.medicine.gst
+            data_dict['expiry'] = store_medicine[0]['expiry']
             try:
                 data_dict['record_qty'] = store_medicine[0]['qty']
             except:
@@ -466,12 +471,12 @@ def update_medicine_order_bill(request, order_type, id):
                 mrp = float(medicine_data['mrp'])
                 sale_rate = float(medicine_data['sale_rate'])
                 try:
-                    hsn = float(medicine_data['hsn'])
+                    hsn = medicine_data['hsn']
                 except:
                     hsn = 0
 
                 try:
-                    gst = float(medicine_data['gst'])
+                    gst = int(medicine_data['gst'])
                 except:
                     gst = 0
 
@@ -549,16 +554,18 @@ def update_medicine_order_bill(request, order_type, id):
             store_id = 0
 
         user = MedicineOrderBillHead.objects.get(id=id)
-        old_credit_sum = \
-            MedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).exclude(id=id).aggregate(Sum('old_credit'))[
-                'old_credit__sum'] or 0
+        old_credit_sum = MedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).exclude(id=id).order_by('-id')
+        if old_credit_sum:
+            old_credit_sum = old_credit_sum[0].old_credit
+        else:
+            old_credit_sum = 0
         medicine = MedicineOrderBillDetail.objects.filter(head_id=id)
         medicine_list = []
 
         for i in medicine:
             data_dict = {}
             query = Q(to_store_id=store_id, medicine_id=i.medicine.id)
-            store_medicine = MedicineStore.objects.filter(query).values('qty', 'price')
+            store_medicine = MedicineStore.objects.filter(query).values('qty', 'price', 'expiry')
             data_dict['medicine_id'] = i.medicine.id
             data_dict['medicine_name'] = i.medicine.name
             data_dict['order_qty'] = i.order_qty
@@ -568,6 +575,7 @@ def update_medicine_order_bill(request, order_type, id):
             data_dict['gst'] = i.gst
             data_dict['taxable_amount'] = i.taxable_amount
             data_dict['tax'] = i.tax
+            data_dict['expiry'] = store_medicine[0]['expiry']
 
             try:
                 data_dict['record_qty'] = store_medicine[0]['qty']
@@ -655,12 +663,12 @@ def estimate_medicine_order_bill(request, order_type, id):
                 mrp = float(medicine_data['mrp'])
                 sale_rate = float(medicine_data['sale_rate'])
                 try:
-                    hsn = float(medicine_data['hsn'])
+                    hsn = medicine_data['hsn']
                 except:
                     hsn = 0
 
                 try:
-                    gst = float(medicine_data['gst'])
+                    gst = int(medicine_data['gst'])
                 except:
                     gst = 0
 
@@ -811,12 +819,12 @@ def update_estimate_medicine_order_bill(request, order_type, id):
                 mrp = float(medicine_data['mrp'])
                 sale_rate = float(medicine_data['sale_rate'])
                 try:
-                    hsn = float(medicine_data['hsn'])
+                    hsn = medicine_data['hsn']
                 except:
                     hsn = 0
 
                 try:
-                    gst = float(medicine_data['gst'])
+                    gst = int(medicine_data['gst'])
                 except:
                     gst = 0
 

@@ -365,9 +365,9 @@
 
             html += '<td><input type="text" id="sale_rate'+index+'" name="sale_rate" class="form-control" readonly required></td>';
 
-            html += '<td><input value="0" type="text" onkeypress="return isNumberKey(event)" id="hsn'+index+'" name="hsn" class="form-control" readonly required></td>';
+            html += '<td><input value="{{i.hsn}}" type="text" onkeypress="return isNumberKey(event)" id="hsn'+index+'" name="hsn" class="form-control" readonly required></td>';
 
-            html += '<td><input value="0" type="text" onkeyup="gst_function('+index+')" onkeypress="return isNumberKey(event)" id="gst'+index+'" name="gst" class="form-control" required></td>';
+            html += '<td><input value="{% if i.gst %}{{i.gst}}{% else %}0{% endif %}" type="text" onkeyup="gst_function('+index+')" onkeypress="return isNumberKey(event)" id="gst'+index+'" name="gst" class="form-control" required></td>';
 
             html += '<td><input value="0" type="text" id="taxable_amount'+index+'" name="taxable_amount" class="total form-control" readonly></td>';
             html += '<td><input value="0" type="text" id="tax'+index+'" name="tax" class="total form-control" readonly></td>';
@@ -442,6 +442,10 @@
                 $('#mrp' + indexID).val('');
                 $('#record_qty' + indexID).val('');
                 $('#amount' + indexID).val(0);
+                $('#sell_qty' + indexID).val(0);
+                $('#sale_rate' + indexID).val(0);
+                $('#taxable_amount' + indexID).val(0);
+                $('#tax' + indexID).val(0);
             }
         });
 
@@ -480,7 +484,9 @@
                                     record_id: results.record_id,
                                     medicine_id: results.medicine_id,
                                     record_qty: results.record_qty,
-                                    price:results.price
+                                    price:results.price,
+                                    hsn: results.hsn,
+                                    gst: results.gst,
                                 };
                             });
                             response(suggestedProducts);
@@ -496,6 +502,8 @@
                 $('#record_id' + indexID).val(ui.item.record_id);
                 $('#medicine_id' + indexID).val(ui.item.medicine_id);
                 $('#mrp' + indexID).val(ui.item.price);
+                $('#hsn' + indexID).val(ui.item.hsn);
+                $('#gst' + indexID).val(ui.item.gst);
                 $('#record_qty' + indexID).val(ui.item.record_qty);
                 //add_medicine()
             }

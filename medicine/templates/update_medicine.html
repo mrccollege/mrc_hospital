@@ -91,12 +91,24 @@
                                                        value="{{medicine.mobile}}" maxlength="10">
                                             </div>
 
+                                            <div class="col-lg-2 form-group">
+                                                <label for="hsn" class="form-label">HSN</label>
+                                                <input type="text" class="form-control" id="hsn"
+                                                       name="hsn" value="{{medicine.hsn}}" required>
+                                            </div>
+
+                                            <div class="col-lg-2 form-group">
+                                                <label for="gst" class="form-label">GST</label>
+                                                <input type="text" class="form-control" id="gst"
+                                                       name="gst" value="{{medicine.gst}}" required>
+                                            </div>
+
                                             <div>
                                                 <label>Recommend To doctor</label>
-                                                <input type="radio" class="" checked name="recommend_medicine"
+                                                <input type="radio" {% if medicine.recom_to_doctor == True %} checked {% endif %} name="recommend_medicine"
                                                        id="recommend_medicine_yes" value="True">
                                                 <label>Yes</label>
-                                                <input type="radio" class="" name="recommend_medicine"
+                                                <input type="radio" name="recommend_medicine" {% if medicine.recom_to_doctor == False %} checked {% endif %}
                                                        id="recommend_medicine_no" value="False">
                                                 <label>No</label>
                                             </div>

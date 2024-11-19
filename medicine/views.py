@@ -85,6 +85,8 @@ def add_medicine(request):
         video_link = form.get('video_link')
         manufacture = form.get('manufacture')
         mobile = form.get('mobile')
+        hsn = form.get('hsn')
+        gst = form.get('gst')
         recommend_medicine = form.get('recommend_medicine')
         status = 'failed'
         msg = 'Something went wrong.'
@@ -95,6 +97,8 @@ def add_medicine(request):
                                                    video_link=video_link,
                                                    manufacture=manufacture.title(),
                                                    mobile=mobile,
+                                                   hsn=hsn,
+                                                   gst=gst,
                                                    recom_to_doctor=recommend_medicine
                                                    )
             if medicine_obj:
@@ -131,6 +135,8 @@ def medicine_update(request, id):
         video_link = form.get('video_link')
         manufacture = form.get('manufacture')
         mobile = form.get('mobile')
+        hsn = form.get('hsn')
+        gst = form.get('gst')
         recommend_medicine = form.get('recommend_medicine')
         msg = 'Medicine Update Failed'
         status = 'Failed'
@@ -141,6 +147,8 @@ def medicine_update(request, id):
                                                                  video_link=video_link,
                                                                  manufacture=manufacture.title(),
                                                                  mobile=mobile,
+                                                                 hsn=hsn,
+                                                                 gst=gst,
                                                                  recom_to_doctor=recommend_medicine
                                                                  )
             if medicine_obj:
@@ -213,7 +221,8 @@ def add_medicine_to_store(request):
                                                                    available_qty=store_qty.qty,
                                                                    add_qty=int(qty[i]),
                                                                    medicine_manufacture=medicine.manufacture,
-                                                                   medicine_expiry=datetime.strptime(expiry_date[i], "%d-%B-%Y"),
+                                                                   medicine_expiry=datetime.strptime(expiry_date[i],
+                                                                                                     "%d-%B-%Y"),
                                                                    )
 
             status = 'success'

@@ -103,15 +103,13 @@
                                                     <div class="col-lg-4 form-group">
                                                         <label for="video_link" class="form-label">Video link</label>
                                                         <input type="text" class="form-control" id="video_link"
-                                                               name="video_link"
-                                                               >
+                                                               name="video_link">
                                                     </div>
 
                                                     <div class="col-lg-4 form-group">
                                                         <label for="manufacture" class="form-label">Manufacturer</label>
                                                         <input type="text" class="form-control" id="manufacture"
-                                                               name="manufacture"
-                                                               >
+                                                               name="manufacture">
                                                     </div>
 
                                                     <div class="col-lg-4 form-group">
@@ -119,19 +117,34 @@
                                                             Mobile</label>
                                                         <input type="text" class="form-control" id="mobile"
                                                                name="mobile"
-                                                               maxlength="10" >
+                                                               maxlength="10">
                                                     </div>
                                                 </div>
                                             </div>
 
-                                            <div>
-                                                <label>Recommend To doctor</label>
-                                                <input type="radio" class="" checked name="recommend_medicine" id="recommend_medicine_yes" value="True">
-                                                <label>Yes</label>
-                                                <input type="radio" class="" name="recommend_medicine" id="recommend_medicine_no" value="False">
-                                                <label>No</label>
+                                            <div class="col-lg-2 form-group">
+                                                <label for="hsn" class="form-label">HSN</label>
+                                                <input type="text" class="form-control" id="hsn"
+                                                       name="hsn" required>
                                             </div>
 
+                                            <div class="col-lg-2 form-group">
+                                                <label for="gst" class="form-label">GST</label>
+                                                <input type="text" class="form-control" id="gst"
+                                                       name="gst" required>
+                                            </div>
+
+                                            <div class="col-lg-4 form-group">
+                                                <div class="text-center mt-5 mx-auto">
+                                                    <label>Recommend To doctor</label>
+                                                    <input type="radio" class="" checked name="recommend_medicine"
+                                                           id="recommend_medicine_yes" value="True">
+                                                    <label for="recommend_medicine_yes">Yes</label>
+                                                    <input type="radio" class="" name="recommend_medicine"
+                                                           id="recommend_medicine_no" value="False">
+                                                    <label for="recommend_medicine_no">No</label>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div><!-- /.box-body -->
 
