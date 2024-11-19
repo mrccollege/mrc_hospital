@@ -276,7 +276,7 @@ def search_medicine(request):
                 'record_qty': i['qty'],
                 'hsn': i['medicine__hsn'],
                 'gst': i['medicine__gst'],
-                'expiry': i['expiry'],
+                'expiry': i['expiry'].strftime("%d-%m-%Y"),
             }
             for i in medicines
         ]

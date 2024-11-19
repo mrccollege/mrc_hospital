@@ -117,6 +117,7 @@
                                                 <thead>
                                                 <tr>
                                                     <th>Medicine Name</th>
+                                                    <th>Expiry</th>
                                                     <th>Record Qty</th>
                                                     <th>Sell Qty</th>
                                                     <th colspan="1">MRP.</th>
@@ -229,6 +230,7 @@
 
         $('#medicine'+indexID).on('keydown', function(event) {
             if (event.key === 'Backspace' || event.key === 'Delete') {
+                $('#expiry' + indexID).val('');
                 $('#record_id' + indexID).val('');
                 $('#medicine_id' + indexID).val('');
                 $('#mrp' + indexID).val('');
@@ -272,7 +274,8 @@
                                     record_id: results.record_id,
                                     medicine_id: results.medicine_id,
                                     record_qty: results.record_qty,
-                                    price:results.price
+                                    price:results.price,
+                                    expiry: results.expiry,
                                 };
                             });
                             response(suggestedProducts);
@@ -285,6 +288,7 @@
             },
             minLength: 2,
             select: function (event, ui) {
+                $('#expiry' + indexID).val(ui.item.expiry);
                 $('#record_id' + indexID).val(ui.item.record_id);
                 $('#medicine_id' + indexID).val(ui.item.medicine_id);
                 $('#mrp' + indexID).val(ui.item.price);
@@ -408,6 +412,8 @@
             html += '<input type="hidden" name="record_id" class="form-control" id="record_id'+index+'" required>';
             html += '<input value="{{i.medicine_id}}" type="hidden" name="medicine_id" class="form-control" id="medicine_id'+index+'" required>';
 
+            html += '<td><input value="{{ i.expiry|date:"d-m-Y" }}" type="text" id="expiry'+index+'" name="expiry" class="form-control" readonly required></td>';
+
             html += '<td><input value="{{i.record_qty}}" type="text" id="record_qty'+index+'" name="record_qty" class="form-control" readonly required></td>';
 
             html += '<td><input value="{{i.order_qty}}" type="text" onkeyup="sell_qty_function('+index+')" onkeypress="return isNumberKey(event)" id="sell_qty'+index+'" name="sell_qty" class="form-control" placeholder="Sell quantity" required></td>';
@@ -445,6 +451,8 @@
         html += '<td><input onkeyup="search_medicine('+index+');" type="text" id="medicine'+index+'" name="medicine" class="form-control" autocomplete="off" placeholder="Search medicine: " required></td>';
         html += '<input type="hidden" name="record_id" class="form-control" id="record_id'+index+'" required>';
         html += '<input type="hidden" name="medicine_id" class="form-control" id="medicine_id'+index+'" required>';
+
+        html += '<td><input type="text" id="expiry'+index+'" name="expiry" class="form-control" readonly required></td>';
 
         html += '<td><input type="text" id="record_qty'+index+'" name="record_qty" class="form-control" readonly required></td>';
 
