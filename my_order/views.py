@@ -23,8 +23,7 @@ from store.models import Store, MedicineStoreTransactionHistory
 from my_order.models import MedicineOrderBillHead, MedicineOrderBillDetail
 
 from my_order.models import EstimateMedicineOrderBillHead, EstimateMedicineOrderBillDetail
-from django.db.models import Sum
-
+from django.db.models import Sum, F
 from order_payment_detail.models import PaymentDetail
 
 
@@ -1126,6 +1125,32 @@ def view_normal_invoice_doctor(request, id):
             Sum('old_credit'))[
             'old_credit__sum'] or 0
     medicine = MedicineOrderBillDetail.objects.filter(head_id=user.id)
+    gst_per = MedicineOrderBillDetail.objects.filter(head_id=user.id).values_list('gst', flat=True).distinct()
+
+    total_taxable_by_gst = {}
+    for gst in gst_per:
+        total_taxable = MedicineOrderBillDetail.objects.filter(head_id=user.id, gst=gst).aggregate(
+            total_taxable=Sum('taxable_amount')
+        )['total_taxable']
+        total_taxable_by_gst[gst] = total_taxable or 0  # Handle None values
+
+    total_discounted_price = 0
+
+    for item in medicine:
+        if item.mrp and item.discount and item.sell_qty:  # Ensure values are not None
+            discount_amount = (item.mrp * item.discount) / 100  # Calculate discount amount per unit
+            discounted_price_per_unit = discount_amount  # Calculate discounted price per unit
+            total_price_for_item = discounted_price_per_unit * item.sell_qty  # Multiply by sell quantity
+            total_discounted_price += total_price_for_item  # Add to total discounted price
+
+    subtotal_amount = medicine.aggregate(
+        total_amount=Sum(F('sell_qty') * F('mrp'))
+    )['total_amount'] or 0  # Ensure 0 if None
+
+    total_taxable_amount = medicine.aggregate(
+        total_taxable=Sum('taxable_amount')
+    )['total_taxable'] or 0  # Ensure 0 if None
+
     context = {
         'id': id,
         'order_type': order_type,
@@ -1133,6 +1158,10 @@ def view_normal_invoice_doctor(request, id):
         'user': user,
         'medicine': medicine,
         'old_credit_sum': old_credit_sum,
+        'total_taxable_by_gst': total_taxable_by_gst,
+        'total_discounted_price': total_discounted_price,
+        'subtotal_amount': subtotal_amount,
+        'total_taxable_amount': total_taxable_amount,
     }
     if order_type == 1:
         return render(request, 'invoice/normal_invoice/normal_invoice_instate.html', context)
