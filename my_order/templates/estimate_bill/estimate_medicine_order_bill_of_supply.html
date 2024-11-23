@@ -119,6 +119,7 @@
                                                 <thead>
                                                 <tr>
                                                     <th>Medicine Name</th>
+                                                    <th>Expiry</th>
                                                     <th>Record Qty</th>
                                                     <th>Sell Qty</th>
                                                     <th colspan="1">MRP.</th>
@@ -417,6 +418,8 @@
             html += '<input type="hidden" name="record_id" class="form-control" id="record_id'+index+'" required>';
             html += '<input value="{{i.medicine_id}}" type="hidden" name="medicine_id" class="form-control" id="medicine_id'+index+'" required>';
 
+            html += '<td><input value="{{ i.expiry|date:"d-m-Y" }}" type="text" id="expiry'+index+'" name="expiry" class="form-control" readonly required></td>';
+
             html += '<td><input value="{{i.record_qty}}" type="text" id="record_qty'+index+'" name="record_qty" class="form-control" readonly required></td>';
 
             html += '<td><input value="{{i.sell_qty}}" type="text" onkeyup="sell_qty_function('+index+')" onkeypress="return isNumberKey(event)" id="sell_qty'+index+'" name="sell_qty" class="form-control" placeholder="Sell quantity" required></td>';
@@ -454,7 +457,7 @@
         html += '<td><input onkeyup="search_medicine('+index+');" type="text" id="medicine'+index+'" name="medicine" class="form-control" autocomplete="off" placeholder="Search medicine: " required></td>';
         html += '<input type="hidden" name="record_id" class="form-control" id="record_id'+index+'" required>';
         html += '<input type="hidden" name="medicine_id" class="form-control" id="medicine_id'+index+'" required>';
-
+        html += '<td><input type="text" id="expiry'+index+'" name="expiry" class="form-control" readonly required></td>';
         html += '<td><input type="text" id="record_qty'+index+'" name="record_qty" class="form-control" readonly required></td>';
 
         html += '<td><input type="text" onkeyup="sell_qty_function('+index+')" onkeypress="return isNumberKey(event)" id="sell_qty'+index+'" name="sell_qty" class="form-control" placeholder="Sell quantity" required></td>';

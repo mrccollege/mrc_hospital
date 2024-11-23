@@ -730,7 +730,7 @@ def estimate_medicine_order_bill(request, order_type, id):
         for i in medicine:
             data_dict = {}
             query = Q(to_store_id=store_id, medicine_id=i.medicine.id)
-            store_medicine = MedicineStore.objects.filter(query).values('qty', 'price')
+            store_medicine = MedicineStore.objects.filter(query).values('qty', 'price', 'expiry')
             data_dict['medicine_id'] = i.medicine.id
             data_dict['medicine_name'] = i.medicine.name
             data_dict['order_qty'] = i.order_qty
@@ -740,6 +740,7 @@ def estimate_medicine_order_bill(request, order_type, id):
             data_dict['gst'] = i.gst
             data_dict['taxable_amount'] = i.taxable_amount
             data_dict['tax'] = i.tax
+            data_dict['expiry'] = store_medicine[0]['expiry']
 
             try:
                 data_dict['record_qty'] = store_medicine[0]['qty']
@@ -882,7 +883,7 @@ def update_estimate_medicine_order_bill(request, order_type, id):
         for i in medicine:
             data_dict = {}
             query = Q(to_store_id=store_id, medicine_id=i.medicine.id)
-            store_medicine = MedicineStore.objects.filter(query).values('qty', 'price')
+            store_medicine = MedicineStore.objects.filter(query).values('qty', 'price', 'expiry')
             data_dict['medicine_id'] = i.medicine.id
             data_dict['medicine_name'] = i.medicine.name
             data_dict['order_qty'] = i.order_qty
@@ -892,6 +893,7 @@ def update_estimate_medicine_order_bill(request, order_type, id):
             data_dict['gst'] = i.gst
             data_dict['taxable_amount'] = i.taxable_amount
             data_dict['tax'] = i.tax
+            data_dict['expiry'] = store_medicine[0]['expiry']
 
             try:
                 data_dict['record_qty'] = store_medicine[0]['qty']
