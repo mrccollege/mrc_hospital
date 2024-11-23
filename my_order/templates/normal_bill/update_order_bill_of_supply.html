@@ -491,9 +491,11 @@
 
         var discount = Number($('#discount'+index).val()) || 0;
         var disc_amt = (discount / 100) * sell_amt;
+        var disc_amt1 = (discount / 100) * mrp;
         var amt =  sell_amt - disc_amt
+        var sale_rate =  mrp - disc_amt1
 
-        $('#sale_rate'+index).val(amt.toFixed(2));
+        $('#sale_rate'+index).val(sale_rate.toFixed(2));
         $('#amount'+index).val(amt.toFixed(2));
 
         sub_total_function()
@@ -512,9 +514,11 @@
         if (sell_qty){
             var discount = Number($('#discount'+index).val()) || 0;
             var disc_amt = (discount / 100) * sell_amt;
+            var disc_amt1 = (discount / 100) * mrp;
             var amt =  sell_amt - disc_amt
+            var sale_rate =  mrp - disc_amt1
 
-            $('#sale_rate'+index).val(amt.toFixed(2));
+            $('#sale_rate'+index).val(sale_rate.toFixed(2));
             $('#amount'+index).val(amt.toFixed(2));
 
             sub_total_function()
@@ -535,9 +539,11 @@
         if (sell_qty){
             var discount = Number($('#discount'+index).val()) || 0;
             var disc_amt = (discount / 100) * sell_amt;
+            var disc_amt1 = (discount / 100) * mrp;
             var amt =  sell_amt - disc_amt
+            var sale_rate =  mrp - disc_amt1
 
-            $('#sale_rate'+index).val(amt.toFixed(2));
+            $('#sale_rate'+index).val(sale_rate.toFixed(2));
             $('#amount'+index).val(amt.toFixed(2));
 
             sub_total_function()

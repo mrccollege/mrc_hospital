@@ -522,11 +522,13 @@
         var mrp = parseInt($('#mrp' + index).val()) || 0;
         var sell_amt = sell_qty * mrp
 
-        var discount = parseInt($('#discount'+index).val()) || 0;
+        var discount = Number($('#discount'+index).val()) || 0;
         var disc_amt = (discount / 100) * sell_amt;
+        var disc_amt1 = (discount / 100) * mrp;
         var amt =  sell_amt - disc_amt
+        var sale_rate =  mrp - disc_amt1
 
-        $('#sale_rate'+index).val(amt.toFixed(2));
+        $('#sale_rate'+index).val(sale_rate.toFixed(2));
 
         var gst = parseInt($('#gst'+index).val()) || 0;
         var result = amt / (1 + (gst / 100));
@@ -554,9 +556,11 @@
         if (sell_qty){
             var discount = Number($('#discount'+index).val()) || 0;
             var disc_amt = (discount / 100) * sell_amt;
+            var disc_amt1 = (discount / 100) * mrp;
             var amt =  sell_amt - disc_amt
+            var sale_rate =  mrp - disc_amt1
 
-            $('#sale_rate'+index).val(amt.toFixed(2));
+            $('#sale_rate'+index).val(sale_rate.toFixed(2));
 
             var gst = Number($('#gst'+index).val()) || 0;
             var result = amt / (1 + (gst / 100));
@@ -586,9 +590,11 @@
         if (sell_qty){
             var discount = Number($('#discount'+index).val()) || 0;
             var disc_amt = (discount / 100) * sell_amt;
+            var disc_amt1 = (discount / 100) * mrp;
             var amt =  sell_amt - disc_amt
+            var sale_rate =  mrp - disc_amt1
 
-            $('#sale_rate'+index).val(amt.toFixed(2));
+            $('#sale_rate'+index).val(sale_rate.toFixed(2));
 
             var gst = Number($('#gst'+index).val()) || 0;
             var result = amt / (1 + (gst / 100));

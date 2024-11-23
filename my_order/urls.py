@@ -19,5 +19,6 @@ urlpatterns = [
     path('view_estimate/<int:id>/', views.view_estimate, name='view_estimate'),
 
     path('view_normal_invoice/<int:id>/', views.view_normal_invoice, name='view_normal_invoice'),
+    path('view_normal_invoice_doctor/<int:id>/', views.view_normal_invoice_doctor, name='view_normal_invoice_doctor'),
     path('view_estimate_invoice/<int:id>/', views.view_estimate_invoice, name='view_estimate_invoice'),
 ]
