@@ -1144,9 +1144,12 @@ def view_normal_invoice_doctor(request, id):
         sale_rate_sub_totals = MedicineOrderBillDetail.objects.filter(
             head_id=user.id, gst=gst
         ).annotate(total=F('sell_qty') * F('sale_rate'))
-        discount_total = sale_rate_sub_totals.aggregate(discount_total=Sum('total'))['discount_total'] or 0
 
-        discount = grand_total - discount_total
+        discount_total = sale_rate_sub_totals.aggregate(discount_total=Sum('total'))['discount_total'] or 0
+        if grand_total > discount_total:
+            discount = grand_total - discount_total
+        else:
+            discount = grand_total
 
         tax = MedicineOrderBillDetail.objects.filter(
             head_id=user.id, gst=gst
