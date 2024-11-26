@@ -1053,6 +1053,8 @@ def view_normal_invoice(request, id):
             Sum('old_credit'))[
             'old_credit__sum'] or 0
     medicine = MedicineOrderBillDetail.objects.filter(head_id=user.id)
+    total_taxable_amount = medicine.aggregate(total_taxable=Sum('taxable_amount'))[
+                               'total_taxable'] or 0  # Default to 0 if the result is None
     context = {
         'id': id,
         'order_type': order_type,
@@ -1060,6 +1062,7 @@ def view_normal_invoice(request, id):
         'user': user,
         'medicine': medicine,
         'old_credit_sum': old_credit_sum,
+        'total_taxable_amount': total_taxable_amount,
     }
     if order_type == 1:
         return render(request, 'invoice/normal_invoice/normal_invoice_instate.html', context)
@@ -1120,22 +1123,46 @@ def view_normal_invoice_doctor(request, id):
         return redirect('/my_order/my_medicine_ordered_list/')
 
     order_type = user.order_type
-    old_credit_sum = \
-        MedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).exclude(order_id_id=id).aggregate(
-            Sum('old_credit'))[
-            'old_credit__sum'] or 0
+
+    old_credit_sum = MedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).exclude(order_id_id=id).aggregate(Sum('old_credit'))['old_credit__sum'] or 0
     medicine = MedicineOrderBillDetail.objects.filter(head_id=user.id)
     gst_per = MedicineOrderBillDetail.objects.filter(head_id=user.id).values_list('gst', flat=True).distinct()
 
-    total_taxable_by_gst = {}
+    total_taxable_by_gst_list = []
     for gst in gst_per:
-        total_taxable = MedicineOrderBillDetail.objects.filter(head_id=user.id, gst=gst).aggregate(
-            total_taxable=Sum('taxable_amount')
-        )['total_taxable']
-        total_taxable_by_gst[gst] = total_taxable or 0  # Handle None values
+        # Total taxable amounts
+        total_taxable = MedicineOrderBillDetail.objects.filter(
+            head_id=user.id, gst=gst
+        ).aggregate(total_taxable=Sum('taxable_amount'))['total_taxable'] or 0
+
+        # Sub totals
+        medicine_sub_totals = MedicineOrderBillDetail.objects.filter(
+            head_id=user.id, gst=gst
+        ).annotate(total=F('sell_qty') * F('mrp'))
+        grand_total = medicine_sub_totals.aggregate(grand_total=Sum('total'))['grand_total'] or 0
+
+        sale_rate_sub_totals = MedicineOrderBillDetail.objects.filter(
+            head_id=user.id, gst=gst
+        ).annotate(total=F('sell_qty') * F('sale_rate'))
+        discount_total = sale_rate_sub_totals.aggregate(discount_total=Sum('total'))['discount_total'] or 0
+
+        discount = grand_total - discount_total
+
+        tax = MedicineOrderBillDetail.objects.filter(
+            head_id=user.id, gst=gst
+        ).aggregate(tax=Sum('tax'))['tax'] or 0
+
+        sgst_and_cgst = tax / 2
+        total_taxable_by_gst_list.append({
+            'gst': gst,
+            'taxable_amount': total_taxable,
+            'grand_total': grand_total,
+            'discount': discount,
+            'tax': tax,
+            'sgst_and_cgst': sgst_and_cgst,
+        })
 
     total_discounted_price = 0
-
     for item in medicine:
         if item.mrp and item.discount and item.sell_qty:  # Ensure values are not None
             discount_amount = (item.mrp * item.discount) / 100  # Calculate discount amount per unit
@@ -1143,13 +1170,8 @@ def view_normal_invoice_doctor(request, id):
             total_price_for_item = discounted_price_per_unit * item.sell_qty  # Multiply by sell quantity
             total_discounted_price += total_price_for_item  # Add to total discounted price
 
-    subtotal_amount = medicine.aggregate(
-        total_amount=Sum(F('sell_qty') * F('mrp'))
-    )['total_amount'] or 0  # Ensure 0 if None
-
-    total_taxable_amount = medicine.aggregate(
-        total_taxable=Sum('taxable_amount')
-    )['total_taxable'] or 0  # Ensure 0 if None
+    subtotal_amount = medicine.aggregate(total_amount=Sum(F('sell_qty') * F('mrp')))['total_amount'] or 0
+    total_taxable_amount = medicine.aggregate(total_taxable=Sum('taxable_amount'))['total_taxable'] or 0
 
     context = {
         'id': id,
@@ -1158,11 +1180,12 @@ def view_normal_invoice_doctor(request, id):
         'user': user,
         'medicine': medicine,
         'old_credit_sum': old_credit_sum,
-        'total_taxable_by_gst': total_taxable_by_gst,
+        'total_taxable_by_gst': total_taxable_by_gst_list,
         'total_discounted_price': total_discounted_price,
         'subtotal_amount': subtotal_amount,
         'total_taxable_amount': total_taxable_amount,
     }
+
     if order_type == 1:
         return render(request, 'invoice/normal_invoice/normal_invoice_instate.html', context)
     elif order_type == 2:

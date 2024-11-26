@@ -145,53 +145,89 @@
                 <td>{{i.amount}}</td>
             </tr>
             {% endfor %}
+
             <tr>
                 <td colspan="3">MRP Amount. {{subtotal_amount}}</td>
                 <td colspan="2">Total Discount. {{total_discounted_price}}</td>
-<!--                <td colspan="4" class="grand total">Sub Total Rs.</td>-->
-<!--                <td>{{user.subtotal}}</td>-->
+                <td colspan="8"></td>
             </tr>
-
-            <tr>
-                <td colspan="3">Disc. {{user.discount}} %</td>
-                <td colspan="2">SGST {{user.sgst}}</td>
-                <td colspan="2">CGST {{user.cgst}}</td>
-                <td colspan="2">Shipping and packing Rs.</td>
-                <td colspan="2">{{user.shipping}}</td>
-            </tr>
-
-<!--            {% for gst, total in total_taxable_by_gst.items %}-->
-<!--            <tr>-->
-<!--                <td colspan="9">GST: {{ gst }}%</td>-->
-<!--                <td colspan="9">{{ total }}</td>-->
-<!--            </tr>-->
-<!--            {% endfor %}-->
-
-            <tr>
-                <td colspan="9" class="grand total">Taxable Amount.</td>
-                <td>{{total_taxable_amount}}</td>
-            </tr>
-            <tr>
-                <td colspan="9" class="grand total">CGST Amount.</td>
-                <td>{{user.cgst}}</td>
-            </tr>
-            <tr>
-                <td colspan="9" class="grand total">SGST Amount.</td>
-                <td>{{user.sgst}}</td>
-            </tr>
-            <tr>
-                <td colspan="9" class="grand total">Grand Total Rs.</td>
-                <td>{{user.total_without_previous_bill}}</td>
-            </tr>
-
             </tbody>
         </table>
+
+        <div style="display: flex; justify-content: space-between; width: 100%; gap: 10px;">
+            <!-- First Table -->
+            <table style="width: 70%; border-collapse: collapse; border: 1px solid black; text-align: left;">
+                <tr>
+                    <th>GST</th>
+                    <th>SUB TOTAL</th>
+                    <th>DISC.</th>
+                    <th>Taxable</th>
+                    <th>SGST</th>
+                    <th>CGST</th>
+                    <th>TOTAL GST</th>
+                </tr>
+                <tbody>
+
+                {% for i in total_taxable_by_gst %}
+                <tr>
+                    <td class="grand total">{{i.gst}}%</td>
+                    <td class="grand total">{{i.grand_total}}</td>
+                    <td class="grand total">{{i.discount}}</td>
+                    <td class="grand total">{{i.taxable_amount}}</td>
+                    <td class="grand total">{{i.sgst_and_cgst}}</td>
+                    <td class="grand total">{{i.sgst_and_cgst}}</td>
+                    <td class="grand total">{{i.tax}}</td>
+                </tr>
+                {% endfor %}
+
+                </tbody>
+            </table>
+
+            <!-- Second Table -->
+            <table style="width: 30%; border-collapse: collapse; border: 1px solid black; text-align: left;">
+                <tr>
+                    <td colspan="2" class="grand total">Taxable Amount.</td>
+                    <td>{{total_taxable_amount}}</td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="grand total">CGST Amount.</td>
+                    <td>{{user.cgst}}</td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="grand total">SGST Amount.</td>
+                    <td>{{user.sgst}}</td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="grand total">Grand Total Rs.</td>
+                    <td>{{user.total_without_previous_bill}}</td>
+                </tr>
+            </table>
+        </div>
+
     </main>
+
     <footer>
-        <p>This is an electronically generated invoice, no signature required.</p>
-        <p>All Disputes Subject to MATHURA Jurisdiction Only.</p>
+        <p>
+            <b>This is an electronically generated invoice,
+                no signature required. All Disputes Subject to MATHURA Jurisdiction Only.
+            </b>
+        </p>
     </footer>
+
+    <div>
+        <table>
+            <tr style="margin-top: 215px;">
+                <td colspan="2"></td>
+                <td colspan="2"><b>OLD CREADIT :Rs. {{user.old_credit}}</b></td>
+                <td colspan="2"><b>CASH :Rs. {{user.cash}}</b></td>
+                <td colspan="2"><b>ONLINE :Rs. {{user.online}}</b></td>
+                <td colspan="2"><b>REMAINING :Rs. {{user.online}}</b></td>
+                <td colspan="2"></td>
+            </tr>
+        </table>
+    </div>
 </div>
+
 
 <script>
     $('#download-pdf').on('click', function () {
