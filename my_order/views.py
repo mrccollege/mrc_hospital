@@ -1092,7 +1092,7 @@ def view_normal_invoice(request, id):
             total=F('sell_qty') * F('sale_rate'))
 
         discount_total = sale_rate_sub_totals.aggregate(discount_total=Sum('total'))['discount_total'] or 0
-        discount = sub_total - discount_total
+        discount = discount_total - sub_total
         grand_discount_total += discount
         tax = MedicineOrderBillDetail.objects.filter(
             head_id=user.id, gst=gst
@@ -1193,7 +1193,7 @@ def view_normal_invoice_doctor(request, id):
         sale_rate_sub_totals = MedicineOrderBillDetail.objects.filter(head_id=user.id, gst=gst).annotate(total=F('sell_qty') * F('sale_rate'))
 
         discount_total = sale_rate_sub_totals.aggregate(discount_total=Sum('total'))['discount_total'] or 0
-        discount = sub_total - discount_total
+        discount = discount_total - sub_total
         grand_discount_total += discount
         tax = MedicineOrderBillDetail.objects.filter(
             head_id=user.id, gst=gst
