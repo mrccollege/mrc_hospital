@@ -387,7 +387,10 @@ def create_bill(request, order_type, id):
             data_dict['hsn'] = i.medicine.hsn
             data_dict['gst'] = i.medicine.gst
             data_dict['gst'] = i.medicine.gst
-            data_dict['expiry'] = store_medicine[0]['expiry']
+            try:
+                data_dict['expiry'] = store_medicine[0]['expiry']
+            except:
+                data_dict['expiry'] = ''
             try:
                 data_dict['record_qty'] = store_medicine[0]['qty']
             except:
