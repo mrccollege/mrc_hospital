@@ -112,6 +112,7 @@ class EstimateMedicineOrderBillHead(models.Model):
     discount = models.IntegerField(default=0, null=True)
     shipping = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     pay_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    total_without_previous_bill = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     sgst = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     cgst = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     old_credit = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
