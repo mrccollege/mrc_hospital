@@ -90,27 +90,28 @@
             <img src="/static/logo/bill_logo/naturo_bar_code.jpeg" alt="Company Logo" class="right-logo">
         </div>
         <h4 style="text-align:center">(TAX INVOICE)</h4>
-        <div><h4><span style="font-size:22px">M/s Mrc Naturocare</span> &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;  &nbsp;&nbsp; &nbsp;  &nbsp; &nbsp;&nbsp; &nbsp;  &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp; Address: Vrindavan - Mathura pin: 281121</h4></div>
-
+        <div><h4><span style="font-size:22px">M/s Mrc Naturocare</span> &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+            &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+            &nbsp; Address: Vrindavan - Mathura pin: 281121</h4></div>
         <hr>
         <div class="header-container">
             <div id="client">
-                <div><strong>Date:</strong> {{user.created_at}}</div>
-                <div><strong>Invoice No:</strong> {{user.invoice_number}}</div>
-                <div><strong>Client:</strong> {{user.doctor.user.username}}</div>
-                <div><strong>Mobile:</strong> {{user.doctor.user.mobile}}</div>
-                <div><strong>Address:</strong> {{user.doctor.user.district}}, {{user.doctor.user.state}}</div>
-                <div><strong>Email:</strong> {{user.doctor.user.email}}</div>
+                <div><strong>Date :</strong> {{user.created_at}}</div>
+                <div><strong>Invoice No :</strong> {{user.invoice_number}}</div>
+                <div><strong>Client :</strong> {{user.doctor.user.username}}</div>
+                <div><strong>Mobile :</strong> {{user.doctor.user.mobile}}</div>
+                <div><strong>Address :</strong> {{user.doctor.user.district}}, {{user.doctor.user.state}}</div>
+                <div><strong>Email :</strong> {{user.doctor.user.email}}</div>
+                <div><strong>GST :</strong> Unregistered</div>
             </div>
             <div id="company">
                 <div>Phone: 7417 7417 74</div>
-                <div>Email: <a href="mailto:mrcayurvedacenter@gamail.com">mrcayurvedacenter@gamail.com</a></div>
+                <div>Email: <a href="mailto:mrcnaturocare@gamail.com">mrcnaturocare@gamail.com</a></div>
                 <div>GSTIN: 09BRLPS1328C1ZR</div>
                 <div>Bank Name: Punjab National Bank</div>
                 <div>Account No: 4902002100001830</div>
                 <div>IFSC CODE: PUNB00463000</div>
             </div>
-
         </div>
     </header>
     <main>
@@ -144,28 +145,110 @@
                 <td>{{i.amount}}</td>
             </tr>
             {% endfor %}
+
             <tr>
-                <td colspan="9" class="grand total">Sub Total Rs.</td>
-                <td>{{user.subtotal}}</td>
-            </tr>
-            <tr>
-                <td colspan="3">Disc. {{user.discount}} %</td>
-                <td colspan="2">IGST {{user.sgst}}</td>
-                <td colspan="2">Shipping and packing Rs.</td>
-                <td colspan="2">{{user.shipping}}</td>
-            </tr>
-            <tr>
-                <td colspan="9" class="grand total">Grand Total Rs.</td>
-                <td>{{user.total_without_previous_bill}}</td>
+                <td colspan="3">MRP Amount. {{subtotal_amount}}</td>
+                <td colspan="2">Total Discount. {{total_discounted_price}}</td>
+                <td colspan="8"></td>
             </tr>
             </tbody>
         </table>
+
+        <div style="display: flex; justify-content: space-between; width: 100%; gap: 10px;">
+            <!-- First Table -->
+            <table style="width: 70%; border-collapse: collapse; border: 1px solid black; text-align: left;">
+                <tr>
+                    <th>GST</th>
+                    <th>SUB TOTAL</th>
+                    <th>DISC.</th>
+                    <th>Taxable</th>
+                    <th>SGST</th>
+                    <th>CGST</th>
+                    <th>TOTAL GST</th>
+                </tr>
+                <tbody>
+
+                {% for i in total_taxable_by_gst %}
+                <tr>
+                    <td class="grand total">{{i.gst}}%</td>
+                    <td class="grand total">{{i.sub_total}}</td>
+                    <td class="grand total">{{i.discount}}</td>
+                    <td class="grand total">{{i.taxable_amount}}</td>
+                    <td class="grand total">{{i.sgst_and_cgst}}</td>
+                    <td class="grand total">{{i.sgst_and_cgst}}</td>
+                    <td class="grand total">{{i.tax}}</td>
+                </tr>
+                {% endfor %}
+
+                <tr>
+                    <td class="grand total">TOTAL</td>
+                    <td class="grand total">{{grand_sub_total}}</td>
+                    <td class="grand total">{{grand_discount_total}}</td>
+                    <td class="grand total">{{grand_taxable_amount_total}}</td>
+                    <td class="grand total">{{grand_sgst_and_cgst_total}}</td>
+                    <td class="grand total">{{grand_sgst_and_cgst_total}}</td>
+                    <td class="grand total">{{grand_tax_total}}</td>
+                </tr>
+
+                </tbody>
+            </table>
+
+            <!-- Second Table -->
+            <table style="width: 30%; border-collapse: collapse; border: 1px solid black; text-align: left;">
+                <tr>
+                    <td colspan="2" class="grand total">Taxable Amount.</td>
+                    <td>{{total_taxable_amount}}</td>
+                </tr>
+                 <tr>
+                    <td colspan="2" class="grand total">Shiping Charge.</td>
+                    <td>{{user.shipping}}</td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="grand total">CGST Amount.</td>
+                    <td>{{user.cgst}}</td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="grand total">SGST Amount.</td>
+                    <td>{{user.sgst}}</td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="grand total">Extra Discount.</td>
+                    <td>{{user.discount}} %</td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="grand total">Current</td>
+                    <td>{{user.current}}</td>
+                </tr>
+
+                <tr>
+                    <td colspan="2" class="grand total">Grand Total Rs.</td>
+                    <td>{{total_without_previous_bill}}</td>
+                </tr>
+
+            </table>
+        </div>
+
     </main>
+
     <footer>
-        <p>This is an electronically generated invoice, no signature required.</p>
-        <p>All Disputes Subject to MATHURA Jurisdiction Only.</p>
+        <p>This is an Electronically generated Invoice, no signature required. All Disputes Subject to MATHURA Jurisdiction Only.
+        </p>
     </footer>
+
+    <div>
+        <table>
+            <tr style="margin-top: 215px;">
+                <td colspan="2"></td>
+                <td colspan="2"><b>OLD CREADIT :Rs. {{old_credit_sum}}</b></td>
+                <td colspan="2"><b>CASH :Rs. {{user.cash}}</b></td>
+                <td colspan="2"><b>ONLINE :Rs. {{user.online}}</b></td>
+                <td colspan="2"><b>REMAINING :Rs. {{pay_amount}}</b></td>
+                <td colspan="2"></td>
+            </tr>
+        </table>
+    </div>
 </div>
+
 
 <script>
     $('#download-pdf').on('click', function () {
