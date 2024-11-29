@@ -116,6 +116,7 @@ class EstimateMedicineOrderBillHead(models.Model):
     sgst = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     cgst = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     old_credit = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    new_credit = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     current = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     cash = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     online = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)

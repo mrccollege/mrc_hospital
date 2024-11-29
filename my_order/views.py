@@ -639,6 +639,7 @@ def estimate_medicine_order_bill(request, order_type, id):
         current = float(form.get('current'))
         total = float(form.get('total_pay_bill_amount'))
         new_credit = float(form.get('new_credit'))
+        old_credit = float(form.get('old_credit'))
 
         obj = EstimateMedicineOrderBillHead.objects.create(order_id_id=oder_id,
                                                            doctor_id=doctor_id,
@@ -649,7 +650,8 @@ def estimate_medicine_order_bill(request, order_type, id):
                                                            subtotal=subtotal,
                                                            total_without_previous_bill=total_without_previous_bill,
                                                            current=current,
-                                                           old_credit=new_credit,
+                                                           old_credit=old_credit,
+                                                           new_credit=new_credit,
                                                            cash=cash,
                                                            online=online,
                                                            shipping=shipping_packing,
@@ -727,11 +729,12 @@ def estimate_medicine_order_bill(request, order_type, id):
         oder_id = user.order_id.id
         invoice_number = user.invoice_number
 
-        old_credit_sum = EstimateMedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).exclude(id=id).order_by('-id')
+        old_credit_sum = MedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).exclude(id=id).order_by('-id')
         if old_credit_sum:
             old_credit_sum = old_credit_sum[0].old_credit
         else:
             old_credit_sum = 0
+
         medicine = MedicineOrderBillDetail.objects.filter(head_id=id)
         medicine_list = []
         for i in medicine:
@@ -747,7 +750,10 @@ def estimate_medicine_order_bill(request, order_type, id):
             data_dict['gst'] = i.gst
             data_dict['taxable_amount'] = i.taxable_amount
             data_dict['tax'] = i.tax
-            data_dict['expiry'] = store_medicine[0]['expiry']
+            try:
+                data_dict['expiry'] = store_medicine[0]['expiry']
+            except:
+                data_dict['expiry'] = ''
 
             try:
                 data_dict['record_qty'] = store_medicine[0]['qty']
@@ -804,13 +810,15 @@ def update_estimate_medicine_order_bill(request, order_type, id):
         total = float(form.get('total_pay_bill_amount'))
         current = float(form.get('current'))
         new_credit = float(form.get('new_credit'))
+        old_credit = float(form.get('old_credit'))
         obj = EstimateMedicineOrderBillHead.objects.filter(id=id).update(store_id=store_id,
                                                                          sgst=sgst,
                                                                          cgst=cgst,
                                                                          subtotal=subtotal,
                                                                          total_without_previous_bill=total_without_previous_bill,
                                                                          current=current,
-                                                                         old_credit=new_credit,
+                                                                         old_credit=old_credit,
+                                                                         new_credit=new_credit,
                                                                          cash=cash,
                                                                          online=online,
                                                                          shipping=shipping_packing,
@@ -882,8 +890,7 @@ def update_estimate_medicine_order_bill(request, order_type, id):
             store_id = 0
 
         user = EstimateMedicineOrderBillHead.objects.get(id=id)
-        old_credit_sum = EstimateMedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).exclude(id=id).order_by(
-            '-id')
+        old_credit_sum = EstimateMedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id, id=id)
         if old_credit_sum:
             old_credit_sum = old_credit_sum[0].old_credit
         else:
@@ -1061,7 +1068,7 @@ def view_normal_invoice(request, id):
 
     order_type = user.order_type
 
-    old_credit_sum = MedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).exclude(order_id_id=id).order_by(
+    old_credit_sum = MedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).exclude(id=id).order_by(
         '-id')
     if old_credit_sum:
         old_credit_sum = old_credit_sum[0].old_credit
@@ -1289,6 +1296,7 @@ def view_estimate_invoice(request, id):
     pay_amount = pay_amount - (cash + online)
     pay_amount = pay_amount - current
     total_without_previous_bill = total_without_previous_bill - current
+    total_without_previous_bill = total_without_previous_bill - - (cash + online)
 
     old_credit_sum = EstimateMedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).exclude(id=id).order_by(
         '-id')
