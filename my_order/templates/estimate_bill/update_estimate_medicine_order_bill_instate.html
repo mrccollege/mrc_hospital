@@ -123,10 +123,10 @@
                                                     <th colspan="1">MRP.</th>
                                                     <th>Disc.%</th>
                                                     <th>S.Rate.</th>
-                                                    <th>HSN</th>
-                                                    <th>GST%</th>
-                                                    <th>Taxable Amount</th>
-                                                    <th>Tax</th>
+<!--                                                    <th>HSN</th>-->
+<!--                                                    <th>GST%</th>-->
+<!--                                                    <th>Taxable Amount</th>-->
+<!--                                                    <th>Tax</th>-->
                                                     <th>Amount</th>
                                                 </tr>
                                                 </thead>
@@ -148,14 +148,14 @@
                                                                id="total_discount" value="{{user.discount}}" onkeypress="return isNumberKey(event)"
                                                                onkeyup="total_discount_apply_function()">
                                                     </div>
-                                                    <div class="col-lg-3">
-                                                        <label for="sgst">SGST %</label>
-                                                        <input type="text" name="sgst" id="sgst" class="form-control" readonly>
-                                                    </div>
-                                                    <div class="col-lg-3">
-                                                        <label for="cgst">CGST %</label>
-                                                        <input type="text" name="cgst" id="cgst" class="form-control" readonly>
-                                                    </div>
+<!--                                                    <div class="col-lg-3">-->
+<!--                                                        <label for="sgst">SGST %</label>-->
+<!--                                                        <input type="text" name="sgst" id="sgst" class="form-control" readonly>-->
+<!--                                                    </div>-->
+<!--                                                    <div class="col-lg-3">-->
+<!--                                                        <label for="cgst">CGST %</label>-->
+<!--                                                        <input type="text" name="cgst" id="cgst" class="form-control" readonly>-->
+<!--                                                    </div>-->
                                                 </div>
 
                                                 <div class="row">
@@ -371,12 +371,12 @@
 
             html += '<td><input value="{{i.sale_rate}}" type="text" id="sale_rate'+index+'" name="sale_rate" class="form-control" readonly required></td>';
 
-            html += '<td><input value="{{i.hsn}}" value="0" type="text" onkeypress="return isNumberKey(event)" id="hsn'+index+'" name="hsn" class="form-control" readonly required></td>';
+<!--            html += '<td><input value="{{i.hsn}}" value="0" type="text" onkeypress="return isNumberKey(event)" id="hsn'+index+'" name="hsn" class="form-control" readonly required></td>';-->
 
-            html += '<td><input value="{{i.gst}}" type="text" onkeyup="gst_function('+index+')" onkeypress="return isNumberKey(event)" id="gst'+index+'" name="gst" class="form-control" required></td>';
+<!--            html += '<td><input value="{{i.gst}}" type="text" onkeyup="gst_function('+index+')" onkeypress="return isNumberKey(event)" id="gst'+index+'" name="gst" class="form-control" required></td>';-->
 
-            html += '<td><input type="text" id="taxable_amount'+index+'" name="taxable_amount" class="total form-control" readonly></td>';
-            html += '<td><input type="text" id="tax'+index+'" name="tax" class="total form-control" readonly></td>';
+<!--            html += '<td><input type="text" id="taxable_amount'+index+'" name="taxable_amount" class="total form-control" readonly></td>';-->
+<!--            html += '<td><input type="text" id="tax'+index+'" name="tax" class="total form-control" readonly></td>';-->
             html += '<td><input type="text" id="amount'+index+'" name="amount" class="total form-control" readonly></td>';
 
             //html += '<td><button onclick="remove_row('+index+')"><i class="fa fa-remove" style="font-size:24px"></i></button></td>';
@@ -415,12 +415,12 @@
 
         html += '<td><input type="text" id="sale_rate'+index+'" name="sale_rate" class="form-control" readonly required></td>';
 
-        html += '<td><input value="0" type="text" onkeypress="return isNumberKey(event)" id="hsn'+index+'" name="hsn" class="form-control" readonly required></td>';
+<!--        html += '<td><input value="0" type="text" onkeypress="return isNumberKey(event)" id="hsn'+index+'" name="hsn" class="form-control" readonly required></td>';-->
 
-        html += '<td><input value="0" type="text" onkeyup="gst_function('+index+')" onkeypress="return isNumberKey(event)" id="gst'+index+'" name="gst" class="form-control" required></td>';
+<!--        html += '<td><input value="0" type="text" onkeyup="gst_function('+index+')" onkeypress="return isNumberKey(event)" id="gst'+index+'" name="gst" class="form-control" required></td>';-->
 
-        html += '<td><input value="0" type="text" id="taxable_amount'+index+'" name="taxable_amount" class="total form-control" readonly></td>';
-        html += '<td><input value="0" type="text" id="tax'+index+'" name="tax" class="total form-control" readonly></td>';
+<!--        html += '<td><input value="0" type="text" id="taxable_amount'+index+'" name="taxable_amount" class="total form-control" readonly></td>';-->
+<!--        html += '<td><input value="0" type="text" id="tax'+index+'" name="tax" class="total form-control" readonly></td>';-->
         html += '<td><input value="0" type="text" id="amount'+index+'" name="amount" class="total form-control" readonly></td>';
 
         html += '<td><button onclick="remove_row('+index+')"><i class="fa fa-remove" style="font-size:24px"></i></button></td>';

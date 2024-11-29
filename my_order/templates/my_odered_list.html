@@ -33,6 +33,7 @@
                             <table id="example1" class="table table-bordered table-striped">
                                 <thead>
                                 <tr>
+                                    <th>Date</th>
                                     <th>Name</th>
                                     <th>Sub total</th>
                                     <th>Discount</th>
@@ -44,6 +45,7 @@
                                 <tbody>
                                 {% for i in order %}
                                 <tr>
+                                    <td>{{i.created_at}}</td>
                                     <td>{{i.doctor|title}}</td>
                                     <td>{{i.subtotal}}</td>
                                     <td>{{i.discount}}</td>
