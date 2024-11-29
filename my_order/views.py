@@ -23,7 +23,7 @@ from store.models import Store, MedicineStoreTransactionHistory
 from my_order.models import MedicineOrderBillHead, MedicineOrderBillDetail
 
 from my_order.models import EstimateMedicineOrderBillHead, EstimateMedicineOrderBillDetail
-from django.db.models import Sum, F
+from django.db.models import Sum, F, FloatField, ExpressionWrapper
 from order_payment_detail.models import PaymentDetail
 
 
@@ -1082,18 +1082,26 @@ def view_normal_invoice(request, id):
             head_id=user.id, gst=gst
         ).aggregate(total_taxable=Sum('taxable_amount'))['total_taxable'] or 0
         grand_taxable_amount_total += total_taxable
+
         # Sub totals
         medicine_sub_totals = MedicineOrderBillDetail.objects.filter(
             head_id=user.id, gst=gst
-        ).annotate(total=F('sell_qty') * F('mrp'))
+        ).annotate(
+            total=F('sell_qty') * F('mrp'),
+            discount_amount=ExpressionWrapper(
+                (F('sell_qty') * F('mrp') * F('discount') / 100),
+                output_field=FloatField()
+            )
+        )
+
+        # Sub total calculation
         sub_total = medicine_sub_totals.aggregate(grand_total=Sum('total'))['grand_total'] or 0
         grand_sub_total += sub_total
-        sale_rate_sub_totals = MedicineOrderBillDetail.objects.filter(head_id=user.id, gst=gst).annotate(
-            total=F('sell_qty') * F('sale_rate'))
 
-        discount_total = sale_rate_sub_totals.aggregate(discount_total=Sum('total'))['discount_total'] or 0
-        discount = discount_total - sub_total
-        grand_discount_total += discount
+        # Discount total calculation
+        discount_total = medicine_sub_totals.aggregate(grand_discount=Sum('discount_amount'))['grand_discount'] or 0
+        grand_discount_total += discount_total
+
         tax = MedicineOrderBillDetail.objects.filter(
             head_id=user.id, gst=gst
         ).aggregate(tax=Sum('tax'))['tax'] or 0
@@ -1104,7 +1112,7 @@ def view_normal_invoice(request, id):
             'gst': gst,
             'taxable_amount': total_taxable,
             'sub_total': sub_total,
-            'discount': discount,
+            'discount': discount_total,
             'tax': tax,
             'sgst_and_cgst': sgst_and_cgst,
         })
@@ -1184,17 +1192,26 @@ def view_normal_invoice_doctor(request, id):
             head_id=user.id, gst=gst
         ).aggregate(total_taxable=Sum('taxable_amount'))['total_taxable'] or 0
         grand_taxable_amount_total += total_taxable
+
         # Sub totals
         medicine_sub_totals = MedicineOrderBillDetail.objects.filter(
             head_id=user.id, gst=gst
-        ).annotate(total=F('sell_qty') * F('mrp'))
+        ).annotate(
+            total=F('sell_qty') * F('mrp'),
+            discount_amount=ExpressionWrapper(
+                (F('sell_qty') * F('mrp') * F('discount') / 100),
+                output_field=FloatField()
+            )
+        )
+
+        # Sub total calculation
         sub_total = medicine_sub_totals.aggregate(grand_total=Sum('total'))['grand_total'] or 0
         grand_sub_total += sub_total
-        sale_rate_sub_totals = MedicineOrderBillDetail.objects.filter(head_id=user.id, gst=gst).annotate(total=F('sell_qty') * F('sale_rate'))
 
-        discount_total = sale_rate_sub_totals.aggregate(discount_total=Sum('total'))['discount_total'] or 0
-        discount = discount_total - sub_total
-        grand_discount_total += discount
+        # Discount total calculation
+        discount_total = medicine_sub_totals.aggregate(grand_discount=Sum('discount_amount'))['grand_discount'] or 0
+        grand_discount_total += discount_total
+
         tax = MedicineOrderBillDetail.objects.filter(
             head_id=user.id, gst=gst
         ).aggregate(tax=Sum('tax'))['tax'] or 0
@@ -1205,7 +1222,7 @@ def view_normal_invoice_doctor(request, id):
             'gst': gst,
             'taxable_amount': total_taxable,
             'sub_total': sub_total,
-            'discount': discount,
+            'discount': discount_total,
             'tax': tax,
             'sgst_and_cgst': sgst_and_cgst,
         })
@@ -1290,24 +1307,66 @@ def view_estimate_invoice(request, id):
     grand_taxable_amount_total = 0
     grand_sgst_and_cgst_total = 0
     grand_tax_total = 0
+
+    # for gst in gst_per:
+    #     # Total taxable amounts
+    #     total_taxable = EstimateMedicineOrderBillDetail.objects.filter(
+    #         head_id=user.id, gst=gst
+    #     ).aggregate(total_taxable=Sum('taxable_amount'))['total_taxable'] or 0
+    #     grand_taxable_amount_total += total_taxable
+    #     # Sub totals
+    #     medicine_sub_totals = EstimateMedicineOrderBillDetail.objects.filter(
+    #         head_id=user.id, gst=gst
+    #     ).annotate(total=F('sell_qty') * F('mrp'))
+    #     sub_total = medicine_sub_totals.aggregate(grand_total=Sum('total'))['grand_total'] or 0
+    #     grand_sub_total += sub_total
+    #     sale_rate_sub_totals = EstimateMedicineOrderBillDetail.objects.filter(head_id=user.id, gst=gst).annotate(
+    #         total=F('sell_qty') * F('sale_rate'))
+    #
+    #     discount_total = sale_rate_sub_totals.aggregate(discount_total=Sum('total'))['discount_total'] or 0
+    #     discount = sub_total - discount_total
+    #     grand_discount_total += discount
+    #     tax = EstimateMedicineOrderBillDetail.objects.filter(
+    #         head_id=user.id, gst=gst
+    #     ).aggregate(tax=Sum('tax'))['tax'] or 0
+    #     grand_tax_total += tax
+    #     sgst_and_cgst = tax / 2
+    #     grand_sgst_and_cgst_total += sgst_and_cgst
+    #     total_taxable_by_gst_list.append({
+    #         'gst': gst,
+    #         'taxable_amount': total_taxable,
+    #         'sub_total': sub_total,
+    #         'discount': discount,
+    #         'tax': tax,
+    #         'sgst_and_cgst': sgst_and_cgst,
+    #     })
+
     for gst in gst_per:
         # Total taxable amounts
         total_taxable = EstimateMedicineOrderBillDetail.objects.filter(
             head_id=user.id, gst=gst
         ).aggregate(total_taxable=Sum('taxable_amount'))['total_taxable'] or 0
         grand_taxable_amount_total += total_taxable
+
         # Sub totals
         medicine_sub_totals = EstimateMedicineOrderBillDetail.objects.filter(
             head_id=user.id, gst=gst
-        ).annotate(total=F('sell_qty') * F('mrp'))
+        ).annotate(
+            total=F('sell_qty') * F('mrp'),
+            discount_amount=ExpressionWrapper(
+                (F('sell_qty') * F('mrp') * F('discount') / 100),
+                output_field=FloatField()
+            )
+        )
+
+        # Sub total calculation
         sub_total = medicine_sub_totals.aggregate(grand_total=Sum('total'))['grand_total'] or 0
         grand_sub_total += sub_total
-        sale_rate_sub_totals = EstimateMedicineOrderBillDetail.objects.filter(head_id=user.id, gst=gst).annotate(
-            total=F('sell_qty') * F('sale_rate'))
 
-        discount_total = sale_rate_sub_totals.aggregate(discount_total=Sum('total'))['discount_total'] or 0
-        discount = sub_total - discount_total
-        grand_discount_total += discount
+        # Discount total calculation
+        discount_total = medicine_sub_totals.aggregate(grand_discount=Sum('discount_amount'))['grand_discount'] or 0
+        grand_discount_total += discount_total
+
         tax = EstimateMedicineOrderBillDetail.objects.filter(
             head_id=user.id, gst=gst
         ).aggregate(tax=Sum('tax'))['tax'] or 0
@@ -1318,7 +1377,7 @@ def view_estimate_invoice(request, id):
             'gst': gst,
             'taxable_amount': total_taxable,
             'sub_total': sub_total,
-            'discount': discount,
+            'discount': discount_total,
             'tax': tax,
             'sgst_and_cgst': sgst_and_cgst,
         })
