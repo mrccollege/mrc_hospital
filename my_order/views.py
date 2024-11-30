@@ -269,19 +269,20 @@ def create_bill(request, order_type, id):
         medicines = json.loads(request.POST.get('medicines'))
         invoice_number = form.get('invoice_number')
         doctor_id = form.get('doctor_id')
+
+
         subtotal = float(form.get('sub_total'))
-        total_without_previous_bill = float(form.get('total'))
-        sgst = form.get('sgst')
-        cgst = form.get('cgst')
+        discount = int(form.get('total_discount'))
+        shipping_packing = float(form.get('shipping_packing'))
+
+        discount_amount = subtotal * discount / 100
+        after_dis_amount = subtotal - discount_amount + shipping_packing
+
         cash = float(form.get('cash'))
         online = float(form.get('online'))
-        shipping_packing = float(form.get('shipping_packing'))
-        discount = int(form.get('total_discount'))
-        current = float(form.get('new_credit'))
-        total = float(form.get('total_pay_bill_amount'))
 
-        old_credit = float(form.get('old_credit'))
-        new_credit = float(form.get('new_credit'))
+        sgst = form.get('sgst')
+        cgst = form.get('cgst')
 
         obj = MedicineOrderBillHead.objects.create(order_id_id=id,
                                                    invoice_number=invoice_number,
@@ -290,15 +291,12 @@ def create_bill(request, order_type, id):
                                                    sgst=sgst,
                                                    cgst=cgst,
                                                    subtotal=subtotal,
-                                                   total_without_previous_bill=total_without_previous_bill,
-                                                   current=current,
-                                                   old_credit=old_credit,
-                                                   new_credit=new_credit,
+                                                   discount_amount=discount_amount,
                                                    cash=cash,
                                                    online=online,
                                                    shipping=shipping_packing,
                                                    discount=discount,
-                                                   pay_amount=total,
+                                                   pay_amount=after_dis_amount,
                                                    status=1,
                                                    order_type=order_type,
                                                    )
@@ -372,16 +370,16 @@ def create_bill(request, order_type, id):
             store_id = 0
 
         user = MedicineOrderHead.objects.get(id=id)
-        total_pay_amount = MedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).aggregate(
-            total=Sum(F('cash') + F('online'))
-        )['total'] or 0
 
-        old_credit_sum = MedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).aggregate(
+        cash_online_amount = MedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).aggregate(
+            total=Sum(F('cash') + F('online'))
+        )['total'] or 0  # Default to 0 if None
+
+        total_pay_amount = MedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).aggregate(
             total=Sum('pay_amount')
         )['total'] or 0
 
-        old_credit_sum = old_credit_sum - total_pay_amount
-
+        old_credit_sum = total_pay_amount - cash_online_amount
         medicine = MedicineOrderDetail.objects.filter(head_id=id)
         medicine_list = []
 
@@ -444,32 +442,30 @@ def update_medicine_order_bill(request, order_type, id):
         status = 'failed'
         msg = 'Bill Creation failed.'
         medicines = json.loads(request.POST.get('medicines'))
+
         subtotal = float(form.get('sub_total'))
-        total_without_previous_bill = float(form.get('total'))
-        sgst = form.get('sgst')
-        cgst = form.get('cgst')
+        discount = int(form.get('total_discount'))
+        shipping_packing = float(form.get('shipping_packing'))
+
+        discount_amount = subtotal * discount / 100
+        after_dis_amount = subtotal - discount_amount + shipping_packing
+
         cash = float(form.get('cash'))
         online = float(form.get('online'))
-        shipping_packing = float(form.get('shipping_packing'))
-        discount = int(form.get('total_discount'))
-        current = float(form.get('new_credit'))
-        total = float(form.get('total_pay_bill_amount'))
-        old_credit = float(form.get('old_credit'))
-        new_credit = float(form.get('new_credit'))
+
+        sgst = form.get('sgst')
+        cgst = form.get('cgst')
 
         obj = MedicineOrderBillHead.objects.filter(id=id).update(store_id=store_id,
                                                                  sgst=sgst,
                                                                  cgst=cgst,
                                                                  subtotal=subtotal,
-                                                                 total_without_previous_bill=total_without_previous_bill,
-                                                                 current=current,
-                                                                 old_credit=old_credit,
-                                                                 new_credit=new_credit,
                                                                  cash=cash,
                                                                  online=online,
                                                                  shipping=shipping_packing,
                                                                  discount=discount,
-                                                                 pay_amount=total,
+                                                                 discount_amount=discount_amount,
+                                                                 pay_amount=after_dis_amount,
                                                                  )
         if obj:
             head_id = id
@@ -566,6 +562,15 @@ def update_medicine_order_bill(request, order_type, id):
             store_id = 0
 
         user = MedicineOrderBillHead.objects.get(id=id)
+        cash_online_amount = MedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).aggregate(
+            total=Sum(F('cash') + F('online'))
+        )['total'] or 0  # Default to 0 if None
+
+        total_pay_amount = MedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).aggregate(
+            total=Sum('pay_amount')
+        )['total'] or 0
+
+        old_credit_sum = total_pay_amount - cash_online_amount
         medicine = MedicineOrderBillDetail.objects.filter(head_id=id)
         medicine_list = []
 
@@ -601,6 +606,7 @@ def update_medicine_order_bill(request, order_type, id):
             'store_id': store_id,
             'user': user,
             'medicine': medicine_list,
+            'old_credit_sum': old_credit_sum,
         }
 
         if order_type == 1:
@@ -741,7 +747,7 @@ def estimate_medicine_order_bill(request, order_type, id):
         )['total'] or 0
 
         old_credit_sum = old_credit_sum - total_pay_amount
-
+        print(old_credit_sum, '=================old_credit_sum=')
         medicine = MedicineOrderBillDetail.objects.filter(head_id=id)
         medicine_list = []
         for i in medicine:
@@ -1285,11 +1291,6 @@ def view_estimate_invoice(request, id):
     online = user.online
     current = user.current
     total_without_previous_bill = user.total_without_previous_bill
-
-    pay_amount = pay_amount - (cash + online)
-    pay_amount = pay_amount - current
-    total_without_previous_bill = total_without_previous_bill - current
-    total_without_previous_bill = total_without_previous_bill - - (cash + online)
 
     old_credit_sum = EstimateMedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id, id=id)
     if old_credit_sum:

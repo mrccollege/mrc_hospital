@@ -496,11 +496,16 @@
 
 <script>
     function isNumberKey(evt) {
-      var charCode = (evt.which) ? evt.which : evt.keyCode
-      if (charCode > 31 && (charCode < 48 || charCode > 57))
+      var charCode = (evt.which) ? evt.which : evt.keyCode;
+
+      // Allow numbers (48-57) and dot (46)
+      if (charCode > 31 && (charCode < 48 || charCode > 57) && charCode !== 46) {
         return false;
+      }
+
       return true;
     }
+
 </script>
 
 {% block js %}
