@@ -371,7 +371,7 @@ def create_bill(request, order_type, id):
         user = MedicineOrderHead.objects.get(id=id)
 
         cash_online_amount = MedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).aggregate(
-            total=Sum(F('cash') + F('online'))
+            total=Sum(F('cash') + F('online') + F('extra_cash_amount') + F('extra_online_amount'))
         )['total'] or 0  # Default to 0 if None
 
         total_pay_amount = MedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).aggregate(
@@ -562,7 +562,7 @@ def update_medicine_order_bill(request, order_type, id):
 
         user = MedicineOrderBillHead.objects.get(id=id)
         cash_online_amount = MedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).aggregate(
-            total=Sum(F('cash') + F('online'))
+            total=Sum(F('cash') + F('online') + F('extra_cash_amount') + F('extra_online_amount'))
         )['total'] or 0  # Default to 0 if None
 
         total_pay_amount = MedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).aggregate(
@@ -1422,8 +1422,8 @@ def add_extra_amount(request, id):
             print(extra_cash, '=====================extra_cash')
             print(pre_online, '=====================pre_online')
             print(extra_online, '=====================extra_online')
-            MedicineOrderBillHead.objects.filter(id=id).update(cash=extra_cash,
-                                                               online=extra_online,
+            MedicineOrderBillHead.objects.filter(id=id).update(extra_cash_amount=cash_amount,
+                                                               extra_online_amount=online_amount,
                                                                )
 
             status = 'success'
