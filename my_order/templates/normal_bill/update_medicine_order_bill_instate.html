@@ -19,18 +19,19 @@
                     </button>
                 </div>
                 <form id="category_form">{% csrf_token %}
+                    <input type="hidden" name="record_id" id="record_id" value="{{id}}">
                     <div class="modal-body">
                         <div class="col-lg-12">
                             <div class="col-lg-6">
                                 <label>Cash</label>
-                                <input type="text" class="form-control" name="name" id="add_category"
-                                       placeholder="Enter category name..">
+                                <input type="text" class="form-control" name="cash_amount" id="cash_amount"
+                                       placeholder="Enter cash amount">
                             </div>
 
                             <div class="col-lg-6">
                                 <label>Online</label>
-                                <input type="text" class="form-control" name="name" id="add_category"
-                                       placeholder="Enter category name..">
+                                <input type="text" class="form-control" name="online_amount" id="online_amount"
+                                       placeholder="Enter online amount">
                             </div>
                         </div>
 
@@ -38,7 +39,7 @@
                             <div class="col-lg-12">
                                 <label>Remark</label>
                                 <textarea rows="2" cols="20" type="text" class="form-control" name="amount_remark" id="amount_remark"
-                                          placeholder="Enter category name..">
+                                          placeholder="Enter remark">
                                 </textarea>
                             </div>
                         </div>
@@ -743,32 +744,31 @@
     $('#category_form').on('submit', function (e) {
         $('#loader-overlay').show(); // Show overlay
         $('#loader').show(); // Show loader
-        add_category = $('#add_category').val();
-        if(add_category == ''){
+        cash_amount = Number($('#cash_amount').val());
+        online_amount = Number($('#online_amount').val());
+        if(cash_amount == '' && online_amount == ''){
             Swal.fire({
                   title: 'Error',
-                  text: 'Please enter category name',
+                  text: 'Please enter cash amount',
                   icon: 'error',
                   confirmButtonColor: '#3085d6',
                   confirmButtonText: 'OK'
              });
             return false;
         }
+
         e.preventDefault();
         var formData = $('#category_form').serialize();
         $.ajax({
-          url: '/medicine/add_category/',
+          url: '/my_order/add_extra_amount/{{id}}/',
           type: 'POST',
           data: formData,
           success: function (response) {
             $('#loader-overlay').hide(); // Show overlay
             $('#loader').hide(); // Show loader
             if(response.status == 'success'){
-                console.log(response.cat_obj)
-                var html = '';
-                html += '<option value="'+response.cat_obj.id+'">'+response.cat_obj.name+'</option>';
-                $('#category').append(html)
                 $('#exampleModalCenter').modal('hide');
+                location.reload();
             }else{
               Swal.fire({
                   title: 'Error',

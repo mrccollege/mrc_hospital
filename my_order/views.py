@@ -270,7 +270,6 @@ def create_bill(request, order_type, id):
         invoice_number = form.get('invoice_number')
         doctor_id = form.get('doctor_id')
 
-
         subtotal = float(form.get('sub_total'))
         discount = int(form.get('total_discount'))
         shipping_packing = float(form.get('shipping_packing'))
@@ -1177,7 +1176,8 @@ def view_normal_invoice_doctor(request, id):
 
     order_type = user.order_type
 
-    old_credit_sum = MedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).exclude(order_id_id=id).order_by('-id')
+    old_credit_sum = MedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).exclude(order_id_id=id).order_by(
+        '-id')
     if old_credit_sum:
         old_credit_sum = old_credit_sum[0].old_credit
     else:
@@ -1255,7 +1255,6 @@ def view_normal_invoice_doctor(request, id):
         'total_discounted_price': total_discounted_price,
         'subtotal_amount': subtotal_amount,
         'total_taxable_amount': total_taxable_amount,
-
 
         'grand_sub_total': grand_sub_total,
         'grand_discount_total': grand_discount_total,
@@ -1391,3 +1390,46 @@ def view_estimate_invoice(request, id):
         return render(request, 'invoice/estimate_invoice/estimate_invoice_bill_of_supply.html', context)
     else:
         return render(request, 'invoice/estimate_invoice/estimate_invoice_bill_of_supply.html', context)
+
+from decimal import Decimal
+def add_extra_amount(request, id):
+    if request.method == 'POST':
+        form = request.POST
+        print(form, '==================form')
+        cash_amount = form.get('cash_amount')
+        online_amount = form.get('online_amount')
+        amount_remark = form.get('amount_remark')
+
+        if cash_amount:
+            cash_amount = Decimal(cash_amount)
+        else:
+            cash_amount = 0
+
+        if online_amount:
+            online_amount = Decimal(online_amount)
+        else:
+            online_amount = 0
+
+        record = MedicineOrderBillHead.objects.filter(id=id)
+        if record:
+            pre_cash = record[0].cash
+            pre_online = record[0].online
+
+            extra_cash = pre_cash + cash_amount
+            extra_online = record[0].online + online_amount
+
+            print(pre_cash, '=====================pre_cash')
+            print(extra_cash, '=====================extra_cash')
+            print(pre_online, '=====================pre_online')
+            print(extra_online, '=====================extra_online')
+            MedicineOrderBillHead.objects.filter(id=id).update(cash=extra_cash,
+                                                               online=extra_online,
+                                                               )
+
+            status = 'success'
+
+            context = {
+                'status': status,
+                'msg': 'Extra amount added successfully.',
+            }
+            return JsonResponse(context)
