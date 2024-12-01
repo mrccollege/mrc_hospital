@@ -1478,7 +1478,6 @@ def view_estimate_invoice(request, id):
 def add_extra_amount(request, id):
     if request.method == 'POST':
         form = request.POST
-        print(form, '==================form')
         cash_amount = form.get('cash_amount')
         online_amount = form.get('online_amount')
         amount_remark = form.get('amount_remark')
@@ -1500,14 +1499,47 @@ def add_extra_amount(request, id):
 
             extra_cash = pre_cash + cash_amount
             extra_online = record[0].online + online_amount
-
-            print(pre_cash, '=====================pre_cash')
-            print(extra_cash, '=====================extra_cash')
-            print(pre_online, '=====================pre_online')
-            print(extra_online, '=====================extra_online')
             MedicineOrderBillHead.objects.filter(id=id).update(extra_cash_amount=cash_amount,
                                                                extra_online_amount=online_amount,
                                                                )
+
+            status = 'success'
+
+            context = {
+                'status': status,
+                'msg': 'Extra amount added successfully.',
+            }
+            return JsonResponse(context)
+
+
+def estimate_add_extra_amount(request, id):
+    if request.method == 'POST':
+        form = request.POST
+        cash_amount = form.get('cash_amount')
+        online_amount = form.get('online_amount')
+        amount_remark = form.get('amount_remark')
+
+        if cash_amount:
+            cash_amount = Decimal(cash_amount)
+        else:
+            cash_amount = 0
+
+        if online_amount:
+            online_amount = Decimal(online_amount)
+        else:
+            online_amount = 0
+
+        record = EstimateMedicineOrderBillHead.objects.filter(id=id)
+        if record:
+            pre_cash = record[0].cash
+            pre_online = record[0].online
+
+            extra_cash = pre_cash + cash_amount
+            extra_online = record[0].online + online_amount
+
+            EstimateMedicineOrderBillHead.objects.filter(id=id).update(extra_cash_amount=cash_amount,
+                                                                       extra_online_amount=online_amount,
+                                                                       )
 
             status = 'success'
 

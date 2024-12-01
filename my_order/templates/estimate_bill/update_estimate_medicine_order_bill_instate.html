@@ -6,6 +6,60 @@
 
 {% block content %}
 <div class="wrapper">
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalCenterTitle"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Add New Category</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="category_form">{% csrf_token %}
+                    <input type="hidden" name="record_id" id="record_id" value="{{id}}">
+                    <div class="modal-body">
+                        <div class="col-lg-12">
+                            <div class="col-lg-6">
+                                <label>Cash</label>
+                                <input type="text" class="form-control" name="cash_amount" id="cash_amount"
+                                       placeholder="Enter cash amount">
+                            </div>
+
+                            <div class="col-lg-6">
+                                <label>Online</label>
+                                <input type="text" class="form-control" name="online_amount" id="online_amount"
+                                       placeholder="Enter online amount">
+                            </div>
+                        </div>
+
+                        <div class="col-lg-12">
+                            <div class="col-lg-12">
+                                <label>Remark</label>
+                                <textarea rows="2" cols="20" type="text" class="form-control" name="amount_remark" id="amount_remark"
+                                          placeholder="Enter remark">
+                                </textarea>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-12">
+                            <div class="col-lg-12">
+                                <label>Upload Payment Screen short Image</label>
+                                <input type="file" name="payment_screenshot" id="payment_screenshot">
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary" id="category_model">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <!-- Right side column. Contains the navbar and content of the page -->
     <div class="content-wrapper">
@@ -221,8 +275,13 @@
                                             </div>
                                         </div>
                                     </div><!-- /.box-body -->
-                                    <div class="box-footer">
+                                   <div class="box-footer">
                                         <button type="submit" class="btn btn-primary">Submit</button>
+                                        &nbsp; &nbsp; &nbsp;
+                                        <button type="button" class="btn btn-primary"
+                                                data-toggle="modal"
+                                                data-target="#exampleModalCenter">Add Amount
+                                        </button>
                                     </div>
                                 </form>
                             </div>
@@ -673,5 +732,50 @@
         var paid_amt = total_pay_bill - (cash + online)
         $('#new_credit').val(paid_amt.toFixed(2))
     }
+</script>
+
+<script>
+    $('#category_form').on('submit', function (e) {
+        $('#loader-overlay').show(); // Show overlay
+        $('#loader').show(); // Show loader
+        cash_amount = Number($('#cash_amount').val());
+        online_amount = Number($('#online_amount').val());
+        if(cash_amount == '' && online_amount == ''){
+            Swal.fire({
+                  title: 'Error',
+                  text: 'Please enter cash amount',
+                  icon: 'error',
+                  confirmButtonColor: '#3085d6',
+                  confirmButtonText: 'OK'
+             });
+            return false;
+        }
+
+        e.preventDefault();
+        var formData = $('#category_form').serialize();
+        $.ajax({
+          url: '/my_order/estimate_add_extra_amount/{{id}}/',
+          type: 'POST',
+          data: formData,
+          success: function (response) {
+            $('#loader-overlay').hide(); // Show overlay
+            $('#loader').hide(); // Show loader
+            if(response.status == 'success'){
+                $('#exampleModalCenter').modal('hide');
+                location.reload();
+            }else{
+              Swal.fire({
+                  title: 'Error',
+                  text: response.msg,
+                  icon: 'error',
+                  confirmButtonColor: '#3085d6',
+                  confirmButtonText: 'OK'
+              });
+              $('#password').val('');
+              return false;
+            }
+          },
+        });
+    });
 </script>
 {% endblock js %}
