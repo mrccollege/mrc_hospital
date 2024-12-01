@@ -585,7 +585,6 @@ def update_medicine_order_bill(request, order_type, id):
             )
         )['total'] or 0
 
-
         total_pay_amount = MedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).aggregate(
             total=Sum('pay_amount')
         )['total'] or 0
@@ -1142,7 +1141,6 @@ def view_normal_invoice(request, id):
 
     old_credit_sum = total_pay_amount - cash_online_amount
 
-
     medicine = MedicineOrderBillDetail.objects.filter(head_id=user.id)
     gst_per = MedicineOrderBillDetail.objects.filter(head_id=user.id).values_list('gst', flat=True).distinct()
 
@@ -1220,7 +1218,6 @@ def view_normal_invoice(request, id):
         'grand_taxable_amount_total': grand_taxable_amount_total,
         'grand_sgst_and_cgst_total': grand_sgst_and_cgst_total,
         'grand_tax_total': grand_tax_total,
-
 
         'remaining_amount': remaining_amount,
         'current': current,
