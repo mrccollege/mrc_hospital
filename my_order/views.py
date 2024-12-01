@@ -25,6 +25,10 @@ from my_order.models import MedicineOrderBillHead, MedicineOrderBillDetail
 from my_order.models import EstimateMedicineOrderBillHead, EstimateMedicineOrderBillDetail
 from django.db.models import Sum, F, FloatField, ExpressionWrapper
 from order_payment_detail.models import PaymentDetail
+from django.db.models.functions import Coalesce
+from decimal import Decimal
+
+from django.db.models import DecimalField
 
 
 # Create your views here.
@@ -296,6 +300,7 @@ def create_bill(request, order_type, id):
                                                    shipping=shipping_packing,
                                                    discount=discount,
                                                    pay_amount=after_dis_amount,
+                                                   current=after_dis_amount,
                                                    status=1,
                                                    order_type=order_type,
                                                    )
@@ -371,14 +376,21 @@ def create_bill(request, order_type, id):
         user = MedicineOrderHead.objects.get(id=id)
 
         cash_online_amount = MedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).aggregate(
-            total=Sum(F('cash') + F('online') + F('extra_cash_amount') + F('extra_online_amount'))
-        )['total'] or 0  # Default to 0 if None
+            total=Sum(
+                Coalesce(F('cash'), 0) +
+                Coalesce(F('online'), 0) +
+                Coalesce(F('extra_cash_amount'), 0) +
+                Coalesce(F('extra_online_amount'), 0),
+                output_field=DecimalField()
+            )
+        )['total'] or 0
 
         total_pay_amount = MedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).aggregate(
             total=Sum('pay_amount')
         )['total'] or 0
 
         old_credit_sum = total_pay_amount - cash_online_amount
+
         medicine = MedicineOrderDetail.objects.filter(head_id=id)
         medicine_list = []
 
@@ -465,6 +477,7 @@ def update_medicine_order_bill(request, order_type, id):
                                                                  discount=discount,
                                                                  discount_amount=discount_amount,
                                                                  pay_amount=after_dis_amount,
+                                                                 current=after_dis_amount,
                                                                  )
         if obj:
             head_id = id
@@ -561,15 +574,24 @@ def update_medicine_order_bill(request, order_type, id):
             store_id = 0
 
         user = MedicineOrderBillHead.objects.get(id=id)
+
         cash_online_amount = MedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).aggregate(
-            total=Sum(F('cash') + F('online') + F('extra_cash_amount') + F('extra_online_amount'))
-        )['total'] or 0  # Default to 0 if None
+            total=Sum(
+                Coalesce(F('cash'), 0) +
+                Coalesce(F('online'), 0) +
+                Coalesce(F('extra_cash_amount'), 0) +
+                Coalesce(F('extra_online_amount'), 0),
+                output_field=DecimalField()
+            )
+        )['total'] or 0
+
 
         total_pay_amount = MedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).aggregate(
             total=Sum('pay_amount')
         )['total'] or 0
 
         old_credit_sum = total_pay_amount - cash_online_amount
+
         medicine = MedicineOrderBillDetail.objects.filter(head_id=id)
         medicine_list = []
 
@@ -636,18 +658,20 @@ def estimate_medicine_order_bill(request, order_type, id):
         doctor_id = form.get('doctor_id')
         oder_id = form.get('oder_id')
         invoice_number = form.get('invoice_number')
+
         subtotal = float(form.get('sub_total'))
-        total_without_previous_bill = float(form.get('total'))
-        sgst = form.get('sgst')
-        cgst = form.get('cgst')
+        discount = int(form.get('total_discount'))
+        shipping_packing = float(form.get('shipping_packing'))
+
+        discount_amount = subtotal * discount / 100
+        after_dis_amount = subtotal - discount_amount + shipping_packing
+
         cash = float(form.get('cash'))
         online = float(form.get('online'))
-        shipping_packing = float(form.get('shipping_packing'))
-        discount = int(form.get('total_discount'))
+
+        sgst = form.get('sgst')
+        cgst = form.get('cgst')
         current = float(form.get('current'))
-        total = float(form.get('total_pay_bill_amount'))
-        new_credit = float(form.get('new_credit'))
-        old_credit = float(form.get('old_credit'))
 
         obj = EstimateMedicineOrderBillHead.objects.create(order_id_id=oder_id,
                                                            doctor_id=doctor_id,
@@ -656,15 +680,13 @@ def estimate_medicine_order_bill(request, order_type, id):
                                                            sgst=sgst,
                                                            cgst=cgst,
                                                            subtotal=subtotal,
-                                                           total_without_previous_bill=total_without_previous_bill,
                                                            current=current,
-                                                           old_credit=old_credit,
-                                                           new_credit=new_credit,
                                                            cash=cash,
                                                            online=online,
                                                            shipping=shipping_packing,
                                                            discount=discount,
-                                                           pay_amount=total,
+                                                           discount_amount=discount_amount,
+                                                           pay_amount=after_dis_amount,
                                                            status=1,
                                                            order_type=order_type,
                                                            )
@@ -737,16 +759,22 @@ def estimate_medicine_order_bill(request, order_type, id):
         oder_id = user.order_id.id
         invoice_number = user.invoice_number
 
-        total_pay_amount = EstimateMedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).aggregate(
-            total=Sum(F('cash') + F('online'))
+        cash_online_amount = EstimateMedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).aggregate(
+            total=Sum(
+                Coalesce(F('cash'), 0) +
+                Coalesce(F('online'), 0) +
+                Coalesce(F('extra_cash_amount'), 0) +
+                Coalesce(F('extra_online_amount'), 0),
+                output_field=DecimalField()
+            )
         )['total'] or 0
 
-        old_credit_sum = EstimateMedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).aggregate(
+        total_pay_amount = EstimateMedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).aggregate(
             total=Sum('pay_amount')
         )['total'] or 0
 
-        old_credit_sum = old_credit_sum - total_pay_amount
-        print(old_credit_sum, '=================old_credit_sum=')
+        old_credit_sum = total_pay_amount - cash_online_amount
+
         medicine = MedicineOrderBillDetail.objects.filter(head_id=id)
         medicine_list = []
         for i in medicine:
@@ -811,31 +839,31 @@ def update_estimate_medicine_order_bill(request, order_type, id):
         status = 'failed'
         msg = 'Estimated Bill updated failed.'
         medicines = json.loads(request.POST.get('medicines'))
+
         subtotal = float(form.get('sub_total'))
-        total_without_previous_bill = float(form.get('total'))
-        sgst = form.get('sgst')
-        cgst = form.get('cgst')
+        discount = int(form.get('total_discount'))
+        shipping_packing = float(form.get('shipping_packing'))
+
+        discount_amount = subtotal * discount / 100
+        after_dis_amount = subtotal - discount_amount + shipping_packing
+
         cash = float(form.get('cash'))
         online = float(form.get('online'))
-        shipping_packing = float(form.get('shipping_packing'))
-        discount = int(form.get('total_discount'))
-        total = float(form.get('total_pay_bill_amount'))
+
+        sgst = form.get('sgst')
+        cgst = form.get('cgst')
         current = float(form.get('current'))
-        new_credit = float(form.get('new_credit'))
-        old_credit = float(form.get('old_credit'))
         obj = EstimateMedicineOrderBillHead.objects.filter(id=id).update(store_id=store_id,
                                                                          sgst=sgst,
                                                                          cgst=cgst,
                                                                          subtotal=subtotal,
-                                                                         total_without_previous_bill=total_without_previous_bill,
                                                                          current=current,
-                                                                         old_credit=old_credit,
-                                                                         new_credit=new_credit,
                                                                          cash=cash,
                                                                          online=online,
                                                                          shipping=shipping_packing,
                                                                          discount=discount,
-                                                                         pay_amount=total,
+                                                                         discount_amount=discount_amount,
+                                                                         pay_amount=after_dis_amount,
                                                                          )
         if obj:
             head_id = id
@@ -902,6 +930,23 @@ def update_estimate_medicine_order_bill(request, order_type, id):
             store_id = 0
 
         user = EstimateMedicineOrderBillHead.objects.get(id=id)
+
+        cash_online_amount = EstimateMedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).aggregate(
+            total=Sum(
+                Coalesce(F('cash'), 0) +
+                Coalesce(F('online'), 0) +
+                Coalesce(F('extra_cash_amount'), 0) +
+                Coalesce(F('extra_online_amount'), 0),
+                output_field=DecimalField()
+            )
+        )['total'] or 0
+
+        total_pay_amount = EstimateMedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).aggregate(
+            total=Sum('pay_amount')
+        )['total'] or 0
+
+        old_credit_sum = total_pay_amount - cash_online_amount
+
         medicine = EstimateMedicineOrderBillDetail.objects.filter(head_id=id)
         medicine_list = []
 
@@ -937,6 +982,7 @@ def update_estimate_medicine_order_bill(request, order_type, id):
             'store_id': store_id,
             'user': user,
             'medicine': medicine_list,
+            'old_credit_sum': old_credit_sum,
         }
         if order_type == 1:
             return render(request, 'estimate_bill/update_estimate_medicine_order_bill_instate.html', context)
@@ -1288,14 +1334,25 @@ def view_estimate_invoice(request, id):
     pay_amount = user.pay_amount
     cash = user.cash
     online = user.online
-    current = user.current
-    total_without_previous_bill = user.total_without_previous_bill
 
-    old_credit_sum = EstimateMedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id, id=id)
-    if old_credit_sum:
-        old_credit_sum = old_credit_sum[0].old_credit
-    else:
-        old_credit_sum = 0
+    remaining_amount = pay_amount - cash + online
+    current = user.current
+
+    cash_online_amount = EstimateMedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).aggregate(
+        total=Sum(
+            Coalesce(F('cash'), 0) +
+            Coalesce(F('online'), 0) +
+            Coalesce(F('extra_cash_amount'), 0) +
+            Coalesce(F('extra_online_amount'), 0),
+            output_field=DecimalField()
+        )
+    )['total'] or 0
+
+    total_pay_amount = EstimateMedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).aggregate(
+        total=Sum('pay_amount')
+    )['total'] or 0
+
+    old_credit_sum = total_pay_amount - cash_online_amount
 
     medicine = EstimateMedicineOrderBillDetail.objects.filter(head_id=user.id)
 
@@ -1380,7 +1437,7 @@ def view_estimate_invoice(request, id):
 
         'current': current,
         'pay_amount': pay_amount,
-        'total_without_previous_bill': total_without_previous_bill,
+        'remaining_amount': remaining_amount,
     }
     if order_type == 1:
         return render(request, 'invoice/estimate_invoice/estimate_invoice_instate.html', context)
@@ -1391,7 +1448,7 @@ def view_estimate_invoice(request, id):
     else:
         return render(request, 'invoice/estimate_invoice/estimate_invoice_bill_of_supply.html', context)
 
-from decimal import Decimal
+
 def add_extra_amount(request, id):
     if request.method == 'POST':
         form = request.POST

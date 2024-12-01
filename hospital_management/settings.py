@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'previous_treatment',
     'my_order',
     'order_payment_detail',
+    'mathfilters',
 
 ]
 
