@@ -152,37 +152,11 @@
         <div style="display: flex; justify-content: space-between; width: 100%; gap: 10px;">
             <!-- First Table -->
             <table style="width: 70%; border-collapse: collapse; border: 1px solid black; text-align: left;">
-                <tr>
-                    <th>GST</th>
-                    <th>SUB TOTAL</th>
-                    <th>DISC.</th>
-                </tr>
-                <tbody>
 
-                {% for i in total_taxable_by_gst %}
-                <tr>
-                    <td class="grand total">{{i.gst}}%</td>
-                    <td class="grand total">{{i.sub_total}}</td>
-                    <td class="grand total">{{i.discount}}</td>
-                </tr>
-                {% endfor %}
-
-                <tr>
-                    <td class="grand total">TOTAL</td>
-                    <td class="grand total">{{grand_sub_total}}</td>
-                    <td class="grand total">{{grand_discount_total}}</td>
-                </tr>
-
-                </tbody>
             </table>
 
             <!-- Second Table -->
             <table style="width: 30%; border-collapse: collapse; border: 1px solid black; text-align: left;">
-                <tr>
-                    <td colspan="2" class="grand total">Taxable Amount.</td>
-                    <td>{{total_taxable_amount}}</td>
-                </tr>
-
                 <tr>
                     <td colspan="2" class="grand total">Extra Discount.</td>
                     <td>{{user.discount}} %</td>
@@ -193,7 +167,7 @@
                 </tr>
                 <tr>
                     <td colspan="2" class="grand total">Grand Total Rs.</td>
-                    <td>{{user.total_without_previous_bill}}</td>
+                    <td>{{user.pay_amount}}</td>
                 </tr>
             </table>
         </div>
@@ -213,7 +187,7 @@
                 <td colspan="2"><b>OLD CREADIT :Rs. {{old_credit_sum}}</b></td>
                 <td colspan="2"><b>CASH :Rs. {{user.cash}}</b></td>
                 <td colspan="2"><b>ONLINE :Rs. {{user.online}}</b></td>
-                <td colspan="2"><b>REMAINING :Rs. {{user.current}}</b></td>
+                <td colspan="2"><b>REMAINING :Rs. {{remaining_amount}}</b></td>
                 <td colspan="2"></td>
             </tr>
         </table>
