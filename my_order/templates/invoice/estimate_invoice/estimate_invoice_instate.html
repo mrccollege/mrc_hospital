@@ -123,10 +123,6 @@
                 <th>MRP.</th>
                 <th>Disc.%</th>
                 <th>S.Rate.</th>
-                <!--                <th>Hsn</th>-->
-                <!--                <th>GST%</th>-->
-                <!--                <th>Taxable Amount</th>-->
-                <!--                <th>Tax</th>-->
                 <th>Amount</th>
             </tr>
             </thead>
@@ -138,10 +134,6 @@
                 <td>{{i.mrp}}</td>
                 <td>{{i.discount}}</td>
                 <td>{{i.sale_rate}}</td>
-                <!--                <td>{{i.hsn}}</td>-->
-                <!--                <td>{{i.gst}}</td>-->
-                <!--                <td>{{i.taxable_amount}}</td>-->
-                <!--                <td>{{i.tax}}</td>-->
                 <td>{{i.amount}}</td>
             </tr>
             {% endfor %}
@@ -157,57 +149,11 @@
         <div style="display: flex; justify-content: space-between; width: 100%; gap: 10px;">
             <!-- First Table -->
             <table style="width: 70%; border-collapse: collapse; border: 1px solid black; text-align: left;">
-                <!--                <tr>-->
-                <!--                    <th>GST</th>-->
-                <!--                    <th>SUB TOTAL</th>-->
-                <!--                    <th>DISC.</th>-->
-                <!--                    <th>Taxable</th>-->
-                <!--                    <th>SGST</th>-->
-                <!--                    <th>CGST</th>-->
-                <!--                    <th>TOTAL GST</th>-->
-                <!--                </tr>-->
-                <!--                <tbody>-->
 
-                <!--                {% for i in total_taxable_by_gst %}-->
-                <!--                <tr>-->
-                <!--                    <td class="grand total">{{i.gst}}%</td>-->
-                <!--                    <td class="grand total">{{i.sub_total}}</td>-->
-                <!--                    <td class="grand total">{{i.discount}}</td>-->
-                <!--                    <td class="grand total">{{i.taxable_amount}}</td>-->
-                <!--                    <td class="grand total">{{i.sgst_and_cgst}}</td>-->
-                <!--                    <td class="grand total">{{i.sgst_and_cgst}}</td>-->
-                <!--                    <td class="grand total">{{i.tax}}</td>-->
-                <!--                </tr>-->
-                <!--                {% endfor %}-->
-
-                <!--                <tr>-->
-                <!--                    <td class="grand total">TOTAL</td>-->
-                <!--                    <td class="grand total">{{grand_sub_total}}</td>-->
-                <!--                    <td class="grand total">{{grand_discount_total}}</td>-->
-                <!--                    <td class="grand total">{{grand_taxable_amount_total}}</td>-->
-                <!--                    <td class="grand total">{{grand_sgst_and_cgst_total}}</td>-->
-                <!--                    <td class="grand total">{{grand_sgst_and_cgst_total}}</td>-->
-                <!--                    <td class="grand total">{{grand_tax_total}}</td>-->
-                <!--                </tr>-->
-
-                <!--                </tbody>-->
             </table>
 
             <!-- Second Table -->
             <table style="width: 30%; border-collapse: collapse; border: 1px solid black; text-align: left;">
-                <!--                <tr>-->
-                <!--                    <td colspan="2" class="grand total">Taxable Amount.</td>-->
-                <!--                    <td>{{total_taxable_amount}}</td>-->
-                <!--                </tr>-->
-
-                <!--                <tr>-->
-                <!--                    <td colspan="2" class="grand total">CGST Amount.</td>-->
-                <!--                    <td>{{user.cgst}}</td>-->
-                <!--                </tr>-->
-                <!--                <tr>-->
-                <!--                    <td colspan="2" class="grand total">SGST Amount.</td>-->
-                <!--                    <td>{{user.sgst}}</td>-->
-                <!--                </tr>-->
                 <tr>
                     <td colspan="2" class="grand total">Discount.</td>
                     <td>{{user.discount}} %</td>
