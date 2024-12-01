@@ -1119,6 +1119,30 @@ def view_normal_invoice(request, id):
         return redirect('/my_order/my_medicine_ordered_list/')
 
     order_type = user.order_type
+    pay_amount = user.pay_amount
+    cash = user.cash
+    online = user.online
+
+    remaining_amount = pay_amount - cash + online
+    current = user.current
+
+    cash_online_amount = MedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).aggregate(
+        total=Sum(
+            Coalesce(F('cash'), 0) +
+            Coalesce(F('online'), 0) +
+            Coalesce(F('extra_cash_amount'), 0) +
+            Coalesce(F('extra_online_amount'), 0),
+            output_field=DecimalField()
+        )
+    )['total'] or 0
+
+    total_pay_amount = MedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).aggregate(
+        total=Sum('pay_amount')
+    )['total'] or 0
+
+    old_credit_sum = total_pay_amount - cash_online_amount
+
+
     medicine = MedicineOrderBillDetail.objects.filter(head_id=user.id)
     gst_per = MedicineOrderBillDetail.objects.filter(head_id=user.id).values_list('gst', flat=True).distinct()
 
@@ -1196,6 +1220,11 @@ def view_normal_invoice(request, id):
         'grand_taxable_amount_total': grand_taxable_amount_total,
         'grand_sgst_and_cgst_total': grand_sgst_and_cgst_total,
         'grand_tax_total': grand_tax_total,
+
+
+        'remaining_amount': remaining_amount,
+        'current': current,
+        'old_credit_sum': old_credit_sum,
     }
 
     if order_type == 1:
