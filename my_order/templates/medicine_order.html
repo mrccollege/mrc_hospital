@@ -127,10 +127,11 @@
                                     </div><!-- /.box-body -->
                                 </form>
 
+
                                 <form id="medicine_form">
                                     {% csrf_token %}
                                     <div class="box-body">
-                                        <div class="table-responsive">
+                                        <div class="table-responsive" style="overflow-x: auto;">
                                             <table class="table table-condensed">
                                                 <thead>
                                                 <tr>
@@ -148,7 +149,8 @@
                                                 </tbody>
                                             </table>
                                             <hr>
-                                            <h3 class="text-center"><strong><u>It is not original bill, it's only estimate.</u></strong></h3>
+                                            <h3 class="text-center"><strong><u>It is not original bill, it's only
+                                                estimate.</u></strong></h3>
                                             <div class="row col-lg-6">
                                                 <div class="row">
                                                     <div class="col-lg-6">
@@ -159,7 +161,8 @@
                                                     </div>
                                                     <div class="col-lg-6">
                                                         <label for="total_discount">Discount %</label>
-                                                        <input type="text" class="form-control" name="total_discount"
+                                                        <input type="text" class="form-control"
+                                                               name="total_discount"
                                                                id="total_discount" value="0"
                                                                onkeypress="return isNumberKey(event)"
                                                                onkeyup="total_discount_apply_function()" readonly>
@@ -168,15 +171,19 @@
 
                                                 <div class="row">
                                                     <div class="col-lg-6">
-                                                        <label for="shipping_packing">Shipping & Packing (Exclude)</label>
-                                                        <input type="text" class="form-control" name="shipping_packing"
-                                                               id="shipping_packing" value="Accordingly will be added in your final bill"
+                                                        <label for="shipping_packing">Shipping & Packing
+                                                            (Exclude)</label>
+                                                        <input type="text" class="form-control"
+                                                               name="shipping_packing"
+                                                               id="shipping_packing"
+                                                               value="Accordingly will be added in your final bill"
                                                                onkeypress="return isNumberKey(event)"
                                                                onkeyup="total_discount_apply_function()" readonly>
                                                     </div>
                                                     <div class="col-lg-6">
                                                         <label for="total">Total</label>
-                                                        <input type="text" class="form-control" name="total" id="total"
+                                                        <input type="text" class="form-control" name="total"
+                                                               id="total"
                                                                onkeypress="return isNumberKey(event)" readonly>
                                                     </div>
                                                 </div>
@@ -187,6 +194,7 @@
                                         <button type="submit" class="btn btn-primary">Submit</button>
                                     </div>
                                 </form>
+
                             </div>
                         </div><!-- /.box-body -->
                     </div><!-- /.box -->
@@ -342,21 +350,23 @@
 
             var html = '';
             html += '<tr id="medicine_tr'+index+'">';
-            html += '<td><input value="{{i.name}}" type="text" id="medicine'+index+'" name="medicine" class="form-control" autocomplete="off" required></td>';
+            html += '<td>{{i.name}}</td>';
             html += '<input type="hidden" value="{{i.id}}" name="medicine_id" class="form-control" id="medicine_id'+index+'" required>';
 
-            html += '<td><input value="{{i.category}}" type="text" id="category'+index+'" name="category" class="form-control" readonly required></td>';
+            html += '<td>{{i.category}}</td>';
 
-            html += '<td><input type="text" onkeyup="order_qty_function('+index+')" onkeypress="return isNumberKey(event)" id="order_qty'+index+'" name="order_qty" class="form-control" placeholder="Sell quantity"></td>';
+            html += '<td><input type="text" onkeyup="order_qty_function('+index+')" onkeypress="return isNumberKey(event)" id="order_qty'+index+'" name="order_qty" class="form-control" placeholder="enter qty"></td>';
 
             html += '<td><input value="{{i.price}}" type="text" id="mrp'+index+'" name="mrp" class="form-control" value="0" readonly required></td>';
 
             html += '<td><input value="" type="text" id="amount'+index+'" name="amount" class="total form-control" readonly></td>';
-            html += '<td><input value="{{i.desc}}" type="text" id="desc'+index+'" name="desc" class="total form-control" readonly></td>';
-            html += '<td><a target="_blank" href="{{i.video_link|safe}}">Video</td>';
+            html += '<td>{{i.desc}}</td>';
+            html += '<td><a href="{{i.video_link|safe}}" target="_blank" class="btn btn-sm btn-primary">Watch Video</a></td>';
 
-            html += '<td><button onclick="remove_row('+index+')"><i class="fa fa-remove" style="font-size:24px"></i></button></td>';
+            html += '<td><button class="btn btn-sm btn-danger" onclick="remove_row('+index+')"><i class="fa fa-trash">Remove</button></td>';
             html += '</tr>';
+
+
             search_medicine(index)
             $('table tbody').append(html);
             index +=1;
