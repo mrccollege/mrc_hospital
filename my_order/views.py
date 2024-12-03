@@ -932,7 +932,8 @@ def update_estimate_medicine_order_bill(request, order_type, id):
 
         user = EstimateMedicineOrderBillHead.objects.get(id=id)
 
-        cash_online_amount = EstimateMedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).exclude(id=id).aggregate(
+        cash_online_amount = \
+        EstimateMedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).exclude(id=id).aggregate(
             total=Sum(
                 Coalesce(F('cash'), 0) +
                 Coalesce(F('online'), 0) +
@@ -942,7 +943,8 @@ def update_estimate_medicine_order_bill(request, order_type, id):
             )
         )['total'] or 0
 
-        total_pay_amount = EstimateMedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).exclude(id=id).aggregate(
+        total_pay_amount = \
+        EstimateMedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).exclude(id=id).aggregate(
             total=Sum('pay_amount')
         )['total'] or 0
 
@@ -1251,13 +1253,28 @@ def view_normal_invoice_doctor(request, id):
 
     order_type = user.order_type
 
-    old_credit_sum = MedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).exclude(order_id_id=id).order_by(
-        '-id')
-    if old_credit_sum:
-        old_credit_sum = old_credit_sum[0].old_credit
-    else:
-        old_credit_sum = 0
+    cash_online_amount = \
+        MedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).exclude(order_id_id=id).aggregate(
+            total=Sum(
+                Coalesce(F('cash'), 0) +
+                Coalesce(F('online'), 0) +
+                Coalesce(F('extra_cash_amount'), 0) +
+                Coalesce(F('extra_online_amount'), 0),
+                output_field=DecimalField()
+            )
+        )['total'] or 0
 
+    total_pay_amount = MedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).exclude(order_id_id=id).aggregate(
+        total=Sum('pay_amount')
+    )['total'] or 0
+
+    old_credit_sum = total_pay_amount - cash_online_amount
+    pay_amount = user.pay_amount
+    cash = user.cash
+    online = user.online
+
+    remaining_amount = pay_amount - cash + online + old_credit_sum
+    current = user.current
     medicine = MedicineOrderBillDetail.objects.filter(head_id=user.id)
     gst_per = MedicineOrderBillDetail.objects.filter(head_id=user.id).values_list('gst', flat=True).distinct()
 
@@ -1336,8 +1353,11 @@ def view_normal_invoice_doctor(request, id):
         'grand_taxable_amount_total': grand_taxable_amount_total,
         'grand_sgst_and_cgst_total': grand_sgst_and_cgst_total,
         'grand_tax_total': grand_tax_total,
-    }
 
+        'current': current,
+        'pay_amount': pay_amount,
+        'remaining_amount': remaining_amount,
+    }
     if order_type == 1:
         return render(request, 'invoice/normal_invoice/normal_invoice_instate.html', context)
     elif order_type == 2:
@@ -1361,7 +1381,8 @@ def view_estimate_invoice(request, id):
         return redirect('/my_order/my_medicine_ordered_list/')
     order_type = user.order_type
 
-    cash_online_amount = EstimateMedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).exclude(id=id).aggregate(
+    cash_online_amount = \
+    EstimateMedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).exclude(id=id).aggregate(
         total=Sum(
             Coalesce(F('cash'), 0) +
             Coalesce(F('online'), 0) +
