@@ -473,7 +473,7 @@
 <script>
     function discount_function(index){
         var order_qty = parseInt($('#order_qty' + index).val()) || 0;
-        var mrp = parseInt($('#mrp' + index).val()) || 0;
+        var mrp = Number($('#mrp' + index).val()) || 0;
         var sell_amt = order_qty * mrp
 
         if (order_qty){
@@ -481,7 +481,7 @@
             var disc_amt = (discount / 100) * sell_amt;
             var amt =  sell_amt - disc_amt
 
-            $('#sale_rate'+index).val(amt);
+            $('#sale_rate'+index).val(amt.toFixed(2));
             $('#amount'+index).val(amt.toFixed(2));
 
             sub_total_function()
@@ -495,7 +495,7 @@
 <script>
     function gst_function(index){
         var order_qty = parseInt($('#order_qty' + index).val()) || 0;
-        var mrp = parseInt($('#mrp' + index).val()) || 0;
+        var mrp = Number($('#mrp' + index).val()) || 0;
         var sell_amt = order_qty * mrp
 
         if (order_qty){
@@ -542,30 +542,29 @@
 
 <script>
     function total_discount_apply_function(){
-        var dis_apply = parseFloat($('#total_discount').val()) || 0;
-        var shipping_packing = parseFloat($('#shipping_packing').val()) || 0;
+        var dis_apply = Number($('#total_discount').val()) || 0;
+        var shipping_packing = Number($('#shipping_packing').val()) || 0;
 
-        var sub_total = parseFloat($('#sub_total').val())
-        //var sub_total = shipping_packing +  sub_total
+        var sub_total = Number($('#sub_total').val())
 
         var disc_amt = (dis_apply / 100) * sub_total;
         var amt =  sub_total - disc_amt
         var amt =  amt +  shipping_packing
         $('#total').val(amt.toFixed(2))
 
-        var old_credit = parseFloat($('#old_credit').val()) || 0;
-        var total = parseFloat($('#total').val()) || 0;
+        var old_credit = Number($('#old_credit').val()) || 0;
+        var total = Number($('#total').val()) || 0;
 
         var total_pay_bill = old_credit + total
-        parseFloat($('#total_pay_bill_amount').val(total_pay_bill.toFixed(2)))
+        Number($('#total_pay_bill_amount').val(total_pay_bill.toFixed(2)))
     }
 </script>
 
 <script>
     function cash_online_function(){
-        var cash = parseFloat($('#cash').val()) || 0;
-        var online  = parseFloat($('#online').val()) || 0;
-        total_pay_bill = parseFloat($('#total_pay_bill_amount').val()) || 0;
+        var cash = Number($('#cash').val()) || 0;
+        var online  = Number($('#online').val()) || 0;
+        total_pay_bill = Number($('#total_pay_bill_amount').val()) || 0;
 
         var paid_amt = total_pay_bill - (cash + online)
         $('#new_credit').val(paid_amt.toFixed(2))
