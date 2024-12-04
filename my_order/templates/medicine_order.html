@@ -355,11 +355,11 @@
 
             html += '<td>{{i.category}}</td>';
 
-            html += '<td><input type="text" onkeyup="order_qty_function('+index+')" onkeypress="return isNumberKey(event)" id="order_qty'+index+'" name="order_qty" class="form-control" placeholder="enter qty"></td>';
+            html += '<td><input style="width: 100px;"  type="text" onkeyup="order_qty_function('+index+')" onkeypress="return isNumberKey(event)" id="order_qty'+index+'" name="order_qty" class="form-control" placeholder="enter qty"></td>';
 
-            html += '<td><input value="{{i.price}}" type="text" id="mrp'+index+'" name="mrp" class="form-control" value="0" readonly required></td>';
+            html += '<td><input style="width: 100px;" value="{{i.price}}" type="text" id="mrp'+index+'" name="mrp" class="form-control" value="0" readonly required></td>';
 
-            html += '<td><input value="" type="text" id="amount'+index+'" name="amount" class="total form-control" readonly></td>';
+            html += '<td><input style="width: 100px;" value="" type="text" id="amount'+index+'" name="amount" class="total form-control" readonly></td>';
             html += '<td>{{i.desc}}</td>';
             html += '<td><a href="{{i.video_link|safe}}" target="_blank" class="btn btn-sm btn-primary">Watch Video</a></td>';
 

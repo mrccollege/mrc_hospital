@@ -137,6 +137,7 @@ def medicine_update(request, id):
         mobile = form.get('mobile')
         hsn = form.get('hsn')
         gst = form.get('gst')
+        desc = form.get('desc')
         recommend_medicine = form.get('recommend_medicine')
         msg = 'Medicine Update Failed'
         status = 'Failed'
@@ -149,6 +150,7 @@ def medicine_update(request, id):
                                                                  mobile=mobile,
                                                                  hsn=hsn,
                                                                  gst=gst,
+                                                                 desc=desc,
                                                                  recom_to_doctor=recommend_medicine
                                                                  )
             if medicine_obj:
