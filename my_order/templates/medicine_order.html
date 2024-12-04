@@ -20,8 +20,31 @@
 
 
 {% block content %}
-<div class="wrapper">
 
+<!-- Modal -->
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Medicine Detail</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modal-body-content">
+                <!-- Content will be dynamically added here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="wrapper">
     <!-- Right side column. Contains the navbar and content of the page -->
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
@@ -359,8 +382,10 @@
 
             html += '<td><input style="width: 100px;" value="{{i.price}}" type="text" id="mrp'+index+'" name="mrp" class="form-control" value="0" readonly required></td>';
 
-            html += '<td><input style="width: 100px;" value="" type="text" id="amount'+index+'" name="amount" class="total form-control" readonly></td>';
-            html += '<td>{{i.desc}}</td>';
+            html += '<td><input style="width: 100px;" value="0.00" type="text" id="amount'+index+'" name="amount" class="total form-control" readonly></td>';
+
+            html += '<td><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter" data-name="{{i.name}}" data-desc="{{i.desc}}" data-price="{{i.price}}">Read More</button></td>';
+
             html += '<td><a href="{{i.video_link|safe}}" target="_blank" class="btn btn-sm btn-primary">Watch Video</a></td>';
 
             html += '<td><button class="btn btn-sm btn-danger" onclick="remove_row('+index+')"><i class="fa fa-trash"> Remove</button></td>';
@@ -380,6 +405,26 @@
         sub_total_function()
         sgst_and_cgst_function()
     }
+
+
+    $(document).ready(function() {
+        $('#exampleModalCenter').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget); // Button that triggered the modal
+            var name = button.data('name');     // Extract info from data-* attributes
+            var desc = button.data('desc');
+            var price = button.data('price');
+
+            // Update the modal's content
+            var modal = $(this);
+            modal.find('#modal-body-content').html(
+                '<p><strong>Medicine Name:</strong> ' + name + '</p>' +
+                '<p><strong>Description:</strong> ' + desc + '</p>' +
+                '<p><strong>Price:</strong> ' + price + '</p>'
+            );
+        });
+    });
+
+
 </script>
 
 <script>
