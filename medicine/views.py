@@ -87,6 +87,7 @@ def add_medicine(request):
         mobile = form.get('mobile')
         hsn = form.get('hsn')
         gst = form.get('gst')
+        desc = form.get('desc')
         recommend_medicine = form.get('recommend_medicine')
         status = 'failed'
         msg = 'Something went wrong.'
@@ -99,6 +100,7 @@ def add_medicine(request):
                                                    mobile=mobile,
                                                    hsn=hsn,
                                                    gst=gst,
+                                                   desc=desc,
                                                    recom_to_doctor=recommend_medicine
                                                    )
             if medicine_obj:
