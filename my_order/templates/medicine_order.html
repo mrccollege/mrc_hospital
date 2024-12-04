@@ -372,10 +372,10 @@
 
             var html = '';
             html += '<tr id="medicine_tr'+index+'">';
-            html += '<td>{{i.name}}</td>';
+            html += '<td title="{{i.name}}">{{i.name}}</td>';
             html += '<input type="hidden" value="{{i.id}}" name="medicine_id" class="form-control" id="medicine_id'+index+'" required>';
 
-            html += '<td>{{i.category}}</td>';
+            html += '<td title="{{i.category}}">{{i.category}}</td>';
 
             html += '<td><input style="width: 100px;"  type="text" onkeyup="order_qty_function('+index+')" onkeypress="return isNumberKey(event)" id="order_qty'+index+'" name="order_qty" class="form-control" placeholder="enter qty"></td>';
 

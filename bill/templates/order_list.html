@@ -30,7 +30,7 @@
                             <h3 class="box-title">Order List</h3>
                         </div><!-- /.box-header -->
                         <div class="box-body table-responsive" style="overflow-x: auto;">
-                            <table id="example1" class="table table-bordered table-striped table-condensed">
+                            <table id="example1" class="table table-condensed">
                                 <thead>
                                 <tr>
                                     <th>Name</th>
@@ -44,7 +44,7 @@
                                 <tbody>
                                 {% for i in order %}
                                 <tr>
-                                    <td>{{i.doctor|title}}</td>
+                                    <td title="{{i.doctor|title}}">{{i.doctor|title}}</td>
                                     <td>{{i.subtotal}}</td>
                                     <td>{{i.discount}}</td>
                                     <td>{{i.shipping}}</td>
