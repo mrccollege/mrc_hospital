@@ -164,28 +164,29 @@
                                                 </div>
 
                                                 <div class="row">
-                                                    <div class="col-lg-6">
+                                                    <div class="col-lg-4">
                                                         <label for="shipping_packing">Shipping & Packing</label>
                                                         <input type="text" class="form-control" name="shipping_packing"
                                                                id="shipping_packing" value="0"
                                                                onkeypress="return isNumberKey(event)"
                                                                onkeyup="total_discount_apply_function()">
                                                     </div>
-                                                    <div class="col-lg-6">
-                                                        <label for="total">Total</label>
+                                                    <div class="col-lg-4">
+                                                        <label for="total">Bill Total</label>
                                                         <input type="text" class="form-control" name="total" id="total"
                                                                onkeypress="return isNumberKey(event)" readonly>
                                                     </div>
                                                 </div>
 
                                                 <div class="row">
-                                                    <div class="col-lg-6">
+
+                                                    <div class="col-lg-4">
                                                         <label for="old_credit">Old Credit</label>
                                                         <input type="text" class="form-control" name="old_credit"
                                                                id="old_credit" value="{{old_credit_sum}}" readonly>
                                                     </div>
 
-                                                    <div class="col-lg-6">
+                                                    <div class="col-lg-4">
                                                         <label for="total_pay_bill_amount">Total Pay Bill Amount</label>
                                                         <input type="text" class="form-control"
                                                                name="total_pay_bill_amount"

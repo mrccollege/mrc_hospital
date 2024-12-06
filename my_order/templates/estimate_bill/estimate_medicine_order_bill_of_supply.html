@@ -161,26 +161,35 @@
                                                                onkeypress="return isNumberKey(event)"
                                                                onkeyup="total_discount_apply_function()">
                                                     </div>
-                                                    <div class="col-lg-4">
-                                                        <label for="current">Current</label>
-                                                        <input type="text" class="form-control" name="current"
-                                                               id="current" value="{{user.current}}" readonly>
-                                                    </div>
+
                                                     <div class="col-lg-4">
                                                         <label for="total">Total</label>
                                                         <input type="text" class="form-control" name="total" id="total"
                                                                onkeypress="return isNumberKey(event)" readonly>
                                                     </div>
+
+                                                    <div class="col-lg-4">
+                                                        <label for="current"> - (Minus) Current</label>
+                                                        <input type="text" class="form-control" name="current"
+                                                               id="current" value="{{user.current}}" readonly>
+                                                    </div>
+
                                                 </div>
 
                                                 <div class="row">
-                                                    <div class="col-lg-6">
+                                                    <div class="col-lg-4">
+                                                        <label for="bill_total">Bill Total</label>
+                                                        <input type="text" class="form-control" name="bill_total"
+                                                               id="bill_total" value="0" readonly>
+                                                    </div>
+
+                                                    <div class="col-lg-4">
                                                         <label for="old_credit">Old Credit</label>
                                                         <input type="text" class="form-control" name="old_credit"
                                                                id="old_credit" value="{{old_credit_sum}}" readonly>
                                                     </div>
 
-                                                    <div class="col-lg-6">
+                                                    <div class="col-lg-4">
                                                         <label for="total_pay_bill_amount">Total Pay Bill Amount</label>
                                                         <input type="text" class="form-control"
                                                                name="total_pay_bill_amount"
@@ -535,30 +544,6 @@
 </script>
 
 <script>
-    function gst_function(index){
-        var sell_qty = Number($('#sell_qty' + index).val()) || 0;
-        var mrp = Number($('#mrp' + index).val()) || 0;
-        var sell_amt = sell_qty * mrp
-
-        if (sell_qty){
-            var discount = Number($('#discount'+index).val()) || 0;
-            var disc_amt = (discount / 100) * sell_amt;
-            var disc_amt1 = (discount / 100) * mrp;
-            var amt =  sell_amt - disc_amt
-            var sale_rate =  mrp - disc_amt1
-
-            $('#sale_rate'+index).val(sale_rate.toFixed(2));
-            $('#amount'+index).val(amt.toFixed(2));
-
-            sub_total_function()
-            total_discount_apply_function()
-        }else{
-            console.log('sell qty is not here')
-        }
-    }
-</script>
-
-<script>
     function sub_total_function(){
         var amountElements = document.querySelectorAll('[name="amount"]');
         var totalSum = 0;
@@ -586,6 +571,7 @@
         var old_credit = Number($('#old_credit').val()) || 0;
         var total = Number($('#total').val()) || 0;
         total = total - current
+        $('#bill_total').val(total.toFixed(2))
         var total_pay_bill = total + old_credit
         Number($('#total_pay_bill_amount').val(total_pay_bill.toFixed(2)))
         cash_online_function()

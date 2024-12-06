@@ -10,6 +10,8 @@ from doctor.models import Doctor
 
 from store.models import Store
 
+from my_order.models import MedicineOrderHead, MedicineOrderBillHead, EstimateMedicineOrderBillHead
+
 
 # Create your views here.
 @login_required(login_url='/account/user_login/')
@@ -20,8 +22,14 @@ def dashboard(request):
         return render(request, 'doctor_dashboard.html')
     is_store = Store.objects.filter(user_id=user_id)
     if is_store:
+        new_order = MedicineOrderHead.objects.filter(status=0).count()
+        normal_bill_order = MedicineOrderBillHead.objects.filter().count()
+        estimate_bill_order = EstimateMedicineOrderBillHead.objects.filter(status=1).count()
         context = {
-            'store_id': is_store[0].id
+            'store_id': is_store[0].id,
+            'new_order': new_order,
+            'normal_bill_order': normal_bill_order,
+            'estimate_bill_order': estimate_bill_order,
         }
         return render(request, 'store_dashboard.html', context)
     else:

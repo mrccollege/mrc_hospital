@@ -125,10 +125,6 @@
                                                     <th colspan="1">MRP.</th>
                                                     <th>Disc.%</th>
                                                     <th>S.Rate.</th>
-                                                    <th>HSN</th>
-                                                    <th>GST%</th>
-                                                    <th>Taxable Amount</th>
-                                                    <th>Tax</th>
                                                     <th>Amount</th>
                                                 </tr>
                                                 </thead>
@@ -150,14 +146,6 @@
                                                                id="total_discount" value="{{user.discount}}" onkeypress="return isNumberKey(event)"
                                                                onkeyup="total_discount_apply_function()">
                                                     </div>
-                                                    <div class="col-lg-3">
-                                                        <label for="sgst">SGST</label>
-                                                        <input type="text" name="sgst" id="sgst" class="form-control" readonly>
-                                                    </div>
-                                                    <div class="col-lg-3">
-                                                        <label for="cgst">CGST</label>
-                                                        <input type="text" name="cgst" id="cgst" class="form-control" readonly>
-                                                    </div>
                                                 </div>
 
                                                 <div class="row">
@@ -170,26 +158,32 @@
                                                     </div>
 
                                                     <div class="col-lg-4">
-                                                        <label for="current">Current</label>
-                                                        <input type="text" class="form-control" name="current"
-                                                               id="current" value="{{user.current}}" readonly>
-                                                    </div>
-
-                                                    <div class="col-lg-4">
                                                         <label for="total">Total</label>
                                                         <input type="text" class="form-control" name="total" id="total"
                                                                onkeypress="return isNumberKey(event)" readonly>
                                                     </div>
+
+                                                    <div class="col-lg-4">
+                                                        <label for="current"> - (Minus) Current</label>
+                                                        <input type="text" class="form-control" name="current"
+                                                               id="current" value="{{user.current}}" readonly>
+                                                    </div>
                                                 </div>
 
                                                 <div class="row">
-                                                    <div class="col-lg-6">
+                                                    <div class="col-lg-4">
+                                                        <label for="bill_total">Bill Total</label>
+                                                        <input type="text" class="form-control" name="bill_total"
+                                                               id="bill_total" value="0" readonly>
+                                                    </div>
+
+                                                    <div class="col-lg-4">
                                                         <label for="old_credit">Old Credit</label>
                                                         <input type="text" class="form-control" name="old_credit"
                                                                id="old_credit" value="{{old_credit_sum}}" readonly>
                                                     </div>
 
-                                                    <div class="col-lg-6">
+                                                    <div class="col-lg-4">
                                                         <label for="total_pay_bill_amount">Total Pay Bill Amount</label>
                                                         <input type="text" class="form-control"
                                                                name="total_pay_bill_amount"
@@ -260,10 +254,6 @@
                     discount: row.find('input[name="discount"]').val(),
                     mrp: row.find('input[name="mrp"]').val(),
                     sale_rate: row.find('input[name="sale_rate"]').val(),
-                    hsn: row.find('input[name="hsn"]').val(),
-                    gst: row.find('input[name="gst"]').val(),
-                    taxable_amount: row.find('input[name="taxable_amount"]').val(),
-                    tax: row.find('input[name="tax"]').val(),
                     amount: row.find('input[name="amount"]').val(),
                 };
                 selectedMedicines.push(medicineData);
@@ -275,8 +265,6 @@
             doctor_id: $('#doctor_id').val(),
             sub_total: $('#sub_total').val(),
             total_discount: $('#total_discount').val(),
-            sgst: $('#sgst').val(),
-            cgst: $('#cgst').val(),
             shipping_packing: $('#shipping_packing').val(),
             total: $('#total').val(),
             current: $('#current').val(),
@@ -374,12 +362,7 @@
 
             html += '<td><input value="{{i.sale_rate}}" type="text" id="sale_rate'+index+'" name="sale_rate" class="form-control" readonly required></td>';
 
-            html += '<td><input value="{{i.hsn}}" value="0" type="text" onkeypress="return isNumberKey(event)" id="hsn'+index+'" name="hsn" class="form-control" readonly required></td>';
 
-            html += '<td><input value="{{i.gst}}" type="text" onkeyup="gst_function('+index+')" onkeypress="return isNumberKey(event)" id="gst'+index+'" name="gst" class="form-control" required></td>';
-
-            html += '<td><input type="text" id="taxable_amount'+index+'" name="taxable_amount" class="total form-control" readonly></td>';
-            html += '<td><input type="text" id="tax'+index+'" name="tax" class="total form-control" readonly></td>';
             html += '<td><input type="text" id="amount'+index+'" name="amount" class="total form-control" readonly></td>';
 
             //html += '<td><button onclick="remove_row('+index+')"><i class="fa fa-remove" style="font-size:24px"></i></button></td>';
@@ -390,7 +373,6 @@
 
             sell_qty_function(index)
             discount_function(index)
-            gst_function(index)
             sub_total_function()
             cash_online_function()
 
@@ -418,12 +400,6 @@
 
         html += '<td><input type="text" id="sale_rate'+index+'" name="sale_rate" class="form-control" readonly required></td>';
 
-        html += '<td><input value="0" type="text" onkeypress="return isNumberKey(event)" id="hsn'+index+'" name="hsn" class="form-control" readonly required></td>';
-
-        html += '<td><input value="0" type="text" onkeyup="gst_function('+index+')" onkeypress="return isNumberKey(event)" id="gst'+index+'" name="gst" class="form-control" required></td>';
-
-        html += '<td><input value="0" type="text" id="taxable_amount'+index+'" name="taxable_amount" class="total form-control" readonly></td>';
-        html += '<td><input value="0" type="text" id="tax'+index+'" name="tax" class="total form-control" readonly></td>';
         html += '<td><input value="0" type="text" id="amount'+index+'" name="amount" class="total form-control" readonly></td>';
 
         html += '<td><button onclick="remove_row('+index+')"><i class="fa fa-remove" style="font-size:24px"></i></button></td>';
@@ -437,7 +413,6 @@
     function remove_row(index){
         $('#medicine_tr'+index).remove()
         sub_total_function()
-        sgst_and_cgst_function()
         total_discount_apply_function()
         cash_online_function()
     }
@@ -522,7 +497,7 @@
         if (sell_qty > record_qty){
             $('#sell_qty' + index).val(0)
         }
-        var mrp = parseInt($('#mrp' + index).val()) || 0;
+        var mrp = Number($('#mrp' + index).val()) || 0;
         var sell_amt = sell_qty * mrp
 
         var discount = Number($('#discount'+index).val()) || 0;
@@ -533,17 +508,10 @@
 
         $('#sale_rate'+index).val(sale_rate.toFixed(2));
 
-        var gst = parseInt($('#gst'+index).val()) || 0;
-        var result = amt / (1 + (gst / 100));
-
-        var tax = amt - result
-        $('#tax'+index).val(tax.toFixed(2));
-
-        $('#taxable_amount'+index).val(result.toFixed(2));
+        var result = amt
         $('#amount'+index).val(amt.toFixed(2));
 
         sub_total_function()
-        sgst_and_cgst_function()
         total_discount_apply_function()
         cash_online_function()
 
@@ -564,63 +532,19 @@
             var sale_rate =  mrp - disc_amt1
 
             $('#sale_rate'+index).val(sale_rate.toFixed(2));
-
-            var gst = parseInt($('#gst'+index).val()) || 0;
-            var result = amt / (1 + (gst / 100));
-
-            var tax = amt - result
-            $('#tax'+index).val(tax.toFixed(2));
-
-            $('#taxable_amount'+index).val(result.toFixed(2));
+            var result = amt
             $('#amount'+index).val(amt.toFixed(2));
 
             sub_total_function()
-            sgst_and_cgst_function()
             total_discount_apply_function()
             cash_online_function()
 
-
-        }else{
-            console.log('sell qty is not here')
-        }
-
-
-    }
-</script>
-
-<script>
-    function gst_function(index){
-        var sell_qty = parseInt($('#sell_qty' + index).val()) || 0;
-        var mrp = parseInt($('#mrp' + index).val()) || 0;
-        var sell_amt = sell_qty * mrp
-
-        if (sell_qty){
-            var discount = Number($('#discount'+index).val()) || 0;
-            var disc_amt = (discount / 100) * sell_amt;
-            var disc_amt1 = (discount / 100) * mrp;
-            var amt =  sell_amt - disc_amt
-            var sale_rate =  mrp - disc_amt1
-
-            $('#sale_rate'+index).val(sale_rate.toFixed(2));
-
-            var gst = parseInt($('#gst'+index).val()) || 0;
-            var result = amt / (1 + (gst / 100));
-
-            var tax = amt - result
-            $('#tax'+index).val(tax.toFixed(2));
-
-            $('#taxable_amount'+index).val(result.toFixed(2));
-            $('#amount'+index).val(amt.toFixed(2));
-
-            sub_total_function()
-            sgst_and_cgst_function()
-            total_discount_apply_function()
-            cash_online_function()
         }else{
             console.log('sell qty is not here')
         }
     }
 </script>
+
 
 <script>
     function sub_total_function(){
@@ -628,26 +552,12 @@
         var totalSum = 0;
         amountElements.forEach(function(element) {
             var amt = parseFloat(element.value) || 0;
-            console.log('Amount:', amt);
             totalSum += amt;
         });
         $('#sub_total').val(totalSum.toFixed(2))
     }
 </script>
 
-<script>
-    function sgst_and_cgst_function(){
-        var taxElements = document.querySelectorAll('[name="tax"]');
-        var total_tax_Sum = 0;
-        taxElements.forEach(function(element) {
-            var tax_amt = Number(element.value) || 0;
-            total_tax_Sum += tax_amt;
-        });
-        total_tax_Sum = total_tax_Sum / 2
-        $('#sgst').val(total_tax_Sum.toFixed(2))
-        $('#cgst').val(total_tax_Sum.toFixed(2))
-    }
-</script>
 
 <script>
     function total_discount_apply_function(){
@@ -665,6 +575,8 @@
         var old_credit = Number($('#old_credit').val()) || 0;
         var total = Number($('#total').val()) || 0;
         total = total - current
+        $('#bill_total').val(total.toFixed(2))
+
         var total_pay_bill = total + old_credit
         Number($('#total_pay_bill_amount').val(total_pay_bill.toFixed(2)))
         cash_online_function()
