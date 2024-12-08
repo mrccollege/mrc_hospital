@@ -279,15 +279,10 @@ def update_medicine_record(request):
         status = 'failed'
         msg = 'Medicine not added.'
         try:
-            # Medicine.objects.filter(id=medicine_id).update(name=medicine_name,
-            #                                                category_id=category_id,
-            #                                                manufacture=manufacture,
-            #                                                mobile=mobile,
-            #                                                )
             store_obj = Store.objects.filter(id=store_id)
             if store_obj:
                 to_store_id = store_obj[0].id
-                query = Q(medicine_id=medicine_id, to_store_id=to_store_id, batch_no=batch_no)
+                query = Q(medicine_id=medicine_id, to_store_id=to_store_id)
                 obj = MedicineStore.objects.get(query)
                 total_qty = obj.qty
                 if add_medicine_qty:
@@ -301,8 +296,13 @@ def update_medicine_record(request):
                     total_qty = obj.qty - int(minus_medicine_qty)
                 else:
                     minus_medicine_qty = 0
-                # main_store_medicine_obj = MedicineStore.objects.filter(query).update(qty=int(total_qty), expiry=medicine_expiry)
-                main_store_medicine_obj = MedicineStore.objects.filter(query).update(qty=int(total_qty), price=price)
+
+                print(total_qty, '============add_medicine_qty')
+                main_store_medicine_obj = MedicineStore.objects.filter(query).update(qty=int(total_qty),
+                                                                                     price=price,
+                                                                                     batch_no=batch_no,
+                                                                                     expiry=medicine_expiry
+                                                                                     )
                 if main_store_medicine_obj:
                     MedicineStoreTransactionHistory.objects.create(from_store_id=to_store_id,
                                                                    to_store_id=to_store_id,

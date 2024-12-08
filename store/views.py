@@ -236,6 +236,24 @@ def mini_store(request):
     return render(request, 'mini_store_detail.html', context)
 
 
+def delete_medicine_from_store(request, id):
+    try:
+        # Attempt to delete the MedicineStore entry by id
+        deleted, _ = MedicineStore.objects.filter(id=id).delete()
+        if deleted:
+            msg = 'Medicine has been deleted.'
+            success = True
+        else:
+            msg = 'Medicine not found.'
+            success = False
+    except Exception as e:
+        msg = f'Error occurred: {str(e)}'
+        success = False
+
+    # Return a JSON response
+    return JsonResponse({'success': success, 'msg': msg})
+
+
 def view_mini_store_medicine(request, store_id):
     store_medicine = MedicineStore.objects.filter(to_store_id=store_id)
     store_name = Store.objects.filter(id=store_id)
@@ -266,7 +284,8 @@ def search_medicine(request):
             for term in search_terms:
                 query &= Q(medicine__name__icontains=term)
 
-        medicines = MedicineStore.objects.filter(query).values('id', 'medicine__id', 'medicine__name', 'price', 'qty', 'medicine__hsn', 'medicine__gst', 'expiry')
+        medicines = MedicineStore.objects.filter(query).values('id', 'medicine__id', 'medicine__name', 'price', 'qty',
+                                                               'medicine__hsn', 'medicine__gst', 'expiry')
         data_list = [
             {
                 'record_id': i['id'],

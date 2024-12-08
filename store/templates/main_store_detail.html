@@ -41,6 +41,7 @@
                                     <th>medicine_expiry</th>
                                     <th>Record</th>
                                     <th>Action</th>
+                                    <th>Action</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -54,6 +55,8 @@
                                     <td>{{i.expiry|date:"d-F-Y"}}</td>
                                     <td><a href="/medicine/view_record_medicine_detail/{{i.id}}/"><b>view</b></a></td>
                                     <td><a href="/store/transfer_main_store_medicine_detail/{{i.id}}/"><b>Transfer</b></a></td>
+                                    <td><a href="/store/delete_medicine_from_store/{{ i.id }}/" class="delete-link"><b>Delete</b></a></td>
+
                                 </tr>
                                 {% endfor %}
                                 </tbody>
@@ -86,5 +89,57 @@
         "bAutoWidth": false
       });
     });
+
 </script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Attach click event to all delete links
+        const deleteLinks = document.querySelectorAll('.delete-link');
+        deleteLinks.forEach(link => {
+            link.addEventListener('click', function (e) {
+                e.preventDefault(); // Prevent default link behavior
+
+                const url = this.href; // Get the link URL
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Send AJAX request
+                        fetch(url, {
+                            method: 'GET',
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            // Show SweetAlert with response message
+                            Swal.fire({
+                                title: data.success ? 'Deleted!' : 'Error!',
+                                text: data.msg,
+                                icon: data.success ? 'success' : 'error'
+                            }).then(() => {
+                                // Optionally, reload the page or remove the deleted row
+                                if (data.success) {
+                                    location.reload();
+                                }
+                            });
+                        })
+                        .catch(error => {
+                            Swal.fire('Error!', 'Something went wrong. Please try again.', 'error');
+                        });
+                    }
+                });
+            });
+        });
+    });
+</script>
+
 {% endblock js %}
