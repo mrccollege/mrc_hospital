@@ -97,17 +97,17 @@
         <div class="header-container">
             <div id="client">
                 <div><strong>Date :</strong> {{user.created_at}}</div>
-                <div><strong>Invoice No :</strong> {{user.invoice_number}}</div>
+                <div><strong>Invoice No :</strong> {{invoice_number}}</div>
                 <div><strong>Client :</strong> {{user.doctor.user.username}}</div>
                 <div><strong>Mobile :</strong> {{user.doctor.user.mobile}}</div>
                 <div><strong>Address :</strong> {{user.doctor.user.district}}, {{user.doctor.user.state}}</div>
                 <div><strong>Email :</strong> {{user.doctor.user.email}}</div>
-                <div><strong>GST :</strong> Unregistered</div>
+                <div><strong>GST :</strong> Unregistered <span> <b>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;State code</b> : <span id="state_code">UP007</span></span></div>
             </div>
             <div id="company">
                 <div>Phone: 7417 7417 74</div>
-                <div>Email: <a href="mailto:mrcnaturocare@gamail.com">mrcnaturocare@gamail.com</a></div>
-                <div>GSTIN: 09BRLPS1328C1ZR</div>
+                <div>Email: <a href="mailto:mrcnaturocare@gamail.com">mrcnaturocare@gmail.com</a></div>
+                <div>GSTIN: 09BRLPS1328C1ZR </div>
                 <div>Bank Name: Punjab National Bank</div>
                 <div>Account No: 4902002100001830</div>
                 <div>IFSC CODE: PUNB00463000</div>
@@ -162,8 +162,7 @@
                     <th>SUB TOTAL</th>
                     <th>DISC.</th>
                     <th>Taxable</th>
-                    <th>SGST</th>
-                    <th>CGST</th>
+                    <th>IGST</th>
                     <th>TOTAL GST</th>
                 </tr>
                 <tbody>
@@ -175,7 +174,6 @@
                     <td class="grand total">{{i.discount}}</td>
                     <td class="grand total">{{i.taxable_amount}}</td>
                     <td class="grand total">{{i.sgst_and_cgst}}</td>
-                    <td class="grand total">{{i.sgst_and_cgst}}</td>
                     <td class="grand total">{{i.tax}}</td>
                 </tr>
                 {% endfor %}
@@ -185,7 +183,6 @@
                     <td class="grand total">{{grand_sub_total}}</td>
                     <td class="grand total">{{grand_discount_total}}</td>
                     <td class="grand total">{{grand_taxable_amount_total}}</td>
-                    <td class="grand total">{{grand_sgst_and_cgst_total}}</td>
                     <td class="grand total">{{grand_sgst_and_cgst_total}}</td>
                     <td class="grand total">{{grand_tax_total}}</td>
                 </tr>
@@ -199,18 +196,33 @@
                     <td colspan="2" class="grand total">Taxable Amount.</td>
                     <td>{{total_taxable_amount}}</td>
                 </tr>
-
+                {% if order_type == 1 %}
                 <tr>
                     <td colspan="2" class="grand total">CGST Amount.</td>
                     <td>{{user.cgst}}</td>
                 </tr>
+
                 <tr>
                     <td colspan="2" class="grand total">SGST Amount.</td>
                     <td>{{user.sgst}}</td>
                 </tr>
+                {% else %}
                 <tr>
-                    <td colspan="2" class="grand total">Extra Discount.</td>
-                    <td>{{user.discount}} %</td>
+                    <td colspan="2" class="grand total">IGST Amount.</td>
+                    <td>{{user.sgst}}</td>
+                </tr>
+                {% endif %}
+<!--                <tr>-->
+<!--                    <td colspan="2" class="grand total">Discount %</td>-->
+<!--                    <td>{{user.discount}} %</td>-->
+<!--                </tr>-->
+<!--                <tr>-->
+<!--                    <td colspan="2" class="grand total">Discount Rs.</td>-->
+<!--                    <td>{{user.discount_amount}}</td>-->
+<!--                </tr>-->
+                <tr>
+                    <td colspan="2" class="grand total">Total.</td>
+                    <td>{{user.subtotal}}</td>
                 </tr>
                 <tr>
                     <td colspan="2" class="grand total">Shiping Charge.</td>

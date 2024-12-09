@@ -204,7 +204,7 @@
                                                         <input type="text" class="form-control" name="total_discount"
                                                                id="total_discount" value="{{user.discount}}"
                                                                onkeypress="return isNumberKey(event)"
-                                                               onkeyup="total_discount_apply_function()">
+                                                               onkeyup="total_discount_apply_function()" readonly>
                                                     </div>
                                                     <div class="col-lg-3">
                                                         <label for="sgst">SGST</label>
@@ -276,7 +276,9 @@
                                         </div>
                                     </div><!-- /.box-body -->
                                     <div class="box-footer">
+                                        {% if is_last == True %}
                                         <button type="submit" class="btn btn-primary">Submit</button>
+                                        {% endif %}
                                         &nbsp; &nbsp; &nbsp;
                                         <button type="button" class="btn btn-primary"
                                                 data-toggle="modal"

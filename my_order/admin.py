@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import MedicineOrderHead, MedicineOrderDetail
+from .models import MedicineOrderHead, MedicineOrderDetail, InvoiceTracker
 
 
 # Register your models here.
@@ -9,3 +9,4 @@ from .models import MedicineOrderHead, MedicineOrderDetail
 
 admin.site.register(MedicineOrderHead)
 admin.site.register(MedicineOrderDetail)
+admin.site.register(InvoiceTracker)

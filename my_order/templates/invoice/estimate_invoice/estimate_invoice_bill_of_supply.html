@@ -88,7 +88,7 @@
     <header class="clearfix" id="pdf2-content">
         <div id="logo">
             <img src="/static/logo/bill_logo/ayur.png" alt="Company Logo" class="left-logo">
-            <img src="/static/logo/bill_logo/scanner_mrc_ayurveda.jpeg" alt="Company Logo" class="right-logo">
+<!--            <img src="/static/logo/bill_logo/scanner_mrc_ayurveda.jpeg" alt="Company Logo" class="right-logo">-->
         </div>
         <h4 style="text-align:center">(BILL OF SUPPLY)</h4>
         <div><h4><span style="font-size:22px">M/s Mrc Ayurveda & Research Center</span> &nbsp; &nbsp; &nbsp; Address:
@@ -97,7 +97,7 @@
         <div class="header-container">
             <div id="client">
                 <div><strong>Date:</strong> {{user.created_at}}</div>
-                <div><strong>Invoice No:</strong> {{user.invoice_number}}</div>
+                <div><strong>Invoice No:</strong> {{invoice_number}}</div>
                 <div><strong>Client:</strong> {{user.doctor.user.username}}</div>
                 <div><strong>Mobile:</strong> {{user.doctor.user.mobile}}</div>
                 <div><strong>Address:</strong> {{user.doctor.user.district}}, {{user.doctor.user.state}}</div>
@@ -109,9 +109,6 @@
                 <div>Phone: 9897 5465 31</div>
                 <div>Email: <a href="mailto:mrcayurveda@gmail.com">mrcayurveda@gmail.com</a></div>
                 <div>GSTIN: 09BRLPS1327P1Z1</div>
-                <div>Bank Name: Punjab National Bank</div>
-                <div>Account No: 4903002100000522</div>
-                <div>IFSC CODE: PUNB00463000</div>
             </div>
 
         </div>
@@ -143,7 +140,7 @@
 
             <tr>
                 <td colspan="3">MRP Amount. {{subtotal_amount}}</td>
-                <td colspan="2">Total Discount. {{total_discounted_price}}</td>
+                <td colspan="2">Discount. {{total_discounted_price}}</td>
                 <td colspan="8"></td>
             </tr>
             </tbody>
@@ -179,8 +176,7 @@
     </main>
 
     <footer>
-        <p>This is an Electronically generated Invoice, no signature required. All Disputes Subject to MATHURA
-            Jurisdiction Only.
+        <p>It is not a original bill. it's just Estimate.
         </p>
     </footer>
 

@@ -172,3 +172,24 @@ class EstimateMedicineOrderBillDetail(models.Model):
 
     class Meta:
         db_table = 'estimate_medicine_order_bill_detail'
+
+
+class InvoiceTracker(models.Model):
+    year = models.IntegerField()
+    last_invoice_number = models.IntegerField(default=0)
+
+    def get_next_invoice_number(self):
+        """
+        Get the next invoice number in sequence.
+        Resets on 1st April every year.
+        """
+        from datetime import datetime
+        current_year = datetime.now().year
+        if self.year != current_year:  # Reset sequence for a new year
+            self.year = current_year
+            self.last_invoice_number = 0
+
+        self.last_invoice_number += 1
+        self.save()
+        return f"{self.last_invoice_number:05d}"  # Format as 5 digits
+
