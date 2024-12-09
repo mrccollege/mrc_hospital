@@ -157,7 +157,7 @@ def medicine_update(request, id):
                                                                  )
             if medicine_obj:
                 if image:
-                    medicine_obj = Medicine.objects.filter(id=id)
+                    medicine_obj = Medicine.objects.get(id=id)
                     medicine_obj.image = image
                     medicine_obj.save()
                 msg = 'Medicine Update Successfully.'
