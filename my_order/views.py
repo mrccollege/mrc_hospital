@@ -72,7 +72,6 @@ def medicine_order(request):
         discount = form.get('total_discount')
         pay_amount = form.get('total')
         invoice_number = generate_invoice_number()
-        print(invoice_number)  # Example: "2024040100001"
         try:
             order_head = MedicineOrderHead.objects.create(invoice_number=invoice_number,
                                                           doctor_id=doctor_id,

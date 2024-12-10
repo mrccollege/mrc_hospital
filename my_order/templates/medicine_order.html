@@ -383,7 +383,7 @@
 
             html += '<td><input style="width: 100px;" value="0.00" type="text" id="amount'+index+'" name="amount" class="total form-control" readonly></td>';
 
-            html += '<td><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter" data-name="{{i.name}}" data-desc="{{i.desc}}" data-price="{{i.price}}">Read More</button></td>';
+            html += '<td><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter" data-name="{% if i.name %}{{i.name}}{% else %}{% endif %}" data-desc="" data-price="{% if i.price %}{{i.price}}{% else %}{% endif %}">Read More</button></td>';
 
             html += '<td><a href="{% if i.video_link %}{{i.video_link|safe}}{% else %}javascript:void(0){% endif %}" {% if i.video_link %}target="_blank"{% endif %} class="btn btn-sm btn-primary">Watch Video</a></td>';
 
