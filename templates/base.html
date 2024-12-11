@@ -31,8 +31,8 @@
     <link rel="stylesheet" href="/static/common_css/sweetalert2.min.css">
     <link rel="stylesheet" href="/static/common_css/jquery.timepicker.min.css">
     <link href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" rel="stylesheet">
-
-
+    {% block css %}
+    {% endblock css %}
     <style>
         .pointer {cursor: pointer;}
     </style>
@@ -63,8 +63,7 @@
             display: none;
         }
     </style>
-    {% block css %}
-    {% endblock css %}
+
 </head>
 <body class="skin-blue">
 <div class="wrapper">
