@@ -183,6 +183,28 @@ def medicine_update(request, id):
         return render(request, 'update_medicine.html', context)
 
 
+def delete_medicine(request, id):
+    try:
+        deleted, _ = Medicine.objects.filter(id=id).delete()
+        already_added = MedicineStore.objects.filter(medicine_id=id)
+        if already_added:
+            msg = 'Medicine not found.'
+            success = False
+            return JsonResponse({'success': success, 'msg': msg})
+        else:
+            if deleted:
+                msg = 'Medicine has been deleted.'
+                success = True
+            else:
+                msg = 'Medicine not found.'
+                success = False
+    except Exception as e:
+        msg = f'Error occurred: {str(e)}'
+        success = False
+
+    # Return a JSON response
+    return JsonResponse({'success': success, 'msg': msg})
+
 def add_medicine_to_store(request):
     user_id = request.session.get('user_id')
     if request.method == 'POST':

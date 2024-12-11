@@ -1,20 +1,8 @@
 {% extends 'base.html' %}
 
 {% block css %}
-<style>
-    .table-responsive tbody {
-        display: block;
-        max-height: 300px;
-        overflow-y: auto;
-        width: 100%;
-    }
 
-    .table-responsive thead, .table-responsive tbody tr {
-        display: table;
-        width: 100%;
-        table-layout: fixed;
-    }
-</style>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
 
 {% endblock css %}
 
@@ -130,8 +118,8 @@
                                 <form id="medicine_form">
                                     {% csrf_token %}
                                     <div class="box-body">
-                                        <div class="table-responsive">
-                                            <table class="table table-condensed">
+                                        <div class="table-responsive" style="overflow-x: auto;">
+                                            <table id="example1" class="table table-condensed">
                                                 <thead>
                                                 <tr>
                                                     <th>Medicine Name</th>
@@ -198,6 +186,7 @@
 {% endblock content %}
 
 {% block js %}
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script>
     $('#user_form_id').on('submit', function (e) {
         $('#loader-overlay').show(); // Show overlay
@@ -517,5 +506,20 @@
         var paid_amt = total_pay_bill - (cash + online)
         $('#new_credit').val(paid_amt.toFixed(2))
     }
+
+
+    $(function () {
+        var table = $("#example1").DataTable({
+            paging: true,
+            searching: true,
+        });
+
+        table.destroy();
+        $("#example1").DataTable({
+            paging: false,
+            searching: true,
+        });
+    });
+
 </script>
 {% endblock js %}
