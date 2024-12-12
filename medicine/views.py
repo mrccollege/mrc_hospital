@@ -205,12 +205,14 @@ def delete_medicine(request, id):
     # Return a JSON response
     return JsonResponse({'success': success, 'msg': msg})
 
+
 def add_medicine_to_store(request):
     user_id = request.session.get('user_id')
     if request.method == 'POST':
         form = request.POST
         store_id = int(form.get('store_id'))
         medicine_id = form.getlist('medicine_id')
+        mini_record_qty = form.getlist('mini_record_qty')
         qty = form.getlist('qty')
         price = form.getlist('price')
         batch_no = form.getlist('batch_no')
@@ -229,6 +231,7 @@ def add_medicine_to_store(request):
                                                              to_store_id=store_id,
                                                              medicine_id=int(medicine_id[i]),
                                                              qty=int(qty[i]),
+                                                             min_medicine_record_qty=int(mini_record_qty[i]),
                                                              price=float(price[i]),
                                                              batch_no=batch_no[i].upper(),
                                                              expiry=datetime.strptime(expiry_date[i], "%d-%B-%Y"),
@@ -265,7 +268,14 @@ def add_medicine_to_store(request):
         return JsonResponse(context)
     else:
         store = Store.objects.filter(user_id=user_id)
-        store = Store.objects.all()
+        if store:
+            store_type = store[0].type
+            if store_type == 'MINI':
+                store = Store.objects.filter(user_id=user_id)
+            else:
+                store = Store.objects.all()
+        else:
+            store = Store.objects.all()
         context = {
             'store': store
         }
@@ -297,6 +307,7 @@ def update_medicine_record(request):
         manufacture = form.get('manufacture')
         mobile = form.get('mobile')
         medicine_expiry = form.get('medicine_expiry')
+        min_medicine_rec = form.get('min_medicine_rec')
         medicine_expiry = datetime.strptime(medicine_expiry, "%d-%B-%Y")
         status = 'failed'
         msg = 'Medicine not added.'
@@ -319,11 +330,11 @@ def update_medicine_record(request):
                 else:
                     minus_medicine_qty = 0
 
-                print(total_qty, '============add_medicine_qty')
                 main_store_medicine_obj = MedicineStore.objects.filter(query).update(qty=int(total_qty),
                                                                                      price=price,
                                                                                      batch_no=batch_no,
-                                                                                     expiry=medicine_expiry
+                                                                                     expiry=medicine_expiry,
+                                                                                     min_medicine_record_qty=min_medicine_rec,
                                                                                      )
                 if main_store_medicine_obj:
                     MedicineStoreTransactionHistory.objects.create(from_store_id=to_store_id,

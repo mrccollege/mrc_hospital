@@ -22,10 +22,11 @@ class MedicineStore(models.Model):
     from_store = models.ForeignKey(Store, related_name='Medicine_from_store', on_delete=models.CASCADE)
     to_store = models.ForeignKey(Store, related_name='Medicine_to_store', on_delete=models.CASCADE)
     medicine = models.ForeignKey(Medicine, on_delete=models.CASCADE)
-    qty = models.IntegerField(null=True)
+    qty = models.IntegerField(null=True, blank=True)
+    min_medicine_record_qty = models.IntegerField(null=True, blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     batch_no = models.CharField(max_length=100, null=True)
-    expiry = models.DateField(null=True)
+    expiry = models.DateField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 

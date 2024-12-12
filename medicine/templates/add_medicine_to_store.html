@@ -52,7 +52,7 @@
                                             <div class="col-lg-4">
                                                 <div class="form-group">
                                                     <label for="store_id" class="form-label">Register New Medicine</label>
-                                                    <a href="/medicine/add_new_medicine/" type="button" class="btn btn-primary form-control">Register Medicine</a>
+                                                    <a href="/medicine/add_medicine/" type="button" class="btn btn-primary form-control">Register Medicine</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -66,6 +66,7 @@
                                                 <tr>
                                                     <th>SN.</th>
                                                     <th>Medicine Name</th>
+                                                    <th>Min. Record Qty</th>
                                                     <th>Qty</th>
                                                     <th>Price</th>
                                                     <th>Batch No.</th>
@@ -162,6 +163,7 @@
         html += '<td>'+index+'</td>';
         html += '<td><input onkeyup="search_medicine('+index+');" type="text" id="medicine'+index+'" name="medicine" class="form-control" autocomplete="off" placeholder="Search medicine: " required></td>';
         html += '<input type="hidden" name="medicine_id" class="form-control" id="medicine_id'+index+'" required>';
+        html += '<td><input type="text" id="mini_record_qty'+index+'" name="mini_record_qty" class="form-control" required></td>';
         html += '<td><input type="text" id="qty'+index+'" name="qty" class="form-control" required></td>';
         html += '<td><input type="text" id="price'+index+'" name="price" class="form-control" required></td>';
         html += '<td><input type="text" id="batch_no'+index+'" name="batch_no" class="form-control"></td>';
