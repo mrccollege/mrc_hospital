@@ -224,7 +224,7 @@
                                                     <div class="col-lg-4">
                                                         <label for="current"> - (Minus) Current</label>
                                                         <input type="text" class="form-control" name="current"
-                                                               id="current" value="0">
+                                                               id="current" value="0" onkeyup="current_function();">
                                                     </div>
                                                 </div>
 
@@ -657,6 +657,10 @@
 
         var paid_amt = total_pay_bill - (cash + online)
         $('#new_credit').val(paid_amt.toFixed(2))
+    }
+
+    function current_function(){
+        total_discount_apply_function()
     }
 </script>
 
