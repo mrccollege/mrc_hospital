@@ -110,6 +110,71 @@ class MedicineOrderBillDetail(models.Model):
         db_table = 'medicine_order_bill_detail'
 
 
+class MedicineUnregisteredOrderBillHead(models.Model):
+    head = models.ForeignKey(MedicineOrderBillHead, related_name='headUnregisteredOrderBillHead', on_delete=models.CASCADE, null=True)
+    order_id = models.ForeignKey(MedicineOrderHead, related_name='order_idUnregisteredOrderBillHead', on_delete=models.CASCADE, null=True)
+    invoice_number = models.CharField(max_length=100, null=True)
+    store = models.ForeignKey(Store, on_delete=models.CASCADE, null=True)
+    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE, null=True)
+    subtotal = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    discount = models.IntegerField(default=0, null=True)
+    discount_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    shipping = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    pay_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    total_without_previous_bill = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    sgst = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    cgst = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    old_credit = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    new_credit = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    current = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    cash = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    online = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+
+    extra_cash_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    extra_online_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    amount_remark = models.CharField(max_length=100, null=True, blank=True)
+
+    status = models.IntegerField(help_text='0=pending,1=inprocess,2=packing,3=dispatch,4=out of delivery,5=delivered')
+    estimate_status = models.IntegerField(default=0, help_text='0=pending,1=complete')
+    order_type = models.IntegerField(help_text='1=In state,2=other state,3=bill of supply')
+    account_number = models.CharField(max_length=100, null=True, blank=True)
+    ifc_number = models.CharField(max_length=100, null=True, blank=True)
+    upi_id_number = models.CharField(max_length=100, null=True, blank=True)
+    bar_code = models.ImageField(upload_to='bank_account_barcode', null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
+
+    def __str__(self):
+        return str(self.doctor)
+
+    class Meta:
+        db_table = 'medicine_unregistered_order_bill_head'
+
+
+class MedicineUnregisteredOrderBillDetail(models.Model):
+    head = models.ForeignKey(MedicineUnregisteredOrderBillHead, on_delete=models.CASCADE, null=True)
+    medicine = models.ForeignKey(Medicine, on_delete=models.CASCADE, null=True)
+    record_qty = models.IntegerField(default=0, null=True)
+    order_qty = models.IntegerField(default=0, null=True)
+    sell_qty = models.IntegerField(default=0, null=True)
+    mrp = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    discount = models.IntegerField(default=0, null=True)
+    sale_rate = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    hsn = models.CharField(max_length=10, null=True, blank=True)
+    gst = models.IntegerField(default=0, null=True, blank=True)
+    taxable_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    tax = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    amount = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
+
+    def __str__(self):
+        return str(self.head.doctor)
+
+    class Meta:
+        db_table = 'medicine_unregistered_order_bill_detail'
+
+
 class EstimateMedicineOrderBillHead(models.Model):
     order_id = models.ForeignKey(MedicineOrderHead, on_delete=models.CASCADE, null=True)
     invoice_number = models.CharField(max_length=100, null=True)
@@ -192,4 +257,3 @@ class InvoiceTracker(models.Model):
         self.last_invoice_number += 1
         self.save()
         return f"{self.last_invoice_number:05d}"  # Format as 5 digits
-
