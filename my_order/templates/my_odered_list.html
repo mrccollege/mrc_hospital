@@ -66,6 +66,10 @@
                                     <td>
                                         <a href="/my_order/view_normal_invoice_doctor/{{i.id}}/" class="btn btn-primary">Normal Bill</a>
                                     </td>
+                                    {% else %}
+                                    <td>
+                                        <a href="/my_order/view_normal_invoice_doctor/{{i.id}}/" class="btn btn-primary" style="pointer-events: none; opacity: 0.6;">Normal Bill</a>
+                                    </td>
                                     {% endif %}
 
                                 </tr>
