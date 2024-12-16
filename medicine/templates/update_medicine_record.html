@@ -143,6 +143,9 @@
 
     $("#medicine_expiry").datepicker({
         dateFormat: "dd-M-yy",
+        changeMonth: true,
+        changeYear: true,
+        yearRange: "1900:2100",
         onClose: function(dateText, inst) {
             var date = $(this).datepicker('getDate');
             if (date) {
