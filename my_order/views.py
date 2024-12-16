@@ -447,7 +447,6 @@ def create_bill(request, order_type, id):
 
 @login_required(login_url='/account/user_login/')
 def unregistered_create_bill(request, order_type, id):
-    print(id, '====================id')
     if request.method == 'POST':
         form = request.POST
         user_id = request.session['user_id']
@@ -482,6 +481,7 @@ def unregistered_create_bill(request, order_type, id):
             head_id = is_already[0].id
             MedicineUnregisteredOrderBillDetail.objects.filter(head_id=head_id).delete()
             MedicineUnregisteredOrderBillHead.objects.filter(head_id=id).delete()
+            MedicineOrderBillHead.objects.filter(id=id).update(final_bill_status=0)
 
         obj_order_id = MedicineOrderBillHead.objects.get(id=id)
         order_id = obj_order_id.order_id_id
@@ -547,7 +547,7 @@ def unregistered_create_bill(request, order_type, id):
                                                                          tax=tax,
                                                                          amount=amount,
                                                                          )
-
+                MedicineOrderBillHead.objects.filter(id=id).update(final_bill_status=1)
                 if obj:
                     status = 'success'
                     msg = 'Bill creation Successfully.'
@@ -1418,7 +1418,8 @@ def final_bill_invoice(request, id):
     current = user.current
 
     medicine = MedicineUnregisteredOrderBillDetail.objects.filter(head_id=user.id)
-    gst_per = MedicineUnregisteredOrderBillDetail.objects.filter(head_id=user.id).values_list('gst', flat=True).distinct()
+    gst_per = MedicineUnregisteredOrderBillDetail.objects.filter(head_id=user.id).values_list('gst',
+                                                                                              flat=True).distinct()
 
     total_taxable_by_gst_list = []
     grand_sub_total = 0

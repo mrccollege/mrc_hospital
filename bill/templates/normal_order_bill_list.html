@@ -57,7 +57,12 @@
                                     <td>{{i.pay_amount|sub:i.cash|add:i.online|floatformat:2}}</td>
 
                                     <td><a href="/my_order/view_normal_invoice/{{i.id}}/" class="btn btn-primary">View</a></td>
+
+                                    {% if i.final_bill_status == 0 %}
+                                    <td><a href="/my_order/final_bill_invoice/{{i.id}}/" class="btn btn-primary" style="pointer-events: none; opacity: 0.6;">Final Bill</a></td>
+                                    {% else %}
                                     <td><a href="/my_order/final_bill_invoice/{{i.id}}/" class="btn btn-primary">Final Bill</a></td>
+                                    {% endif %}
 
                                     <td><a href="/my_order/update_medicine_order_bill/{{i.order_type}}/{{i.id}}/" class="btn btn-primary">Update Bill</a></td>
 
