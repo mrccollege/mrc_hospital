@@ -7,7 +7,7 @@ import pandas as pd
 from .models import Medicine, MedicineCategory
 from django.core.files.storage import FileSystemStorage
 from store.models import Store, MedicineStore, MedicineStoreTransactionHistory
-from django.db.models import Case, When
+from django.db.models import Case, When, Value, IntegerField
 
 
 # Create your views here.
@@ -172,9 +172,14 @@ def medicine_update(request, id):
         return JsonResponse(context)
     else:
         medicine = Medicine.objects.get(id=id)
-        category = MedicineCategory.objects.annotate(category=Case(When(id=medicine.category.id, then=0),
-                                                                   default=1))
 
+        category = MedicineCategory.objects.annotate(
+            custom_order=Case(
+                When(id=medicine.category.id, then=Value(0)),
+                default=Value(1),
+                output_field=IntegerField(),
+            )
+        ).order_by('custom_order')
         context = {
             'id': id,
             'medicine': medicine,

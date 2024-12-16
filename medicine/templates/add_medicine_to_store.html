@@ -173,36 +173,22 @@
 
         $('table tbody').append(html);
 
-<!--        $("#expiry_date"+index).datepicker({-->
-<!--            dateFormat: "dd-M-yy",-->
-<!--            onClose: function(dateText, inst) {-->
-<!--                var date = $(this).datepicker('getDate');-->
-<!--                if (date) {-->
-<!--                    var day = ("0" + date.getDate()).slice(-2);-->
-<!--                    var month = $.datepicker.formatDate('MM', date);-->
-<!--                    var year = date.getFullYear();-->
+        $("#expiry_date" + index).datepicker({
+            dateFormat: "dd-M-yy",
+            changeMonth: true, // Enable month dropdown
+            changeYear: true,  // Enable year dropdown
+            yearRange: "1900:2100", // Optional: Set range of years
+            onClose: function(dateText, inst) {
+                var date = $(this).datepicker('getDate');
+                if (date) {
+                    var day = ("0" + date.getDate()).slice(-2);
+                    var month = $.datepicker.formatDate('MM', date); // Month as full name
+                    var year = date.getFullYear();
 
-<!--                    $(this).val(day + '-' + month + '-' + year);-->
-<!--                }-->
-<!--            }-->
-<!--        });-->
-
-            $("#expiry_date" + index).datepicker({
-                dateFormat: "dd-M-yy",
-                changeMonth: true, // Enable month dropdown
-                changeYear: true,  // Enable year dropdown
-                yearRange: "1900:2100", // Optional: Set range of years
-                onClose: function(dateText, inst) {
-                    var date = $(this).datepicker('getDate');
-                    if (date) {
-                        var day = ("0" + date.getDate()).slice(-2);
-                        var month = $.datepicker.formatDate('MM', date); // Month as full name
-                        var year = date.getFullYear();
-
-                        $(this).val(day + '-' + month + '-' + year);
-                    }
+                    $(this).val(day + '-' + month + '-' + year);
                 }
-            });
+            }
+        });
 
 
         index +=1;
