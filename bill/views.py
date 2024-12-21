@@ -14,6 +14,7 @@ from my_order.models import MedicineOrderBillHead
 from my_order.models import EstimateMedicineOrderBillHead
 from django.utils.timezone import localtime
 
+
 # Create your views here.
 @login_required(login_url='/account/user_login/')
 def bill_list(request):
@@ -86,3 +87,16 @@ def order_detail(request, id):
         'medicine': medicine,
     }
     return render(request, 'order_detail.html', context)
+
+
+def create_customer_bill(request, order_type):
+    context = {
+        'order_type': order_type,
+    }
+
+    if order_type == 1:
+        return render(request, 'normal_bill/order_tax_invoice_in_state.html', context)
+    elif order_type == 2:
+        return render(request, 'normal_bill/order_tax_invoice_other_state.html', context)
+    elif order_type == 3:
+        return render(request, 'normal_bill/oder_bill_of_supply.html', context)
