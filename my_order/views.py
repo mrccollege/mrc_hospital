@@ -475,7 +475,7 @@ def unregistered_create_bill(request, order_type, id):
 
         sgst = form.get('sgst')
         cgst = form.get('cgst')
-
+        state_code = form.get('state_code')
         is_already = MedicineUnregisteredOrderBillHead.objects.filter(head_id=id)
         if is_already:
             head_id = is_already[0].id
@@ -502,6 +502,7 @@ def unregistered_create_bill(request, order_type, id):
                                                                current=after_dis_amount,
                                                                status=1,
                                                                order_type=order_type,
+                                                               state_code=state_code,
                                                                )
         if obj:
             head_id = obj.id
