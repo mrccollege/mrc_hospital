@@ -586,6 +586,17 @@ def update_medicine_order_bill(request, order_type, id):
 
         sgst = form.get('sgst')
         cgst = form.get('cgst')
+        state_code = form.get('state_code')
+
+        for medicine_data in medicines:
+            record_qty = int(medicine_data['record_qty'])
+            sell_qty = int(medicine_data['sell_qty'])
+            if sell_qty > record_qty:
+                context = {
+                    'status': status,
+                    'msg': 'Some medicines record qty is less than sale qty.'
+                }
+                return JsonResponse(context)
 
         obj = MedicineOrderBillHead.objects.filter(id=id).update(store_id=store_id,
                                                                  sgst=sgst,
@@ -598,6 +609,7 @@ def update_medicine_order_bill(request, order_type, id):
                                                                  discount_amount=discount_amount,
                                                                  pay_amount=after_dis_amount,
                                                                  current=after_dis_amount,
+                                                                 state_code=state_code,
                                                                  )
         if obj:
             head_id = id

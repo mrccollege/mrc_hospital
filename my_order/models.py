@@ -77,6 +77,7 @@ class MedicineOrderBillHead(models.Model):
     ifc_number = models.CharField(max_length=100, null=True, blank=True)
     upi_id_number = models.CharField(max_length=100, null=True, blank=True)
     bar_code = models.ImageField(upload_to='bank_account_barcode', null=True, blank=True)
+    state_code = models.CharField(max_length=10, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 
@@ -142,6 +143,7 @@ class MedicineUnregisteredOrderBillHead(models.Model):
     ifc_number = models.CharField(max_length=100, null=True, blank=True)
     upi_id_number = models.CharField(max_length=100, null=True, blank=True)
     bar_code = models.ImageField(upload_to='bank_account_barcode', null=True, blank=True)
+    state_code = models.CharField(max_length=10, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 
@@ -205,6 +207,7 @@ class EstimateMedicineOrderBillHead(models.Model):
     ifc_number = models.CharField(max_length=100, null=True, blank=True)
     upi_id_number = models.CharField(max_length=100, null=True, blank=True)
     bar_code = models.ImageField(upload_to='bank_account_barcode', null=True, blank=True)
+    state_code = models.CharField(max_length=10, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 
