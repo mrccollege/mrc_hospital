@@ -684,7 +684,7 @@
         if (sell_qty > record_qty){
             $('#sell_qty' + index).val(pre_sell_qty)
             $('#sell_qty' + index).prop('readonly', true);
-            $('#remove_btn' + index).prop('disabled', true);
+            //$('#remove_btn' + index).prop('disabled', true);
         }
         var sell_qty = parseInt($('#sell_qty' + index).val()) || 0;
 
