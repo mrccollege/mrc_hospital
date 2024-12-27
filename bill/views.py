@@ -180,6 +180,21 @@ def create_customer_bill(request, patient_id=0):
 def create_customer_bill_detail(request, patient_id):
     patient = Patient.objects.get(id=patient_id)
     context = {
+        'patient_id': patient_id,
         'patient': patient,
     }
     return render(request, 'customer_bill/create_customer_detail.html', context)
+
+
+def customer_generate_bill(request, order_type, patient_id):
+    patient = Patient.objects.get(id=patient_id)
+    context = {
+        'patient_id': patient_id,
+        'patient': patient,
+    }
+    if order_type == 1:
+        return render(request, 'customer_bill/create_customer_bill_instate.html', context)
+    elif order_type == 2:
+        return render(request, 'customer_bill/create_customer_bill_other_state.html', context)
+    elif order_type == 3:
+        return render(request, 'customer_bill/create_customer_bill_of_supply.html', context)
