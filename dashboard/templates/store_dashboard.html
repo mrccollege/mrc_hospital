@@ -18,6 +18,41 @@
     <section class="content">
         <!-- Small boxes (Stat box) -->
         <div class="row">
+            <h3 class="text-center">Medicine Details</h3>
+            <div class="col-lg-3 col-xs-6">
+                <!-- small box -->
+                <div class="small-box bg-aqua" onclick="add_new_medicine_to_store()">
+                    <div class="inner">
+                        <h3 class="text-center"><i class="fa fa-plus" style="font-size:24px"></i></h3>
+                        <p class="text-center">Registered Medicine</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-medkit"></i>
+                    </div>
+                    <a href="/medicine/add_medicine/" class="small-box-footer">More info <i
+                            class="fa fa-arrow-circle-right"></i></a>
+                </div>
+            </div><!-- ./col -->
+
+            <div class="col-lg-3 col-xs-6">
+                <!-- small box -->
+                <div class="small-box bg-green" onclick="new_medicine_order_list()">
+                    <div class="inner">
+                        <h3 class="text-center">{{new_order}}</h3>
+                        <p class="text-center">Medicine List</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-stats-bars"></i>
+                    </div>
+                    <a href="/medicine/all_medicine/" class="small-box-footer">More info <i
+                            class="fa fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="row">
             <h3 class="text-center">Doctors Medicine Order details</h3>
             <div class="col-lg-3 col-xs-6">
                 <!-- small box -->
@@ -93,7 +128,8 @@
                     <div class="icon">
                         <i class="ion ion-person-add"></i>
                     </div>
-                    <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+                    <a href="/bill/create_customer_bill/0/" class="small-box-footer">More info <i
+                            class="fa fa-arrow-circle-right"></i></a>
                 </div>
             </div><!-- ./col -->
             <div class="col-lg-3 col-xs-6">

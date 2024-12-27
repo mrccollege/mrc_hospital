@@ -1,4 +1,7 @@
+from datetime import datetime
+
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 from django.shortcuts import render
 
 from .models import PatientBill, PatientBillDetail
@@ -13,6 +16,9 @@ from my_order.models import MedicineOrderBillHead
 
 from my_order.models import EstimateMedicineOrderBillHead
 from django.utils.timezone import localtime
+
+from account.models import User
+from patient.models import Patient
 
 
 # Create your views here.
@@ -89,14 +95,53 @@ def order_detail(request, id):
     return render(request, 'order_detail.html', context)
 
 
-def create_customer_bill(request, order_type):
+def create_customer_bill(request, order_type=0):
+    if request.method == 'POST':
+        form = request.POST
+        username = form.get('name')
+        mobile = form.get('mobile')
+        email = form.get('email')
+        patient_age = form.get('age')
+        sex = form.get('gender')
+
+        patient_code = datetime.now().strftime("%Y%d%H%M%S")
+        status = 'failed'
+        msg = 'Patient Registration failed.'
+        try:
+            user_obj = User.objects.create_user(username=username.title(),
+                                                email=email,
+                                                password='12345',
+                                                mobile=mobile,
+                                                sex=sex,
+                                                age=patient_age,
+                                                )
+            if user_obj:
+                patient_id = user_obj.id
+                Patient.objects.create(user_id=patient_id,
+                                       patient_code=patient_code,
+                                       )
+                status = 'success'
+                msg = 'Patient Registration successfully.'
+
+        except Exception as e:
+            status = status
+            msg = str(e)
+
+        context = {
+            'status': status,
+            'msg': msg,
+        }
+        return JsonResponse(context)
+
     context = {
         'order_type': order_type,
     }
-
     if order_type == 1:
-        return render(request, 'normal_bill/order_tax_invoice_in_state.html', context)
+        return render(request, 'customer_bill/create_customer_bill_instate.html', context)
     elif order_type == 2:
-        return render(request, 'normal_bill/order_tax_invoice_other_state.html', context)
+        return render(request, 'customer_bill/create_customer_bill_other_state.html', context)
     elif order_type == 3:
-        return render(request, 'normal_bill/oder_bill_of_supply.html', context)
+        return render(request, 'customer_bill/create_customer_bill_of_supply.html', context)
+    else:
+        return render(request, 'customer_bill/create_customer_bill.html', context)
+
