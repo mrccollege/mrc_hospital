@@ -95,7 +95,39 @@ def order_detail(request, id):
     return render(request, 'order_detail.html', context)
 
 
-def create_customer_bill(request, order_type=0):
+def get_patient(request):
+    if request.method == 'POST':
+        form = request.POST
+        search_data = form.get('search_data')
+        status = 'failed'
+        msg = 'Patient data not found?'
+        patient_id = 0
+        try:
+            user_obj = Patient.objects.filter(patient_code=search_data)
+            if user_obj:
+                patient_id = user_obj[0].id
+                status = 'success'
+                msg = 'Data found successfully.'
+        except Exception as e:
+            status = status
+            msg = str(e)
+
+        context = {
+            'status': status,
+            'msg': msg,
+            'patient_id': patient_id,
+        }
+        return JsonResponse(context)
+    # if order_type == 1:
+    #     return render(request, 'customer_bill/create_customer_bill_instate.html', context)
+    # elif order_type == 2:
+    #     return render(request, 'customer_bill/create_customer_bill_other_state.html', context)
+    # elif order_type == 3:
+    #     return render(request, 'customer_bill/create_customer_bill_of_supply.html', context)
+    return render(request, 'customer_bill/create_customer_bill.html')
+
+
+def create_customer_bill(request, patient_id=0):
     if request.method == 'POST':
         form = request.POST
         username = form.get('name')
@@ -107,6 +139,7 @@ def create_customer_bill(request, order_type=0):
         patient_code = datetime.now().strftime("%Y%d%H%M%S")
         status = 'failed'
         msg = 'Patient Registration failed.'
+        patient_id = 0
         try:
             user_obj = User.objects.create_user(username=username.title(),
                                                 email=email,
@@ -117,11 +150,13 @@ def create_customer_bill(request, order_type=0):
                                                 )
             if user_obj:
                 patient_id = user_obj.id
-                Patient.objects.create(user_id=patient_id,
-                                       patient_code=patient_code,
-                                       )
-                status = 'success'
-                msg = 'Patient Registration successfully.'
+                patient_obj = Patient.objects.create(user_id=patient_id,
+                                                     patient_code=patient_code,
+                                                     )
+                if patient_obj:
+                    patient_id = patient_obj.id
+                    status = 'success'
+                    msg = 'Patient Registration successfully.'
 
         except Exception as e:
             status = status
@@ -130,18 +165,21 @@ def create_customer_bill(request, order_type=0):
         context = {
             'status': status,
             'msg': msg,
+            'patient_id': patient_id,
         }
         return JsonResponse(context)
+    # if order_type == 1:
+    #     return render(request, 'customer_bill/create_customer_bill_instate.html', context)
+    # elif order_type == 2:
+    #     return render(request, 'customer_bill/create_customer_bill_other_state.html', context)
+    # elif order_type == 3:
+    #     return render(request, 'customer_bill/create_customer_bill_of_supply.html', context)
+    return render(request, 'customer_bill/create_customer_bill.html')
 
+
+def create_customer_bill_detail(request, patient_id):
+    patient = Patient.objects.get(id=patient_id)
     context = {
-        'order_type': order_type,
+        'patient': patient,
     }
-    if order_type == 1:
-        return render(request, 'customer_bill/create_customer_bill_instate.html', context)
-    elif order_type == 2:
-        return render(request, 'customer_bill/create_customer_bill_other_state.html', context)
-    elif order_type == 3:
-        return render(request, 'customer_bill/create_customer_bill_of_supply.html', context)
-    else:
-        return render(request, 'customer_bill/create_customer_bill.html', context)
-
+    return render(request, 'customer_bill/create_customer_detail.html', context)

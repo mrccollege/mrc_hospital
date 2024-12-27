@@ -13,6 +13,7 @@ urlpatterns = [
     path('order_list/', views.order_list, name='order_list'),
     path('order_detail/<int:id>/', views.order_detail, name='order_detail'),
 
-
-    path('create_customer_bill/<int:order_type>/', views.create_customer_bill, name='create_customer_bill'),
+    path('get_patient/', views.get_patient, name='get_patient'),
+    path('create_customer_bill/', views.create_customer_bill, name='create_customer_bill'),
+    path('create_customer_bill_detail/<int:patient_id>/', views.create_customer_bill_detail, name='create_customer_bill_detail'),
 ]

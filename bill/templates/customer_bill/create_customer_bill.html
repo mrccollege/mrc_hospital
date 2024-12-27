@@ -100,22 +100,27 @@
                                     </div>
 
                                     <div id="tab1" class="tab-content active">
-                                        <form id="tab1form">
-                                            <label for="customer_id">Customer Id / Mobile Number</label>
-                                            <input type="text" id="customer_id" name="customer_id" placeholder="Enter customer id"
-                                                   required>
-
-                                            <button type="submit">Submit</button>
+                                        <form id="tab1form">{% csrf_token %}
+                                            <label for="search_data">Customer Id / Mobile Number</label>
+                                            <input type="text" id="search_data" name="search_data"
+                                                   placeholder="Enter customer id"
+                                                   required value="">
+                                            <input type="hidden" name="patient_id1" id="patient_id1" value="0">
+                                            <button type="submit" class="mb-3">Submit</button>
+                                            <button type="button" id="tab1continues_btn" class="hidden">Continue
+                                            </button>
                                         </form>
                                     </div>
 
                                     <div id="tab2" class="tab-content">
-                                        <form id="tab2form">
+                                        <form id="tab2form">{% csrf_token %}
                                             <label for="name">Name:</label>
-                                            <input type="text" id="name" name="name" placeholder="Enter Customer name" required>
+                                            <input type="text" id="name" name="name" placeholder="Enter Customer name"
+                                                   required>
 
                                             <label for="age">Age:</label>
-                                            <input type="text" id="age" name="age" placeholder="Enter Customer age" required>
+                                            <input type="text" id="age" name="age" placeholder="Enter Customer age"
+                                                   required>
 
                                             <label for="gender">Gender:</label>
                                             <select name="gender" id="gender" class="form-control">
@@ -125,15 +130,20 @@
                                             </select>
 
                                             <label for="mobile">Mobile:</label>
-                                            <input type="text" id="mobile" name="mobile" placeholder="Enter Customer mobile" required>
+                                            <input type="text" id="mobile" name="mobile"
+                                                   placeholder="Enter Customer mobile" required>
 
                                             <label for="email">Email:</label>
-                                            <input type="email" id="email" name="email" placeholder="Enter Customer email" required>
+                                            <input type="email" id="email" name="email"
+                                                   placeholder="Enter Customer email" required>
 
-                                            <label for="email">Address:</label>
-                                            <input type="email" id="email" name="email" placeholder="Enter Customer email" required>
-
-                                            <button type="submit">Submit</button>
+                                            <label for="address">Address:</label>
+                                            <input type="address" id="address" name="address"
+                                                   placeholder="Enter address" required>
+                                            <input type="hidden" name="patient_id2" id="patient_id2" value="0">
+                                            <button type="submit" id="tab2submit_btn" class="mb-3">Submit</button>
+                                            <button type="button" id="tab2continues_btn" class="hidden">Continue
+                                            </button>
                                         </form>
                                     </div>
 
@@ -143,6 +153,7 @@
                         </div><!-- /.box -->
                     </div><!-- /.col -->
                 </div><!-- /.row -->
+            </div><!-- /.row -->
         </section><!-- /.content -->
     </div><!-- /.content-wrapper -->
 
@@ -154,6 +165,20 @@
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 
 <script>
+    $('#tab1continues_btn').click(function(){
+        patient_id = $('#patient_id1').val();
+        if (patient_id != 0 || patient_id != ''){
+            window.location = '/bill/create_customer_bill_detail/'+patient_id+'/'
+        }
+    });
+
+    $('#tab2continues_btn').click(function(){
+        patient_id = $('#patient_id2').val();
+        if (patient_id != 0 || patient_id != ''){
+            window.location = '/bill/create_customer_bill_detail/'+patient_id+'/'
+        }
+    });
+
     $('#selecttab1').click(function(){
         $('#selecttab2').removeClass('active')
         $(this).addClass('active')
@@ -168,6 +193,59 @@
 
         $('#tab1').removeClass('active')
         $('#tab2').addClass('active')
+    });
+</script>
+
+<script>
+    $('#tab1form').on('submit', function (e) {
+        $('#loader-overlay').show(); // Show overlay
+        $('#loader').show(); // Show loader
+
+        search_data = $('#search_data').val();
+        if(search_data == ''){
+            Swal.fire({
+                  title: 'Error',
+                  text: 'Please Fill customer ID / MOBILE / EMAIL ',
+                  icon: 'error',
+                  confirmButtonColor: '#3085d6',
+                  confirmButtonText: 'OK'
+             });
+            return false;
+        }
+
+        e.preventDefault();
+        var formData = $('#tab1form').serialize();
+        $.ajax({
+          url: '/bill/get_patient/',
+          type: 'POST',
+          data: formData,
+          success: function (response) {
+            $('#loader-overlay').hide(); // Show overlay
+            $('#loader').hide(); // Show loader
+            if(response.status == 'success'){
+                Swal.fire({
+                    title: 'Success',
+                    text: response.msg,
+                    icon: 'success',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'OK'
+                  }).then((result) => {
+                      $('#tab1continues_btn').removeClass('hidden')
+                      $('#patient_id1').val(response.patient_id)
+                  });
+            }else{
+              Swal.fire({
+                  title: 'Error',
+                  text: response.msg,
+                  icon: 'error',
+                  confirmButtonColor: '#3085d6',
+                  confirmButtonText: 'OK'
+              });
+              return false;
+            }
+          },
+        });
     });
 </script>
 
@@ -198,53 +276,17 @@
             $('#loader-overlay').hide(); // Show overlay
             $('#loader').hide(); // Show loader
             if(response.status == 'success'){
-                console.log(response.patient_obj)
-                var html = '';
-                html += '<option value="'+response.patient_obj.id+'">'+response.patient_obj.name+'</option>';
-                $('#reference_by_other').append(html)
-                $('#exampleModalCenter').modal('hide');
-            }else{
-              Swal.fire({
-                  title: 'Error',
-                  text: response.msg,
-                  icon: 'error',
-                  confirmButtonColor: '#3085d6',
-                  confirmButtonText: 'OK'
-              });
-              $('#password').val('');
-              return false;
-            }
-          },
-        });
-    });
-</script>
-
-<script>
-    $('#user_form_id').on('submit', function (e) {
-        $('#loader-overlay').show(); // Show overlay
-        $('#loader').show(); // Show loader
-        store_id = $('#store_id').val();
-        if(store_id == 0){
-            return false;
-        }
-        e.preventDefault();
-        var formData = $('#user_form_id').serialize();
-        $.ajax({
-          url: '/account/update_user_detail/',
-          type: 'POST',
-          data: formData,
-          success: function (response) {
-            if(response.status == 'success'){
-                $('#loader-overlay').hide(); // Show overlay
-                $('#loader').hide(); // Show loader
-                  Swal.fire({
+                Swal.fire({
                     title: 'Success',
                     text: response.msg,
                     icon: 'success',
                     showCancelButton: false,
                     confirmButtonColor: '#3085d6',
                     confirmButtonText: 'OK'
-                  })
+                  }).then((result) => {
+                      $('#tab2continues_btn').removeClass('hidden')
+                      $('#patient_id2').val(response.patient_id)
+                  });
             }else{
               Swal.fire({
                   title: 'Error',
@@ -260,360 +302,5 @@
     });
 </script>
 
-<script>
-    $('#medicine_form').on('submit', function (e) {
-        $('#loader-overlay').show(); // Show overlay
-        $('#loader').show(); // Show loader
 
-        e.preventDefault();
-
-        var selectedMedicines = [];
-
-        $('input[name="order_qty"]').each(function() {
-            var qty = $(this).val();
-            if (qty && qty > 0) {  // Check if qty is entered
-                var row = $(this).closest('tr');  // Get the closest row to this input
-                var medicineData = {
-                    medicine_id: row.find('input[name="medicine_id"]').val(),
-                    order_qty: qty,
-                    mrp: row.find('input[name="mrp"]').val(),
-                    amount: row.find('input[name="amount"]').val(),
-                    desc: row.find('input[name="desc"]').val(),
-                };
-                selectedMedicines.push(medicineData);
-            }
-        });
-
-        var formData = {
-            medicines: JSON.stringify(selectedMedicines),  // Selected medicines data
-            doctor_id: $('#doctor_id').val(),
-            sub_total: $('#sub_total').val(),
-            total_discount: $('#total_discount').val(),
-            shipping_packing: $('#shipping_packing').val(),
-            total: $('#total').val(),
-            csrfmiddlewaretoken: '{{ csrf_token }}'  // Add CSRF token
-        };
-
-        if (selectedMedicines.length > 0) {
-            $.ajax({
-                url: '/my_order/medicine_order/',
-                type: 'POST',
-                data: formData,  // Send the form data with medicine and other inputs
-                success: function (response) {
-                    $('#loader-overlay').hide();
-                    $('#loader').hide();
-
-                    if(response.status == 'success'){
-                      Swal.fire({
-                        title: 'Success',
-                        text: response.msg,
-                        icon: 'success',
-                        showCancelButton: false,
-                        confirmButtonColor: '#3085d6',
-                        confirmButtonText: 'OK'
-                      }).then((result) => {
-                        window.location.href = '/my_order/my_medicine_ordered_list/';
-                      });
-                    }else{
-                      Swal.fire({
-                          title: 'Error',
-                          text: response.msg,
-                          icon: 'error',
-                          confirmButtonColor: '#3085d6',
-                          confirmButtonText: 'OK'
-                      });
-                      $('#password').val('');
-                      return false;
-                    }
-                },
-                error: function() {
-                    $('#loader-overlay').hide();
-                    $('#loader').hide();
-                    Swal.fire({
-                        title: 'Error',
-                        text: 'An error occurred during submission.',
-                        icon: 'error',
-                        confirmButtonColor: '#3085d6',
-                        confirmButtonText: 'OK'
-                    });
-                }
-            });
-        } else {
-            $('#loader-overlay').hide();
-            $('#loader').hide();
-            Swal.fire({
-                title: 'Error',
-                text: 'No quantities entered.',
-                icon: 'error',
-                confirmButtonColor: '#3085d6',
-                confirmButtonText: 'OK'
-            });
-        }
-    });
-
-
-</script>
-
-<script>
-    var index = 1;
-    $(document).ready(function(){
-        {% for i in medicine %}
-
-            var html = '';
-            html += '<tr id="medicine_tr'+index+'">';
-            html += '<td title="{{i.name}}">{{i.name}}</td>';
-            html += '<input type="hidden" value="{{i.id}}" name="medicine_id" class="form-control" id="medicine_id'+index+'" required>';
-
-            html += '<td title="{{i.category}}">{{i.category}}</td>';
-
-            html += '<td><input style="width: 100px;"  type="text" onkeyup="order_qty_function('+index+')" onkeypress="return isNumberKey(event)" id="order_qty'+index+'" name="order_qty" class="form-control" placeholder="enter qty"></td>';
-
-            html += '<td><input style="width: 100px;" value="{{i.price}}" type="text" id="mrp'+index+'" name="mrp" class="form-control" value="0" readonly required></td>';
-
-            html += '<td><input style="width: 100px;" value="0.00" type="text" id="amount'+index+'" name="amount" class="total form-control" readonly></td>';
-
-            html += '<td><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter" data-name="{% if i.name %}{{i.name}}{% else %}{% endif %}" data-desc="" data-price="{% if i.price %}{{i.price}}{% else %}{% endif %}">Read More</button></td>';
-
-            html += '<td><a href="{% if i.video_link %}{{i.video_link|safe}}{% else %}javascript:void(0){% endif %}" {% if i.video_link %}target="_blank"{% endif %} class="btn btn-sm btn-primary">Watch Video</a></td>';
-
-            //html += '<td><button class="btn btn-sm btn-danger" onclick="remove_row('+index+')"><i class="fa fa-trash"> Remove</button></td>';
-            html += '</tr>';
-
-
-            search_medicine(index)
-            $('table tbody').append(html);
-            index +=1;
-
-        {% endfor %}
-
-    });
-
-    function remove_row(index){
-        $('#medicine_tr'+index).remove()
-        sub_total_function()
-        sgst_and_cgst_function()
-    }
-
-
-    $(document).ready(function() {
-        $('#exampleModalCenter').on('show.bs.modal', function (event) {
-            var button = $(event.relatedTarget); // Button that triggered the modal
-            var name = button.data('name');     // Extract info from data-* attributes
-            var desc = button.data('desc');
-            var price = button.data('price');
-
-            // Update the modal's content
-            var modal = $(this);
-            modal.find('#modal-body-content').html(
-                '<p><strong>Medicine Name:</strong> ' + name + '</p>' +
-                '<p><strong>Description:</strong> ' + desc + '</p>' +
-                '<p><strong>Price:</strong> ' + price + '</p>'
-            );
-        });
-    });
-
-
-</script>
-
-<script>
-    function search_medicine(indexID) {
-
-        $('#medicine'+indexID).on('keydown', function(event) {
-            if (event.key === 'Backspace' || event.key === 'Delete') {
-                $('#record_id' + indexID).val('');
-                $('#medicine_id' + indexID).val('');
-                $('#mrp' + indexID).val('');
-                $('#category' + indexID).val('');
-                $('#amount' + indexID).val(0);
-            }
-        });
-
-        $('#medicine'+indexID).on('input', function() {
-            var value = $(this).val();
-            var leadingSpaces = value.match(/^ */)[0].length;
-            if (leadingSpaces > 2) {
-                $(this).val(value.slice(0, leadingSpaces - 1) + value.slice(leadingSpaces));
-            }
-        });
-
-        var medicineIds = [];
-
-        $('input[name="medicine_id"]').each(function() {
-            medicineIds.push($(this).val());
-        });
-        medicineIds = medicineIds.filter(function(id) {
-            return id.trim() !== '';
-        });
-
-        $('#medicine' + indexID).autocomplete({
-            source: function (request, response) {
-                $.ajax({
-                    url: '/my_order/search_medicine/',
-                    type: 'GET',
-                    data: {
-                        search_value: request.term,
-                        medicineIds: medicineIds,
-                    },
-                    success: function (result) {
-                        if (result.results) {
-                            var suggestedProducts = result.results.map(function (results) {
-                                return {
-                                    label: results.name,
-                                    value: results.name,
-                                    medicine_id: results.medicine_id,
-                                    category: results.category,
-                                    mrp:results.mrp
-                                };
-                            });
-                            response(suggestedProducts);
-                        }
-                    },
-                    error: function (xhr, errmsg, err) {
-                        console.log(xhr.status + ": " + xhr.responseText);
-                    }
-                });
-            },
-            minLength: 2,
-            select: function (event, ui) {
-                $('#medicine_id' + indexID).val(ui.item.medicine_id);
-                $('#mrp' + indexID).val(ui.item.mrp);
-                $('#category' + indexID).val(ui.item.category);
-                //add_medicine()
-            }
-        })
-    }
-</script>
-
-<script>
-    function order_qty_function(index){
-        var order_qty = parseInt($('#order_qty' + index).val()) || 0;
-        var mrp = parseInt($('#mrp' + index).val()) || 0;
-        var sell_amt = order_qty * mrp
-
-        var discount = parseInt($('#discount'+index).val()) || 0;
-        var disc_amt = (discount / 100) * sell_amt;
-        var amt =  sell_amt - disc_amt
-
-        $('#sale_rate'+index).val(amt.toFixed(2));
-        $('#amount'+index).val(amt.toFixed(2));
-
-        sub_total_function()
-        total_discount_apply_function()
-
-    }
-</script>
-
-<script>
-    function discount_function(index){
-        var order_qty = parseInt($('#order_qty' + index).val()) || 0;
-        var mrp = Number($('#mrp' + index).val()) || 0;
-        var sell_amt = order_qty * mrp
-
-        if (order_qty){
-            var discount = parseInt($('#discount'+index).val()) || 0;
-            var disc_amt = (discount / 100) * sell_amt;
-            var amt =  sell_amt - disc_amt
-
-            $('#sale_rate'+index).val(amt.toFixed(2));
-            $('#amount'+index).val(amt.toFixed(2));
-
-            sub_total_function()
-            total_discount_apply_function()
-        }else{
-            console.log('sell qty is not here')
-        }
-    }
-</script>
-
-<script>
-    function gst_function(index){
-        var order_qty = parseInt($('#order_qty' + index).val()) || 0;
-        var mrp = Number($('#mrp' + index).val()) || 0;
-        var sell_amt = order_qty * mrp
-
-        if (order_qty){
-            var discount = parseInt($('#discount'+index).val()) || 0;
-            var disc_amt = (discount / 100) * sell_amt;
-            var amt =  sell_amt - disc_amt
-
-            $('#sale_rate'+index).val(amt.toFixed(2));
-            $('#amount'+index).val(amt.toFixed(2));
-
-            sub_total_function()
-            total_discount_apply_function()
-        }else{
-            console.log('sell qty is not here')
-        }
-    }
-</script>
-
-<script>
-
-    function sub_total_function(){
-        var amountElements = document.querySelectorAll('[name="amount"]');
-        var totalSum = 0;
-        amountElements.forEach(function(element) {
-            var amt = Number(element.value) || 0;
-            totalSum += amt;
-        });
-        $('#sub_total').val(totalSum.toFixed(2))
-        if(totalSum >= 2000 && totalSum <= 15000){
-            $('#total_discount').val(30)
-        }
-        else if(totalSum >= 15001 && totalSum <= 16999){
-            $('#total_discount').val(35)
-        }
-        else if(totalSum >= 16999){
-            $('#total_discount').val(40)
-        }
-        else{
-            $('#total_discount').val(0)
-        }
-        total_discount_apply_function()
-    }
-</script>
-
-<script>
-    function total_discount_apply_function(){
-        var dis_apply = Number($('#total_discount').val()) || 0;
-        var shipping_packing = Number($('#shipping_packing').val()) || 0;
-
-        var sub_total = Number($('#sub_total').val())
-
-        var disc_amt = (dis_apply / 100) * sub_total;
-        var amt =  sub_total - disc_amt
-        var amt =  amt +  shipping_packing
-        $('#total').val(amt.toFixed(2))
-
-        var old_credit = Number($('#old_credit').val()) || 0;
-        var total = Number($('#total').val()) || 0;
-
-        var total_pay_bill = old_credit + total
-        Number($('#total_pay_bill_amount').val(total_pay_bill.toFixed(2)))
-    }
-</script>
-
-<script>
-    function cash_online_function(){
-        var cash = Number($('#cash').val()) || 0;
-        var online  = Number($('#online').val()) || 0;
-        total_pay_bill = Number($('#total_pay_bill_amount').val()) || 0;
-
-        var paid_amt = total_pay_bill - (cash + online)
-        $('#new_credit').val(paid_amt.toFixed(2))
-    }
-
-    $(function () {
-        var table = $("#example1").DataTable({
-            paging: true,
-            searching: true,
-        });
-
-        table.destroy();
-        $("#example1").DataTable({
-            paging: false,
-            searching: true,
-        });
-    });
-</script>
 {% endblock js %}
