@@ -138,6 +138,12 @@
                                 </form>
 
 
+                                <div id="example1_filter" class="dataTables_filter">
+                                    <input type="text" id="customSearch" class="form-control"
+                                           placeholder="Search for matching rows...">
+                                </div>
+
+
                                 <form id="medicine_form">
                                     {% csrf_token %}
                                     <div class="box-body">
@@ -158,6 +164,7 @@
                                                 <tbody>
                                                 </tbody>
                                             </table>
+
                                             <hr>
                                             <h3 class="text-center"><strong><u>It is not original bill, it's only
                                                 estimate.</u></strong></h3>
@@ -215,10 +222,37 @@
 
 </div><!-- ./wrapper -->
 
+
 {% endblock content %}
 
 {% block js %}
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+
+<script>
+    $(document).ready(function () {
+        const table = $('#example1').DataTable({
+            order: true, // Disable initial sorting
+            paging: false, // Disable pagination
+            dom: 'lrtip', // Hide default search box
+        });
+
+        // Custom search logic
+        $('#customSearch').on('keyup', function () {
+            const searchTerm = $(this).val().toLowerCase();
+            const rows = $('#example1 tbody tr');
+
+            rows.each(function () {
+                const row = $(this);
+                const text = row.text().toLowerCase();
+
+                if (text.includes(searchTerm)) {
+                    row.prependTo('#example1 tbody'); // Move matching rows to the top
+                }
+            });
+        });
+    });
+</script>
 
 <script>
     $('#user_form_id').on('submit', function (e) {
@@ -604,17 +638,17 @@
         $('#new_credit').val(paid_amt.toFixed(2))
     }
 
-    $(function () {
-        var table = $("#example1").DataTable({
-            paging: true,
-            searching: true,
-        });
+<!--    $(function () {-->
+<!--        var table = $("#example1").DataTable({-->
+<!--            paging: true,-->
+<!--            searching: true,-->
+<!--        });-->
 
-        table.destroy();
-        $("#example1").DataTable({
-            paging: false,
-            searching: true,
-        });
-    });
+<!--        table.destroy();-->
+<!--        $("#example1").DataTable({-->
+<!--            paging: false,-->
+<!--            searching: false,-->
+<!--        });-->
+<!--    });-->
 </script>
 {% endblock js %}
