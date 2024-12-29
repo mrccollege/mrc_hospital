@@ -21,6 +21,12 @@ from my_order.models import MedicineOrderHead, MedicineOrderDetail
 
 # Create your views here.
 def main_store(request):
+    user_id = request.session['user_id']
+    admin_user = User.objects.filter(id=user_id)
+    type_store = ''
+    if admin_user:
+        if admin_user[0].username.upper() == 'ADMIN':
+            type_store = 'ADMIN'
     store = Store.objects.filter(type='MAIN')
     if store:
         main_store_id = store[0].id
@@ -34,7 +40,8 @@ def main_store(request):
     context = {
         'main_store_id': main_store_id,
         'store_name': store_name,
-        'medicine': medicine
+        'medicine': medicine,
+        'main': type_store,
     }
     return render(request, 'main_store_detail.html', context)
 
@@ -229,9 +236,16 @@ def medicine_stock_history(request):
 
 
 def mini_store(request):
+    user_id = request.session['user_id']
+    admin_user = User.objects.filter(id=user_id)
+    type_store = ''
+    if admin_user:
+        if admin_user[0].username.upper() == 'ADMIN':
+            type_store = 'ADMIN'
     store = Store.objects.filter(type='MINI').order_by('-id')
     context = {
-        'store': store
+        'store': store,
+        'main': type_store,
     }
     return render(request, 'mini_store_detail.html', context)
 

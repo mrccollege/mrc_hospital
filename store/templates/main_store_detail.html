@@ -39,9 +39,13 @@
                                     <th>Qty</th>
                                     <th>Manufacturer</th>
                                     <th>medicine_expiry</th>
+                                    <th>Action</th>
+                                    {% if main == 'ADMIN' %}
                                     <th>Record</th>
-                                    <th>Action</th>
-                                    <th>Action</th>
+                                    <th>Remove</th>
+                                    {% endif %}
+
+
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -53,9 +57,11 @@
                                     <td>{{i.qty}}</td>
                                     <td>{{i.medicine.manufacture|title}}</td>
                                     <td>{{i.expiry|date:"d-F-Y"}}</td>
-                                    <td><a href="/medicine/view_record_medicine_detail/{{i.id}}/"><b>view</b></a></td>
                                     <td><a href="/store/transfer_main_store_medicine_detail/{{i.id}}/"><b>Transfer</b></a></td>
+                                    {% if main == 'ADMIN' %}
+                                    <td><a href="/medicine/view_record_medicine_detail/{{i.id}}/"><b>view</b></a></td>
                                     <td><a href="/store/delete_medicine_from_store/{{ i.id }}/" class="delete-link"><b>Delete</b></a></td>
+                                    {% endif %}
 
                                 </tr>
                                 {% endfor %}
