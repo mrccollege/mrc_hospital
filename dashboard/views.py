@@ -22,10 +22,12 @@ def dashboard(request):
         return render(request, 'doctor_dashboard.html')
     is_store = Store.objects.filter(user_id=user_id)
     if is_store:
+        store_type = is_store[0].type
         new_order = MedicineOrderHead.objects.filter(status=0).count()
         normal_bill_order = MedicineOrderBillHead.objects.filter().count()
         estimate_bill_order = EstimateMedicineOrderBillHead.objects.filter(status=1).count()
         context = {
+            'store_type': store_type,
             'store_id': is_store[0].id,
             'new_order': new_order,
             'normal_bill_order': normal_bill_order,

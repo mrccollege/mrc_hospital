@@ -242,7 +242,12 @@ def mini_store(request):
     if admin_user:
         if admin_user[0].username.upper() == 'ADMIN':
             type_store = 'ADMIN'
-    store = Store.objects.filter(type='MINI').order_by('-id')
+    store_type = Store.objects.filter(user_id=user_id)
+    query = Q(type='MINI')
+    if store_type:
+        if store_type[0].type == 'MINI':
+            query = Q(user_id=user_id)
+    store = Store.objects.filter(query).order_by('-id')
     context = {
         'store': store,
         'main': type_store,
