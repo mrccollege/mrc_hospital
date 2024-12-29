@@ -3,6 +3,16 @@
 {% block css %}
 
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+<style>
+    #example1_filter {
+        text-align: right; /* Aligns the container's content to the right */
+    }
+
+    #customSearch {
+        display: inline-block; /* Ensures the input is inline and positioned correctly */
+        width: auto; /* Adjust width as needed */
+    }
+</style>
 
 {% endblock css %}
 
@@ -138,16 +148,14 @@
                                 </form>
 
 
-                                <div id="example1_filter" class="dataTables_filter">
-                                    <input type="text" id="customSearch" class="form-control"
-                                           placeholder="Search for matching rows...">
-                                </div>
-
-
                                 <form id="medicine_form">
                                     {% csrf_token %}
                                     <div class="box-body">
                                         <div class="table-responsive" style="overflow-x: auto;">
+                                            <div id="example1_filter" class="dataTables_filter">
+                                                <input type="text" id="customSearch" class="form-control"
+                                                       placeholder="Search for matching rows...">
+                                            </div>
                                             <table id="example1" class="table table-condensed">
                                                 <thead>
                                                 <tr>
@@ -228,11 +236,10 @@
 {% block js %}
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 
-
 <script>
     $(document).ready(function () {
         const table = $('#example1').DataTable({
-            order: true, // Disable initial sorting
+            order: [[0, 'asc']], // Sort alphabetically by the first column (A-Z)
             paging: false, // Disable pagination
             dom: 'lrtip', // Hide default search box
         });
@@ -242,17 +249,38 @@
             const searchTerm = $(this).val().toLowerCase();
             const rows = $('#example1 tbody tr');
 
+            let matchFound = false; // Track if a match is found
+
+            if (searchTerm === '') {
+                rows.show(); // Show all rows if search input is empty
+                $('#noDataRow').remove(); // Remove 'No data found' row if present
+                return;
+            }
+
             rows.each(function () {
                 const row = $(this);
                 const text = row.text().toLowerCase();
 
                 if (text.includes(searchTerm)) {
-                    row.prependTo('#example1 tbody'); // Move matching rows to the top
+                    row.show(); // Show matching row
+                    matchFound = true; // Set flag to true if a match is found
+                } else {
+                    row.hide(); // Hide non-matching row
                 }
             });
+
+            // If no match is found, show a "No data found" message
+            if (!matchFound) {
+                if (!$('#noDataRow').length) {
+                    $('#example1 tbody').append('<tr id="noDataRow"><td colspan="7" class="text-center">No data found</td></tr>');
+                }
+            } else {
+                $('#noDataRow').remove(); // Remove 'No data found' row if matches exist
+            }
         });
     });
 </script>
+
 
 <script>
     $('#user_form_id').on('submit', function (e) {
