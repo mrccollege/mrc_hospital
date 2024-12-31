@@ -647,7 +647,7 @@ def update_medicine_order_bill(request, order_type, id):
                 query = Q(head_id=head_id, medicine_id=medicine_id)
                 already_obj = MedicineOrderBillDetail.objects.filter(query)
 
-                if sell_qty < record_qty:
+                if sell_qty <= record_qty:
                     if already_obj:
                         MedicineOrderBillDetail.objects.filter(query).update(record_qty=record_qty,
                                                                              sell_qty=sell_qty,
