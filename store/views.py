@@ -64,7 +64,8 @@ def transfer_mini_store_medicine_detail(request, record_id):
     store_medicine = MedicineStore.objects.get(id=record_id)
     from_store_id = store_medicine.to_store.id
     store_name = store_medicine.to_store.user.username
-
+    print(from_store_id, '========from_store_id')
+    print(store_name, '========store_name')
     mini_store = Store.objects.all().exclude(id=from_store_id)
     context = {
         'recorde_id': record_id,
@@ -156,6 +157,8 @@ def transfer_medicine_from_mini(request):
         transfer_medicine_qty = int(form.get('transfer_medicine_qty'))
         medicine = MedicineStore.objects.get(id=recorde_id)
         medicine_id = medicine.medicine.id
+        print(medicine_id, '==================medicine_id')
+        print(to_store_id, '==================to_store_id')
         medicine_name = medicine.medicine.name
         existing_qty = medicine.qty
         medicine_manufacture = medicine.medicine.manufacture
@@ -194,7 +197,7 @@ def transfer_medicine_from_mini(request):
         if obj:
             MedicineStore.objects.filter(medicine_id=medicine_id, to_store_id=from_store_id, batch_no=batch_no).update(
                 qty=medicine_qty)
-            available_stock = MedicineStore.objects.get(medicine_id=medicine_id, to_store_id=to_store_id)
+            available_stock = MedicineStore.objects.get(query)
             MedicineStoreTransactionHistory.objects.create(from_store_id=from_store_id,
                                                            to_store_id=to_store_id,
                                                            medicine_id=medicine_id,
