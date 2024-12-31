@@ -1523,13 +1523,13 @@ def final_bill_invoice(request, id):
     }
 
     if order_type == 1:
-        return render(request, 'invoice/normal_invoice/normal_invoice_instate.html', context)
+        return render(request, 'invoice/normal_final_invoive/normal_invoice_instate.html', context)
     elif order_type == 2:
-        return render(request, 'invoice/normal_invoice/normal_invoice_other_state.html', context)
+        return render(request, 'invoice/normal_final_invoive/normal_invoice_other_state.html', context)
     elif order_type == 3:
-        return render(request, 'invoice/normal_invoice/normal_invoice_bill_of_supply.html', context)
+        return render(request, 'invoice/normal_final_invoive/normal_invoice_bill_of_supply.html', context)
     else:
-        return render(request, 'invoice/normal_invoice/normal_invoice_bill_of_supply.html', context)
+        return render(request, 'invoice/normal_final_invoive/normal_invoice_bill_of_supply.html', context)
 
 
 def view_normal_invoice_doctor(request, id):
