@@ -40,12 +40,10 @@
                                     <th>Manufacturer</th>
                                     <th>medicine_expiry</th>
                                     <th>Action</th>
-                                    {% if main == 'ADMIN' %}
+                                    {% if main == 'ADMIN' or main_store_id != 0 %}
                                     <th>Record</th>
                                     <th>Remove</th>
                                     {% endif %}
-
-
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -62,7 +60,6 @@
                                     <td><a href="/medicine/view_record_medicine_detail/{{i.id}}/"><b>view</b></a></td>
                                     <td><a href="/store/delete_medicine_from_store/{{ i.id }}/" class="delete-link"><b>Delete</b></a></td>
                                     {% endif %}
-
                                 </tr>
                                 {% endfor %}
                                 </tbody>
