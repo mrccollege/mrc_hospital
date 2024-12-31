@@ -58,7 +58,7 @@
                                     <td>{{i.medicine.manufacture|title}}</td>
                                     <td>{{i.expiry|date:"d-F-Y"}}</td>
                                     <td><a href="/store/transfer_main_store_medicine_detail/{{i.id}}/"><b>Transfer</b></a></td>
-                                    {% if main == 'ADMIN' %}
+                                    {% if main == 'ADMIN' or main_store_id != 0 %}
                                     <td><a href="/medicine/view_record_medicine_detail/{{i.id}}/"><b>view</b></a></td>
                                     <td><a href="/store/delete_medicine_from_store/{{ i.id }}/" class="delete-link"><b>Delete</b></a></td>
                                     {% endif %}
