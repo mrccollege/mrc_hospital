@@ -735,9 +735,9 @@ def update_medicine_order_bill(request, order_type, id):
             store_medicine = MedicineStore.objects.filter(query).values('qty', 'price', 'expiry')
             data_dict['medicine_id'] = i.medicine.id
             data_dict['medicine_name'] = i.medicine.name
-            data_dict['order_qty'] = i.sell_qty
+            data_dict['record_qty'] = i.record_qty
             data_dict['sell_qty'] = i.sell_qty
-            data_dict['discount'] = i.discount
+            data_dict['order_qty'] = i.order_qty
             data_dict['hsn'] = i.hsn
             data_dict['gst'] = i.gst
             data_dict['taxable_amount'] = i.taxable_amount

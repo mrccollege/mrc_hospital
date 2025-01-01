@@ -571,7 +571,7 @@
 
             html += '<td><input value="{{i.record_qty}}" type="text" id="record_qty'+index+'" name="record_qty" class="form-control" readonly required></td>';
 
-            html += '<td><input value="{{i.sell_qty}}" type="text" onkeyup="sell_qty_function('+index+')" onkeypress="return isNumberKey(event)" id="sell_qty'+index+'" name="sell_qty" class="form-control" placeholder="Sell quantity" required><input value="{{i.sell_qty}}" type="hidden" id="pre_sell_qty'+index+'" class="form-control" required></td>';
+            html += '<td><input {% if i.record_qty == 0 %} readonly {% endif %} value="{{i.sell_qty}}" type="text" onkeyup="sell_qty_function('+index+')" onkeypress="return isNumberKey(event)" id="sell_qty'+index+'" name="sell_qty" class="form-control" placeholder="Sell quantity" required><input value="{{i.sell_qty}}" type="hidden" id="pre_sell_qty'+index+'" class="form-control" required></td>';
             html += '<td><input style="width: 90px;" value="{{i.order_qty}}" name="order_qty" type="text"  class="form-control" readonly></td>';
             html += '<td><input value="{{i.mrp}}" type="text" id="mrp'+index+'" name="mrp" class="form-control" value="0" readonly required></td>';
 
@@ -725,9 +725,9 @@
         var record_qty = parseInt($('#record_qty' + index).val()) || 0;
         var pre_sell_qty = parseInt($('#pre_sell_qty' + index).val()) || 0;
 
-        if (sell_qty > record_qty){
-            $('#sell_qty' + index).val(0);
-        }
+<!--        if (sell_qty > record_qty){-->
+<!--            $('#sell_qty' + index).val(0);-->
+<!--        }-->
         var sell_qty = parseInt($('#sell_qty' + index).val()) || 0;
 
         var mrp = Number($('#mrp' + index).val()) || 0;
