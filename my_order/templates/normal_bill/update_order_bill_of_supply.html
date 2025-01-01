@@ -662,9 +662,7 @@
         var pre_sell_qty = parseInt($('#pre_sell_qty' + index).val()) || 0;
 
         if (sell_qty > record_qty){
-            $('#sell_qty' + index).val(pre_sell_qty)
-            $('#sell_qty' + index).prop('readonly', true);
-            //$('#remove_btn' + index).prop('disabled', true);
+            $('#sell_qty' + index).val(0)
         }
         var sell_qty = parseInt($('#sell_qty' + index).val()) || 0;
 
