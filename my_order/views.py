@@ -589,15 +589,81 @@ def update_medicine_order_bill(request, order_type, id):
         cgst = form.get('cgst')
         state_code = form.get('state_code')
 
+        head_id = id
+
+        medicine_ids = []
         for medicine_data in medicines:
+            medicine_id = medicine_data['medicine_id']
+            medicine_ids.append(medicine_id)
             record_qty = int(medicine_data['record_qty'])
             sell_qty = int(medicine_data['sell_qty'])
-            if sell_qty > record_qty:
-                context = {
-                    'status': status,
-                    'msg': 'Some medicines record qty is less than sale qty.'
-                }
-                return JsonResponse(context)
+            discount = int(medicine_data['discount'])
+            mrp = float(medicine_data['mrp'])
+            sale_rate = float(medicine_data['sale_rate'])
+            try:
+                hsn = medicine_data['hsn']
+            except:
+                hsn = 0
+
+            try:
+                gst = int(medicine_data['gst'])
+            except:
+                gst = 0
+
+            try:
+                taxable_amount = float(medicine_data['taxable_amount'])
+            except:
+                taxable_amount = 0
+
+            try:
+                tax = float(medicine_data['tax'])
+            except:
+                tax = 0
+            amount = float(medicine_data['amount'])
+
+            query = Q(head_id=head_id, medicine_id=medicine_id)
+            already_obj = MedicineOrderBillDetail.objects.filter(query)
+
+            if already_obj:
+                pre_sell_qty = already_obj[0].sell_qty
+                update_record_qty = int(record_qty + pre_sell_qty)
+                MedicineStore.objects.filter(to_store_id=store_id, medicine_id=medicine_id).update(
+                    qty=update_record_qty)
+                store_record = MedicineStore.objects.filter(to_store_id=store_id, medicine_id=medicine_id)
+                if store_record[0].qty >= sell_qty:
+                    record_qty = int(store_record[0].qty) - sell_qty
+                    MedicineOrderBillDetail.objects.filter(query).update(record_qty=record_qty,
+                                                                         sell_qty=sell_qty,
+                                                                         mrp=mrp,
+                                                                         discount=discount,
+                                                                         sale_rate=sale_rate,
+                                                                         hsn=hsn,
+                                                                         gst=gst,
+                                                                         taxable_amount=taxable_amount,
+                                                                         tax=tax,
+                                                                         amount=amount,
+                                                                         )
+
+                    MedicineStore.objects.filter(to_store_id=store_id, medicine_id=medicine_id).update(
+                        qty=record_qty)
+            else:
+                store_record = MedicineStore.objects.filter(to_store_id=store_id, medicine_id=medicine_id)
+                if store_record[0].qty >= sell_qty:
+                    record_qty = int(store_record[0].qty) - sell_qty
+                    MedicineOrderBillDetail.objects.create(head_id=head_id,
+                                                           medicine_id=medicine_id,
+                                                           record_qty=record_qty,
+                                                           sell_qty=sell_qty,
+                                                           mrp=mrp,
+                                                           discount=discount,
+                                                           sale_rate=sale_rate,
+                                                           hsn=hsn,
+                                                           gst=gst,
+                                                           taxable_amount=taxable_amount,
+                                                           tax=tax,
+                                                           amount=amount,
+                                                           )
+                    MedicineStore.objects.filter(to_store_id=store_id, medicine_id=medicine_id).update(qty=record_qty)
 
         obj = MedicineOrderBillHead.objects.filter(id=id).update(store_id=store_id,
                                                                  sgst=sgst,
@@ -613,80 +679,6 @@ def update_medicine_order_bill(request, order_type, id):
                                                                  state_code=state_code,
                                                                  )
         if obj:
-            head_id = id
-            medicine_ids = []
-            for medicine_data in medicines:
-                medicine_id = medicine_data['medicine_id']
-                medicine_ids.append(medicine_id)
-                record_qty = int(medicine_data['record_qty'])
-                sell_qty = int(medicine_data['sell_qty'])
-                discount = int(medicine_data['discount'])
-                mrp = float(medicine_data['mrp'])
-                sale_rate = float(medicine_data['sale_rate'])
-                try:
-                    hsn = medicine_data['hsn']
-                except:
-                    hsn = 0
-
-                try:
-                    gst = int(medicine_data['gst'])
-                except:
-                    gst = 0
-
-                try:
-                    taxable_amount = float(medicine_data['taxable_amount'])
-                except:
-                    taxable_amount = 0
-
-                try:
-                    tax = float(medicine_data['tax'])
-                except:
-                    tax = 0
-                amount = float(medicine_data['amount'])
-
-                query = Q(head_id=head_id, medicine_id=medicine_id)
-                already_obj = MedicineOrderBillDetail.objects.filter(query)
-
-                if sell_qty <= record_qty:
-                    if already_obj:
-                        MedicineOrderBillDetail.objects.filter(query).update(record_qty=record_qty,
-                                                                             sell_qty=sell_qty,
-                                                                             mrp=mrp,
-                                                                             discount=discount,
-                                                                             sale_rate=sale_rate,
-                                                                             hsn=hsn,
-                                                                             gst=gst,
-                                                                             taxable_amount=taxable_amount,
-                                                                             tax=tax,
-                                                                             amount=amount,
-                                                                             )
-
-                        if sell_qty <= record_qty:
-                            pre_sell_qty = already_obj[0].sell_qty
-                            remaining_qty = int(record_qty + pre_sell_qty) - int(sell_qty)
-                            MedicineStore.objects.filter(to_store_id=store_id, medicine_id=medicine_id).update(
-                                qty=remaining_qty)
-
-                            MedicineOrderBillDetail.objects.filter(query).update(record_qty=remaining_qty)
-                    else:
-                        MedicineOrderBillDetail.objects.create(head_id=head_id,
-                                                               medicine_id=medicine_id,
-                                                               record_qty=record_qty,
-                                                               sell_qty=sell_qty,
-                                                               mrp=mrp,
-                                                               discount=discount,
-                                                               sale_rate=sale_rate,
-                                                               hsn=hsn,
-                                                               gst=gst,
-                                                               taxable_amount=taxable_amount,
-                                                               tax=tax,
-                                                               amount=amount,
-                                                               )
-                        if sell_qty <= record_qty:
-                            remaining_qty = int(record_qty) - int(sell_qty)
-                            MedicineStore.objects.filter(to_store_id=store_id, medicine_id=medicine_id).update(
-                                qty=remaining_qty)
-                            MedicineOrderBillDetail.objects.filter(query).update(record_qty=remaining_qty)
             MedicineOrderHead.objects.filter(id=id).update(status=1)
             MedicineOrderBillDetail.objects.filter(head_id=id).exclude(medicine_id__in=medicine_ids).delete()
             status = 'success'
