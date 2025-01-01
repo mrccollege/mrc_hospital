@@ -172,6 +172,7 @@
                                                     <th>Expiry</th>
                                                     <th>Record Qty</th>
                                                     <th>Sell Qty</th>
+                                                    <th>Order Qty</th>
                                                     <th colspan="1">MRP.</th>
                                                     <th>Disc.%</th>
                                                     <th>S.Rate.</th>
@@ -375,6 +376,7 @@
                     medicine_id: row.find('input[name="medicine_id"]').val(),
                     record_qty: row.find('input[name="record_qty"]').val(),
                     sell_qty: row.find('input[name="sell_qty"]').val(),
+                    order_qty: row.find('input[name="order_qty"]').val(),
                     discount: row.find('input[name="discount"]').val(),
                     mrp: row.find('input[name="mrp"]').val(),
                     sale_rate: row.find('input[name="sale_rate"]').val(),
@@ -480,6 +482,7 @@
                     medicine_id: row.find('input[name="medicine_id"]').val(),
                     record_qty: row.find('input[name="record_qty"]').val(),
                     sell_qty: row.find('input[name="sell_qty"]').val(),
+                    order_qty: row.find('input[name="order_qty"]').val(),
                     discount: row.find('input[name="discount"]').val(),
                     mrp: row.find('input[name="mrp"]').val(),
                     sale_rate: row.find('input[name="sale_rate"]').val(),
@@ -586,7 +589,7 @@
             html += '<td><input value="{{i.record_qty}}" type="text" id="record_qty'+index+'" name="record_qty" class="form-control" readonly required></td>';
 
             html += '<td><input value="{{i.sell_qty}}" type="text" onkeyup="sell_qty_function('+index+')" onkeypress="return isNumberKey(event)" id="sell_qty'+index+'" name="sell_qty" class="form-control" placeholder="Sell quantity" required><input value="{{i.sell_qty}}" type="hidden" id="pre_sell_qty'+index+'" class="form-control" required></td>';
-
+            html += '<td><input style="width: 90px;" value="{{i.order_qty}}" name="order_qty" type="text"  class="form-control" readonly></td>';
             html += '<td><input value="{{i.mrp}}" type="text" id="mrp'+index+'" name="mrp" class="form-control" value="0" readonly required></td>';
 
             html += '<td><input value="{{i.discount}}" type="text" onkeyup="discount_function('+index+')" onkeypress="return isNumberKey(event)" id="discount'+index+'" name="discount" class="form-control"></td>';
@@ -626,7 +629,7 @@
         html += '<td><input type="text" id="record_qty'+index+'" name="record_qty" class="form-control" readonly required></td>';
 
         html += '<td><input type="text" onkeyup="sell_qty_function('+index+')" onkeypress="return isNumberKey(event)" id="sell_qty'+index+'" name="sell_qty" class="form-control" placeholder="Sell quantity" required></td>';
-
+        html += '<td><input style="width: 90px;" value="0" name="order_qty" type="text"  class="form-control" readonly></td>';
         html += '<td><input type="text" id="mrp'+index+'" name="mrp" class="form-control" value="0" readonly required></td>';
 
         html += '<td><input value="0" type="text" onkeyup="discount_function('+index+')" onkeypress="return isNumberKey(event)" id="discount'+index+'" name="discount" class="form-control" required></td>';

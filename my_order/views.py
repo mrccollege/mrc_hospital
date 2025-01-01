@@ -316,6 +316,7 @@ def create_bill(request, order_type, id):
                 medicine_id = medicine_data['medicine_id']
                 record_qty = int(medicine_data['record_qty'])
                 sell_qty = int(medicine_data['sell_qty'])
+                order_qty = int(medicine_data['order_qty'])
                 discount = int(medicine_data['discount'])
                 mrp = float(medicine_data['mrp'])
                 sale_rate = float(medicine_data['sale_rate'])
@@ -345,6 +346,7 @@ def create_bill(request, order_type, id):
                                                              medicine_id=medicine_id,
                                                              record_qty=record_qty,
                                                              sell_qty=sell_qty,
+                                                             order_qty=order_qty,
                                                              mrp=mrp,
                                                              discount=discount,
                                                              sale_rate=sale_rate,
@@ -730,7 +732,7 @@ def update_medicine_order_bill(request, order_type, id):
             store_medicine = MedicineStore.objects.filter(query).values('qty', 'price', 'expiry')
             data_dict['medicine_id'] = i.medicine.id
             data_dict['medicine_name'] = i.medicine.name
-            data_dict['order_qty'] = i.order_qty
+            data_dict['order_qty'] = i.sell_qty
             data_dict['sell_qty'] = i.sell_qty
             data_dict['discount'] = i.discount
             data_dict['hsn'] = i.hsn
