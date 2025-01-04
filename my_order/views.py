@@ -1110,7 +1110,10 @@ def update_estimate_medicine_order_bill(request, order_type, id):
             data_dict['gst'] = i.gst
             data_dict['taxable_amount'] = i.taxable_amount
             data_dict['tax'] = i.tax
-            data_dict['expiry'] = store_medicine[0]['expiry']
+            try:
+                data_dict['expiry'] = store_medicine[0]['expiry']
+            except:
+                data_dict['expiry'] = ''
 
             try:
                 data_dict['record_qty'] = store_medicine[0]['qty']
