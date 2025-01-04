@@ -212,7 +212,6 @@ def add_medicine_to_store(request):
         form = request.POST
         store_id = int(form.get('store_id'))
         medicine_id = form.getlist('medicine_id')
-        mini_record_qty = form.getlist('mini_record_qty')
         qty = form.getlist('qty')
         price = form.getlist('price')
         batch_no = form.getlist('batch_no')
@@ -231,7 +230,6 @@ def add_medicine_to_store(request):
                                                              to_store_id=store_id,
                                                              medicine_id=int(medicine_id[i]),
                                                              qty=int(qty[i]),
-                                                             min_medicine_record_qty=int(mini_record_qty[i]),
                                                              price=float(price[i]),
                                                              batch_no=batch_no[i].upper(),
                                                              expiry=datetime.strptime(expiry_date[i], "%d-%B-%Y"),

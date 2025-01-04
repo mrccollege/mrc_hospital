@@ -66,10 +66,9 @@
                                                 <tr>
                                                     <th>SN.</th>
                                                     <th>Medicine Name</th>
-                                                    <th>Min. Record Qty</th>
+                                                    <th>Batch No.</th>
                                                     <th>Qty</th>
                                                     <th>Price</th>
-                                                    <th>Batch No.</th>
                                                     <th>Expiry Date</th>
                                                 </tr>
                                                 </thead>
@@ -162,11 +161,13 @@
         html += '<tr id="medicine_tr'+index+'">';
         html += '<td>'+index+'</td>';
         html += '<td><input onkeyup="search_medicine('+index+');" type="text" id="medicine'+index+'" name="medicine" class="form-control" autocomplete="off" placeholder="Search medicine: " required></td>';
+
+        html += '<td><input type="text" id="batch_no'+index+'" name="batch_no" class="form-control"></td>';
+
         html += '<input type="hidden" name="medicine_id" class="form-control" id="medicine_id'+index+'" required>';
-        html += '<td><input type="text" id="mini_record_qty'+index+'" name="mini_record_qty" class="form-control" required></td>';
         html += '<td><input type="text" id="qty'+index+'" name="qty" class="form-control" required></td>';
         html += '<td><input type="text" id="price'+index+'" name="price" class="form-control" required></td>';
-        html += '<td><input type="text" id="batch_no'+index+'" name="batch_no" class="form-control"></td>';
+
         html += '<td><input type="text" id="expiry_date'+index+'" name="expiry_date" class="form-control" required></td>';
         html += '<td><button onclick="remove_row('+index+')"><i class="fa fa-remove" style="font-size:24px"></i></button></td>';
         html += '</tr>';
