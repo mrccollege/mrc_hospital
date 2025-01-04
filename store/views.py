@@ -258,16 +258,40 @@ def mini_store(request):
     return render(request, 'mini_store_detail.html', context)
 
 
+# def delete_medicine_from_store(request, id):
+#     try:
+#         # Attempt to delete the MedicineStore entry by id
+#         deleted, _ = MedicineStore.objects.filter(id=id).delete()
+#         if deleted:
+#             msg = 'Medicine has been deleted.'
+#             success = True
+#         else:
+#             msg = 'Medicine not found.'
+#             success = False
+#     except Exception as e:
+#         msg = f'Error occurred: {str(e)}'
+#         success = False
+#
+#     # Return a JSON response
+#     return JsonResponse({'success': success, 'msg': msg})
+
 def delete_medicine_from_store(request, id):
     try:
-        # Attempt to delete the MedicineStore entry by id
-        deleted, _ = MedicineStore.objects.filter(id=id).delete()
-        if deleted:
+        # Retrieve the MedicineStore entry by id
+        medicine_store = MedicineStore.objects.get(id=id)
+
+        # Check if the quantity is greater than 0
+        if medicine_store.qty > 0:
+            msg = 'Cannot delete. Medicine quantity is greater than 0.'
+            success = False
+        else:
+            # Proceed to delete if quantity is 0
+            medicine_store.delete()
             msg = 'Medicine has been deleted.'
             success = True
-        else:
-            msg = 'Medicine not found.'
-            success = False
+    except MedicineStore.DoesNotExist:
+        msg = 'Medicine not found.'
+        success = False
     except Exception as e:
         msg = f'Error occurred: {str(e)}'
         success = False

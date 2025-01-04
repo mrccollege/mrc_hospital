@@ -95,6 +95,17 @@ def order_detail(request, id):
     return render(request, 'order_detail.html', context)
 
 
+def view_doctor_order_detail(request, id):
+    user = MedicineOrderHead.objects.get(id=id)
+    medicine = MedicineOrderDetail.objects.filter(head_id=id)
+    context = {
+        'id': id,
+        'user': user,
+        'medicine': medicine,
+    }
+    return render(request, 'view_doctor_order_detail.html', context)
+
+
 def get_patient(request):
     if request.method == 'POST':
         form = request.POST

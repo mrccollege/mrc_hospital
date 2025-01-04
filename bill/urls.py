@@ -11,6 +11,7 @@ urlpatterns = [
     path('estimate_order_bill_list/', views.estimate_order_bill_list, name='estimate_order_bill_list'),
     path('order_list/', views.order_list, name='order_list'),
     path('order_detail/<int:id>/', views.order_detail, name='order_detail'),
+    path('view_doctor_order_detail/<int:id>/', views.view_doctor_order_detail, name='view_doctor_order_detail'),
 
     path('get_patient/', views.get_patient, name='get_patient'),
     path('create_customer_bill/', views.create_customer_bill, name='create_customer_bill'),
