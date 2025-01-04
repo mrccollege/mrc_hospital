@@ -315,7 +315,6 @@ def update_medicine_record(request):
             store_obj = Store.objects.filter(id=store_id)
             if store_obj:
                 to_store_id = store_obj[0].id
-                MedicineStore.objects.filter(medicine_id=medicine_id, to_store_id=to_store_id).update(batch_no=batch_no)
                 query = Q(medicine_id=medicine_id, to_store_id=to_store_id, batch_no=batch_no)
                 obj = MedicineStore.objects.get(query)
                 total_qty = obj.qty
