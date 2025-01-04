@@ -69,7 +69,7 @@ def order_list(request):
 
 
 def normal_order_bill_list(request):
-    order = MedicineOrderBillHead.objects.all().order_by('-created_at__date')
+    order = MedicineOrderBillHead.objects.all().order_by('-id')
     context = {
         'order': order
     }
