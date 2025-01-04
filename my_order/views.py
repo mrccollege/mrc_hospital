@@ -704,7 +704,7 @@ def update_medicine_order_bill(request, order_type, id):
             store_id = 0
 
         user = MedicineOrderBillHead.objects.get(id=id)
-        is_last = user.id == MedicineOrderBillHead.objects.aggregate(Max('id'))['id__max']
+        is_last = user.id == MedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).aggregate(Max('id'))['id__max']
         is_estimated = EstimateMedicineOrderBillHead.objects.filter(order_id_id=user.order_id).exists()
         if is_last and is_estimated == False:
             is_last = True
