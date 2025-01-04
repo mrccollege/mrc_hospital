@@ -98,7 +98,7 @@
 				"mData": oDefaults.mData ? oDefaults.oDefaults : iCol
 			} );
 			oSettings.aoColumns.push( oCol );
-			
+
 			/* Add a column specific filter */
 			if ( oSettings.aoPreSearchCols[ iCol ] === undefined || oSettings.aoPreSearchCols[ iCol ] === null )
 			{
@@ -107,24 +107,24 @@
 			else
 			{
 				var oPre = oSettings.aoPreSearchCols[ iCol ];
-				
+
 				/* Don't require that the user must specify bRegex, bSmart or bCaseInsensitive */
 				if ( oPre.bRegex === undefined )
 				{
 					oPre.bRegex = true;
 				}
-				
+
 				if ( oPre.bSmart === undefined )
 				{
 					oPre.bSmart = true;
 				}
-				
+
 				if ( oPre.bCaseInsensitive === undefined )
 				{
 					oPre.bCaseInsensitive = true;
 				}
 			}
-			
+
 			/* Use the column options function to initialise classes etc */
 			_fnColumnOptions( oSettings, iCol, null );
 		}
