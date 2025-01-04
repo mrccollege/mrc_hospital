@@ -32,8 +32,8 @@
                             <table id="example1" class="table table-bordered table-striped">
                                 <thead>
                                 <tr>
+                                    <th>S.N</th>
                                     <th>Date</th>
-<!--                                    <th>Id</th>-->
                                     <th>Name</th>
                                     <th>Mobile</th>
                                     <th>Address</th>
@@ -49,8 +49,8 @@
                                 <tbody>
                                 {% for i in order %}
                                 <tr>
+                                    <td>{{ forloop.counter }}</td>
                                     <td>{{ i.created_at|date:"d-M-Y h:i A" }}</td>
-<!--                                    <td>{{ i.id }}</td>-->
                                     <td>{{i.doctor|title}}</td>
                                     <td>{{i.doctor.user.mobile}}</td>
                                     <td>{{i.doctor.user.district}}, {{i.doctor.user.state}}</td>
