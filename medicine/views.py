@@ -212,6 +212,7 @@ def add_medicine_to_store(request):
         form = request.POST
         store_id = int(form.get('store_id'))
         medicine_id = form.getlist('medicine_id')
+        mini_record_qty = form.getlist('mini_record_qty')
         qty = form.getlist('qty')
         price = form.getlist('price')
         batch_no = form.getlist('batch_no')
@@ -224,11 +225,12 @@ def add_medicine_to_store(request):
                 if is_obj:
                     pre_qty = is_obj[0].qty
                     total_qty = pre_qty + int(qty[i])
-                    store_obj = MedicineStore.objects.filter(query).update(qty=total_qty)
+                    store_obj = MedicineStore.objects.filter(query).update(qty=total_qty, min_medicine_record_qty=int(mini_record_qty[i]))
                 else:
                     store_obj = MedicineStore.objects.create(from_store_id=store_id,
                                                              to_store_id=store_id,
                                                              medicine_id=int(medicine_id[i]),
+                                                             min_medicine_record_qty=int(mini_record_qty[i]),
                                                              qty=int(qty[i]),
                                                              price=float(price[i]),
                                                              batch_no=batch_no[i].upper(),
@@ -406,6 +408,10 @@ def search_batch_no(request):
             data_dict['batch_lable'] = str(i.batch_no) + ' - ' + str(i.medicine.name)
             data_dict['medicine_id'] = str(i.medicine.id)
             data_dict['medicine_name'] = str(i.medicine.name)
+            try:
+                data_dict['min_medicine_record_qty'] = int(i.min_medicine_record_qty)
+            except:
+                data_dict['min_medicine_record_qty'] = 0
             data_dict['price'] = i.price
             data_list.append(data_dict)
         context = {

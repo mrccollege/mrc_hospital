@@ -67,8 +67,9 @@
                                                     <th>SN.</th>
                                                     <th>Batch No.</th>
                                                     <th>Medicine Name</th>
-                                                    <th>Qty</th>
+                                                    <th>Add Qty</th>
                                                     <th>Price</th>
+                                                    <th>Min Required Qty</th>
                                                     <th>Expiry Date</th>
                                                 </tr>
                                                 </thead>
@@ -165,7 +166,10 @@
 
         html += '<input type="hidden" name="medicine_id" class="form-control" id="medicine_id'+index+'" required>';
         html += '<td><input type="text" id="qty'+index+'" name="qty" class="form-control" required></td>';
+
         html += '<td><input type="text" id="price'+index+'" name="price" class="form-control" required></td>';
+
+        html += '<td><input type="text" id="mini_record_qty'+index+'" name="mini_record_qty" value="0" class="form-control" required></td>';
 
         html += '<td><input type="text" id="expiry_date'+index+'" name="expiry_date" class="form-control" required></td>';
         html += '<td><button onclick="remove_row('+index+')"><i class="fa fa-remove" style="font-size:24px"></i></button></td>';
@@ -260,6 +264,10 @@
             });
             return false;
         }
+        $('#batch_no' + indexID).val('');
+        $('#price' + indexID).val('');
+        $('#medicine_id' + indexID).val('');
+        $('#medicine_name' + indexID).val('');
         var batch_noIds = [];
 
         $('input[name="batch_no"]').each(function () {
@@ -289,11 +297,12 @@
                                     price: results.price,
                                     medicine_id: results.medicine_id,
                                     medicine_name: results.medicine_name,
+                                    mini_record_qty: results.min_medicine_record_qty,
                                 };
                             });
                             response(suggestedProducts);
                         } else {
-                            response([{ label: "No data found", value: "" }]);  // Show "No data found" in the dropdown
+                            response([{ label: "No data found", value: "" }]);
                         }
                     },
                     error: function (xhr, errmsg, err) {
@@ -307,12 +316,14 @@
                     $('#price' + indexID).val('');
                     $('#medicine_id' + indexID).val('');
                     $('#medicine_name' + indexID).val('');
+                    $('#mini_record_qty' + indexID).val(0);
                     return false;
                 }
                 $('#batch_no' + indexID).val(ui.item.value);
                 $('#price' + indexID).val(ui.item.price);
                 $('#medicine_id' + indexID).val(ui.item.medicine_id);
                 $('#medicine' + indexID).val(ui.item.medicine_name);
+                $('#mini_record_qty' + indexID).val(ui.item.mini_record_qty);
             }
         });
     }
