@@ -72,7 +72,7 @@ def medicine_order(request):
         subtotal = form.get('sub_total')
         discount = form.get('total_discount')
         pay_amount = form.get('total')
-        invoice_number = generate_invoice_number()
+        invoice_number = 'Mrc'
         try:
             order_head = MedicineOrderHead.objects.create(invoice_number=invoice_number,
                                                           doctor_id=doctor_id,
@@ -462,7 +462,7 @@ def unregistered_create_bill(request, order_type, id):
         msg = 'Bill Creation failed.'
 
         medicines = json.loads(request.POST.get('medicines'))
-        invoice_number = form.get('invoice_number')
+        invoice_number = generate_invoice_number()
         doctor_id = form.get('doctor_id')
 
         subtotal = float(form.get('sub_total'))
