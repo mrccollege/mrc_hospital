@@ -162,7 +162,7 @@
         html += '<td>'+index+'</td>';
         html += '<td><input onkeyup="search_medicine('+index+');" type="text" id="medicine'+index+'" name="medicine" class="form-control" autocomplete="off" placeholder="Search medicine: " required></td>';
 
-        html += '<td><input type="text" id="batch_no'+index+'" name="batch_no" class="form-control"></td>';
+        html += '<td><input type="text" onkeyup="search_batch_no('+index+');" id="batch_no'+index+'" name="batch_no" autocomplete="off" placeholder="Search Batch : " class="form-control"></td>';
 
         html += '<input type="hidden" name="medicine_id" class="form-control" id="medicine_id'+index+'" required>';
         html += '<td><input type="text" id="qty'+index+'" name="qty" class="form-control" required></td>';
@@ -246,6 +246,77 @@
         });
     }
 
+</script>
+
+<script>
+    function search_batch_no(indexID) {
+        store_id = parseInt($('#store_id').val());
+        if (store_id == 0) {
+            Swal.fire({
+                title: 'Error',
+                text: 'Please Select Store.',
+                icon: 'error',
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'OK'
+            });
+            return false;
+        }
+        var batch_noIds = [];
+
+        $('input[name="batch_no"]').each(function () {
+            batch_noIds.push($(this).val());
+        });
+        batch_noIds = batch_noIds.filter(function (id) {
+            return id.trim() !== '';
+        });
+
+        $('#batch_no' + indexID).autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: '/medicine/search_batch_no/',
+                    type: 'GET',
+                    data: {
+                        search_value: request.term,
+                        batch_noIds: batch_noIds,
+                        store_id: store_id,
+                    },
+                    success: function (result) {
+                        if (result.results && result.results.length > 0) {
+                            var suggestedProducts = result.results.map(function (results) {
+                                return {
+                                    label: results.batch_lable,
+                                    value: results.batch_no,
+                                    id: results.id,
+                                    price: results.price,
+                                    medicine_id: results.medicine_id,
+                                    medicine_name: results.medicine_name,
+                                };
+                            });
+                            response(suggestedProducts);
+                        } else {
+                            response([{ label: "No data found", value: "" }]);  // Show "No data found" in the dropdown
+                        }
+                    },
+                    error: function (xhr, errmsg, err) {
+                        console.log(xhr.status + ": " + xhr.responseText);
+                    }
+                });
+            },
+            select: function (event, ui) {
+                if (ui.item.value === "") {
+                    $('#batch_no' + indexID).val('');
+                    $('#price' + indexID).val('');
+                    $('#medicine_id' + indexID).val('');
+                    $('#medicine_name' + indexID).val('');
+                    return false;
+                }
+                $('#batch_no' + indexID).val(ui.item.value);
+                $('#price' + indexID).val(ui.item.price);
+                $('#medicine_id' + indexID).val(ui.item.medicine_id);
+                $('#medicine' + indexID).val(ui.item.medicine_name);
+            }
+        });
+    }
 </script>
 
 {% endblock js %}

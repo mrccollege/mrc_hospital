@@ -391,6 +391,29 @@ def search_medicine(request):
         return JsonResponse(context)
 
 
+def search_batch_no(request):
+    if request.method == 'GET':
+        form = request.GET
+        search_value = form.get('search_value')
+        batch_noIds = form.getlist('batch_noIds[]')
+        store_id = int(form.get('store_id'))
+        medicine = MedicineStore.objects.filter(batch_no__icontains=search_value, to_store=store_id).exclude(id__in=batch_noIds)
+        data_list = []
+        for i in medicine:
+            data_dict = {}
+            data_dict['id'] = i.id
+            data_dict['batch_no'] = str(i.batch_no)
+            data_dict['batch_lable'] = str(i.batch_no) + ' - ' + str(i.medicine.name)
+            data_dict['medicine_id'] = str(i.medicine.id)
+            data_dict['medicine_name'] = str(i.medicine.name)
+            data_dict['price'] = i.price
+            data_list.append(data_dict)
+        context = {
+            'results': data_list,
+        }
+        return JsonResponse(context)
+
+
 def upload_medicine_excel(request):
     if request.method == 'POST' and request.FILES.get('medicine_excel'):
         status = 'failed?'
