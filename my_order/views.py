@@ -1095,6 +1095,9 @@ def update_estimate_medicine_order_bill(request, order_type, id):
         old_credit_sum = total_pay_amount - cash_online_amount
 
         medicine = EstimateMedicineOrderBillDetail.objects.filter(head_id=id)
+        medicine_count = EstimateMedicineOrderBillDetail.objects.filter(head_id=id).count()
+        print(id, '================id id')
+        print(medicine_count, '================medicine_count count')
         medicine_list = []
 
         for i in medicine:
