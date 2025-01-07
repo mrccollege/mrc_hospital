@@ -311,51 +311,52 @@ def update_medicine_record(request):
         medicine_expiry = datetime.strptime(medicine_expiry, "%d-%B-%Y")
         status = 'failed'
         msg = 'Medicine not added.'
-        try:
-            store_obj = Store.objects.filter(id=store_id)
-            if store_obj:
-                to_store_id = store_obj[0].id
-                query = Q(medicine_id=medicine_id, to_store_id=to_store_id, batch_no=batch_no)
-                obj = MedicineStore.objects.get(query)
-                total_qty = obj.qty
-                if add_medicine_qty:
-                    add_medicine_qty = add_medicine_qty
-                    total_qty = obj.qty + int(add_medicine_qty)
-                else:
-                    add_medicine_qty = 0
+        # try:
+        store_obj = Store.objects.filter(id=store_id)
+        if store_obj:
+            to_store_id = store_obj[0].id
+            query = Q(medicine_id=medicine_id, to_store_id=to_store_id, batch_no=batch_no)
+            obj = MedicineStore.objects.filter(query).update()
+            obj = MedicineStore.objects.get(query)
+            total_qty = obj.qty
+            if add_medicine_qty:
+                add_medicine_qty = add_medicine_qty
+                total_qty = obj.qty + int(add_medicine_qty)
+            else:
+                add_medicine_qty = 0
 
-                if minus_medicine_qty:
-                    minus_medicine_qty = minus_medicine_qty
-                    total_qty = obj.qty - int(minus_medicine_qty)
-                else:
-                    minus_medicine_qty = 0
+            if minus_medicine_qty:
+                minus_medicine_qty = minus_medicine_qty
+                total_qty = obj.qty - int(minus_medicine_qty)
+            else:
+                minus_medicine_qty = 0
 
-                main_store_medicine_obj = MedicineStore.objects.filter(query).update(qty=int(total_qty),
-                                                                                     price=price,
-                                                                                     batch_no=batch_no,
-                                                                                     expiry=medicine_expiry,
-                                                                                     min_medicine_record_qty=min_medicine_rec,
-                                                                                     )
-                if main_store_medicine_obj:
-                    MedicineStoreTransactionHistory.objects.create(from_store_id=to_store_id,
-                                                                   to_store_id=to_store_id,
-                                                                   medicine_id=medicine_id,
-                                                                   medicine_name=medicine_name,
-                                                                   batch_no=obj.batch_no,
-                                                                   category=category_name,
-                                                                   price=obj.price,
-                                                                   available_qty=total_qty,
-                                                                   add_qty=add_medicine_qty,
-                                                                   minus_qty=minus_medicine_qty,
-                                                                   medicine_manufacture=obj.medicine.manufacture,
-                                                                   medicine_expiry=medicine_expiry,
-                                                                   )
-                    status = 'success'
-                    msg = 'Medicine Updated Successfully.'
+            main_store_medicine_obj = MedicineStore.objects.filter(query).update(qty=int(total_qty),
+                                                                                 price=price,
+                                                                                 batch_no=batch_no,
+                                                                                 expiry=medicine_expiry,
+                                                                                 min_medicine_record_qty=min_medicine_rec,
+                                                                                 )
+            if main_store_medicine_obj:
+                MedicineStoreTransactionHistory.objects.create(from_store_id=to_store_id,
+                                                               to_store_id=to_store_id,
+                                                               medicine_id=medicine_id,
+                                                               medicine_name=medicine_name,
+                                                               batch_no=obj.batch_no,
+                                                               category=category_name,
+                                                               price=obj.price,
+                                                               available_qty=total_qty,
+                                                               add_qty=add_medicine_qty,
+                                                               minus_qty=minus_medicine_qty,
+                                                               medicine_manufacture=obj.medicine.manufacture,
+                                                               medicine_expiry=medicine_expiry,
+                                                               )
+                status = 'success'
+                msg = 'Medicine Updated Successfully.'
 
-        except Exception as e:
-            status = status
-            msg = str(e)
+        # except Exception as e:
+        #     status = status
+        #     msg = str(e)
 
         context = {
             'status': status,
@@ -379,7 +380,7 @@ def search_medicine(request):
         form = request.GET
         search_value = form.get('search_value')
         medicineIds = form.getlist('medicineIds[]')
-        medicine = Medicine.objects.filter(name__icontains=search_value).exclude(id__in=medicineIds)
+        medicine = Medicine.objects.filter(name__icontains=search_value)
         data_list = []
         for i in medicine:
             data_dict = {}
@@ -398,8 +399,9 @@ def search_batch_no(request):
         form = request.GET
         search_value = form.get('search_value')
         batch_noIds = form.getlist('batch_noIds[]')
+        print(batch_noIds, '=========batch_noIds=')
         store_id = int(form.get('store_id'))
-        medicine = MedicineStore.objects.filter(batch_no__icontains=search_value, to_store=store_id).exclude(id__in=batch_noIds).order_by('medicine__name')
+        medicine = MedicineStore.objects.filter(batch_no__icontains=search_value, to_store=store_id).order_by('medicine__name')
         data_list = []
         for i in medicine:
             data_dict = {}

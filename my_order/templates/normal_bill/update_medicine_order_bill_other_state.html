@@ -557,29 +557,29 @@
             var html = '';
             html += '<tr id="medicine_tr'+index+'">';
             html += '<td>'+index+'</td>';
-            html += '<td><input value="{{i.medicine_name}}" type="text" id="medicine'+index+'" name="medicine" class="form-control" autocomplete="off" placeholder="Search medicine: " required></td>';
+            html += '<td><input style="width: 200px;" value="{{i.medicine_name}}" type="text" id="medicine'+index+'" name="medicine" class="form-control" autocomplete="off" placeholder="Search medicine: " required></td>';
             html += '<input type="hidden" name="record_id" class="form-control" id="record_id'+index+'" required>';
             html += '<input value="{{i.medicine_id}}" type="hidden" name="medicine_id" class="form-control" id="medicine_id'+index+'" required>';
 
-            html += '<td><input value="{{ i.expiry|date:"d-m-Y" }}" type="text" id="expiry'+index+'" name="expiry" class="form-control" readonly required></td>';
+            html += '<td><input style="width: 90px;" value="{{ i.expiry|date:"d-m-Y" }}" type="text" id="expiry'+index+'" name="expiry" class="form-control" readonly required></td>';
 
-            html += '<td><input value="{{i.record_qty}}" type="text" id="record_qty'+index+'" name="record_qty" class="form-control" readonly required></td>';
+            html += '<td><input style="width: 90px;" value="{{i.record_qty}}" type="text" id="record_qty'+index+'" name="record_qty" class="form-control" readonly required></td>';
 
-            html += '<td><input value="{{i.sell_qty}}" type="text" onkeyup="sell_qty_function('+index+')" onkeypress="return isNumberKey(event)" id="sell_qty'+index+'" name="sell_qty" class="form-control" placeholder="Sell quantity" required><input value="{{i.sell_qty}}" type="hidden" id="pre_sell_qty'+index+'" class="form-control" required></td>';
-            html += '<td><input style="width: 90px;" value="{{i.order_qty}}" name="order_qty" type="text"  class="form-control" readonly></td>';
-            html += '<td><input value="{{i.mrp}}" type="text" id="mrp'+index+'" name="mrp" class="form-control" value="0" readonly required></td>';
+            html += '<td><input style="width: 90px;" value="{{i.sell_qty}}" type="text" onkeyup="sell_qty_function('+index+')" onkeypress="return isNumberKey(event)" id="sell_qty'+index+'" name="sell_qty" class="form-control" placeholder="Sell quantity" required><input value="{{i.sell_qty}}" type="hidden" id="pre_sell_qty'+index+'" class="form-control" required></td>';
+            html += '<td><input style="width: 90px;" style="width: 90px;" value="{{i.order_qty}}" name="order_qty" type="text"  class="form-control" readonly></td>';
+            html += '<td><input style="width: 90px;" value="{{i.mrp}}" type="text" id="mrp'+index+'" name="mrp" class="form-control" value="0" readonly required></td>';
 
-            html += '<td><input value="{{i.discount}}" type="text" onkeyup="discount_function('+index+')" onkeypress="return isNumberKey(event)" id="discount'+index+'" name="discount" class="form-control" required></td>';
+            html += '<td><input style="width: 90px;" value="{{i.discount}}" type="text" onkeyup="discount_function('+index+')" onkeypress="return isNumberKey(event)" id="discount'+index+'" name="discount" class="form-control" required></td>';
 
-            html += '<td><input type="text" id="sale_rate'+index+'" name="sale_rate" class="form-control" readonly required></td>';
+            html += '<td><input style="width: 90px;" type="text" id="sale_rate'+index+'" name="sale_rate" class="form-control" readonly required></td>';
 
-            html += '<td><input value="0" type="text" onkeypress="return isNumberKey(event)" id="hsn'+index+'" name="hsn" class="form-control" readonly required></td>';
+            html += '<td><input style="width: 90px;" value="0" type="text" onkeypress="return isNumberKey(event)" id="hsn'+index+'" name="hsn" class="form-control" readonly required></td>';
 
-            html += '<td><input value="{{i.gst}}" type="text" onkeyup="gst_function('+index+')" onkeypress="return isNumberKey(event)" id="gst'+index+'" name="gst" class="form-control" required></td>';
+            html += '<td><input style="width: 90px;" value="{{i.gst}}" type="text" onkeyup="gst_function('+index+')" onkeypress="return isNumberKey(event)" id="gst'+index+'" name="gst" class="form-control" required></td>';
 
-            html += '<td><input value="0" type="text" id="taxable_amount'+index+'" name="taxable_amount" class="total form-control" readonly></td>';
-            html += '<td><input value="0" type="text" id="tax'+index+'" name="tax" class="total form-control" readonly></td>';
-            html += '<td><input value="0" type="text" id="amount'+index+'" name="amount" class="total form-control" readonly></td>';
+            html += '<td><input style="width: 90px;" value="0" type="text" id="taxable_amount'+index+'" name="taxable_amount" class="total form-control" readonly></td>';
+            html += '<td><input style="width: 90px;" value="0" type="text" id="tax'+index+'" name="tax" class="total form-control" readonly></td>';
+            html += '<td><input style="width: 90px;" value="0" type="text" id="amount'+index+'" name="amount" class="total form-control" readonly></td>';
 
             html += '<td><button id="remove_btn'+index+'" onclick="remove_row('+index+')"><i class="fa fa-remove" style="font-size:24px"></i></button></td>';
             html += '</tr>';
@@ -602,29 +602,29 @@
         var html = '';
         html += '<tr id="medicine_tr'+index+'">';
         html += '<td>'+index+'</td>';
-        html += '<td><input onkeyup="search_medicine('+index+');" type="text" id="medicine'+index+'" name="medicine" class="form-control" autocomplete="off" placeholder="Search medicine: " required></td>';
+        html += '<td><input style="width: 200px;" onkeyup="search_medicine('+index+');" type="text" id="medicine'+index+'" name="medicine" class="form-control" autocomplete="off" placeholder="Search medicine: " required></td>';
         html += '<input type="hidden" name="record_id" class="form-control" id="record_id'+index+'" required>';
         html += '<input type="hidden" name="medicine_id" class="form-control" id="medicine_id'+index+'" required>';
 
-        html += '<td><input type="text" id="expiry'+index+'" name="expiry" class="form-control" readonly required></td>';
+        html += '<td><input style="width: 90px;" type="text" id="expiry'+index+'" name="expiry" class="form-control" readonly required></td>';
 
-        html += '<td><input type="text" id="record_qty'+index+'" name="record_qty" class="form-control" readonly required></td>';
+        html += '<td><input style="width: 90px;" type="text" id="record_qty'+index+'" name="record_qty" class="form-control" readonly required></td>';
 
-        html += '<td><input type="text" onkeyup="sell_qty_function('+index+')" onkeypress="return isNumberKey(event)" id="sell_qty'+index+'" name="sell_qty" class="form-control" placeholder="Sell quantity" required></td>';
-        html += '<td><input style="width: 90px;" value="0" name="order_qty" type="text"  class="form-control" readonly></td>';
-        html += '<td><input type="text" id="mrp'+index+'" name="mrp" class="form-control" value="0" readonly required></td>';
+        html += '<td><input style="width: 90px;" type="text" onkeyup="sell_qty_function('+index+')" onkeypress="return isNumberKey(event)" id="sell_qty'+index+'" name="sell_qty" class="form-control" placeholder="Sell quantity" required></td>';
+        html += '<td><input style="width: 90px;" style="width: 90px;" value="0" name="order_qty" type="text"  class="form-control" readonly></td>';
+        html += '<td><input style="width: 90px;" type="text" id="mrp'+index+'" name="mrp" class="form-control" value="0" readonly required></td>';
 
-        html += '<td><input value="0" type="text" onkeyup="discount_function('+index+')" onkeypress="return isNumberKey(event)" id="discount'+index+'" name="discount" class="form-control" required></td>';
+        html += '<td><input style="width: 90px;" value="0" type="text" onkeyup="discount_function('+index+')" onkeypress="return isNumberKey(event)" id="discount'+index+'" name="discount" class="form-control" required></td>';
 
-        html += '<td><input type="text" id="sale_rate'+index+'" name="sale_rate" class="form-control" readonly required></td>';
+        html += '<td><input style="width: 90px;" type="text" id="sale_rate'+index+'" name="sale_rate" class="form-control" readonly required></td>';
 
-        html += '<td><input type="text" onkeypress="return isNumberKey(event)" id="hsn'+index+'" name="hsn" class="form-control" readonly required></td>';
+        html += '<td><input style="width: 90px;" type="text" onkeypress="return isNumberKey(event)" id="hsn'+index+'" name="hsn" class="form-control" readonly required></td>';
 
-        html += '<td><input value="0" type="text" onkeyup="gst_function('+index+')" onkeypress="return isNumberKey(event)" id="gst'+index+'" name="gst" class="form-control" required></td>';
+        html += '<td><input style="width: 90px;" value="0" type="text" onkeyup="gst_function('+index+')" onkeypress="return isNumberKey(event)" id="gst'+index+'" name="gst" class="form-control" required></td>';
 
-        html += '<td><input value="0" type="text" id="taxable_amount'+index+'" name="taxable_amount" class="total form-control" readonly></td>';
-        html += '<td><input value="0" type="text" id="tax'+index+'" name="tax" class="total form-control" readonly></td>';
-        html += '<td><input value="0" type="text" id="amount'+index+'" name="amount" class="total form-control" readonly></td>';
+        html += '<td><input style="width: 90px;" value="0" type="text" id="taxable_amount'+index+'" name="taxable_amount" class="total form-control" readonly></td>';
+        html += '<td><input style="width: 90px;" value="0" type="text" id="tax'+index+'" name="tax" class="total form-control" readonly></td>';
+        html += '<td><input style="width: 90px;" value="0" type="text" id="amount'+index+'" name="amount" class="total form-control" readonly></td>';
 
         html += '<td><button onclick="remove_row('+index+')"><i class="fa fa-remove" style="font-size:24px"></i></button></td>';
         html += '</tr>';
