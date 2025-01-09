@@ -114,6 +114,7 @@
         <table>
             <thead>
             <tr>
+                <th>S.N</th>
                 <th>Medicine Name</th>
                 <th>Qty</th>
                 <th>MRP.</th>
@@ -125,6 +126,7 @@
             <tbody>
             {% for i in medicine %}
             <tr>
+                <td>{{forloop.counter}}</td>
                 <td>{{i.medicine}}</td>
                 <td>{{i.sell_qty}}</td>
                 <td>{{i.mrp}}</td>
@@ -135,7 +137,7 @@
             {% endfor %}
 
             <tr>
-                <td colspan="3">MRP Amount. {{subtotal_amount}}</td>
+                <td colspan="4">MRP Amount. {{subtotal_amount}}</td>
                 <td colspan="2">Total Discount. {{total_discounted_price}}</td>
                 <td colspan="4">Sub Total. {{user.subtotal}}</td>
             </tr>

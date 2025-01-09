@@ -578,10 +578,10 @@ def update_medicine_order_bill(request, order_type, id):
         medicines = json.loads(request.POST.get('medicines'))
 
         subtotal = float(form.get('sub_total'))
-        discount = int(form.get('total_discount'))
+        discount1 = int(form.get('total_discount'))
         shipping_packing = float(form.get('shipping_packing'))
 
-        discount_amount = subtotal * discount / 100
+        discount_amount = subtotal * discount1 / 100
         after_dis_amount = subtotal - discount_amount + shipping_packing
 
         cash = float(form.get('cash'))
@@ -677,7 +677,7 @@ def update_medicine_order_bill(request, order_type, id):
                                                                  cash=cash,
                                                                  online=online,
                                                                  shipping=shipping_packing,
-                                                                 discount=discount,
+                                                                 discount=discount1,
                                                                  discount_amount=discount_amount,
                                                                  pay_amount=after_dis_amount,
                                                                  current=after_dis_amount,
@@ -978,11 +978,11 @@ def update_estimate_medicine_order_bill(request, order_type, id):
         medicines = json.loads(request.POST.get('medicines'))
 
         subtotal = float(form.get('sub_total'))
-        discount = int(form.get('total_discount'))
+        discount1 = int(form.get('total_discount'))
         shipping_packing = float(form.get('shipping_packing'))
         current = float(form.get('current'))
 
-        discount_amount = subtotal * discount / 100
+        discount_amount = subtotal * discount1 / 100
         after_dis_amount = subtotal - discount_amount + shipping_packing
         after_dis_amount = after_dis_amount - current
 
@@ -1044,7 +1044,7 @@ def update_estimate_medicine_order_bill(request, order_type, id):
                                                                          cash=cash,
                                                                          online=online,
                                                                          shipping=shipping_packing,
-                                                                         discount=discount,
+                                                                         discount=discount1,
                                                                          discount_amount=discount_amount,
                                                                          pay_amount=after_dis_amount,
                                                                          )
@@ -1096,8 +1096,6 @@ def update_estimate_medicine_order_bill(request, order_type, id):
 
         medicine = EstimateMedicineOrderBillDetail.objects.filter(head_id=id)
         medicine_count = EstimateMedicineOrderBillDetail.objects.filter(head_id=id).count()
-        print(id, '================id id')
-        print(medicine_count, '================medicine_count count')
         medicine_list = []
 
         for i in medicine:
@@ -1426,8 +1424,6 @@ def final_bill_invoice(request, id):
         total=Sum('pay_amount')
     )['total'] or 0
 
-    print(total_pay_amount, '=====================total_pay_amount')
-    print(cash_online_amount, '=====================cash_online_amount')
     old_credit_sum = total_pay_amount - cash_online_amount
 
     pay_amount = user.pay_amount

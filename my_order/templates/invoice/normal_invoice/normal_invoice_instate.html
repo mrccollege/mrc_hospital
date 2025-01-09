@@ -118,6 +118,7 @@
         <table>
             <thead>
             <tr>
+                <th>S.N</th>
                 <th>Medicine Name</th>
                 <th>Qty</th>
                 <th>MRP.</th>
@@ -133,6 +134,7 @@
             <tbody>
             {% for i in medicine %}
             <tr>
+                <td>{{forloop.counter}}</td>
                 <td>{{i.medicine}}</td>
                 <td>{{i.sell_qty}}</td>
                 <td>{{i.mrp}}</td>
@@ -147,7 +149,7 @@
             {% endfor %}
 
             <tr>
-                <td colspan="3">MRP Amount. {{subtotal_amount}}</td>
+                <td colspan="4">MRP Amount. {{subtotal_amount}}</td>
                 <td colspan="2">Total Discount. {{total_discounted_price}}</td>
                 <td colspan="8"></td>
             </tr>
@@ -208,14 +210,6 @@
                     <td colspan="2" class="grand total">SGST Amount.</td>
                     <td>{{user.sgst}}</td>
                 </tr>
-<!--                <tr>-->
-<!--                    <td colspan="2" class="grand total">Discount %</td>-->
-<!--                    <td>{{user.discount}} %</td>-->
-<!--                </tr>-->
-<!--                <tr>-->
-<!--                    <td colspan="2" class="grand total">Discount Rs.</td>-->
-<!--                    <td>{{user.discount_amount}}</td>-->
-<!--                </tr>-->
                 <tr>
                     <td colspan="2" class="grand total">Shiping Charge.</td>
                     <td>{{user.shipping}}</td>
