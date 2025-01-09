@@ -638,6 +638,10 @@
         var current = Number($('#current').val()) || 0;
         var old_credit = Number($('#old_credit').val()) || 0;
         var total = Number($('#total').val()) || 0;
+        if (current > total){
+            var current = Number($('#current').val(0));
+        }
+        var current = Number($('#current').val()) || 0;
         total = total - current
         $('#bill_total').val(total.toFixed(2))
         var total_pay_bill = total + old_credit

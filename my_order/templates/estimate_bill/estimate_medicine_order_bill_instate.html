@@ -565,6 +565,7 @@
 
 <script>
     function total_discount_apply_function(){
+
         var dis_apply = Number($('#total_discount').val()) || 0;
         var shipping_packing = Number($('#shipping_packing').val()) || 0;
 
@@ -578,6 +579,10 @@
         var current = Number($('#current').val()) || 0;
         var old_credit = Number($('#old_credit').val()) || 0;
         var total = Number($('#total').val()) || 0;
+        if (current > total){
+            var current = Number($('#current').val(0));
+        }
+        var current = Number($('#current').val()) || 0;
         total = total - current
         $('#bill_total').val(total.toFixed(2))
 
