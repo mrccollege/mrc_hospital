@@ -28,7 +28,7 @@ from django.db.models import Sum, F, FloatField, ExpressionWrapper
 from order_payment_detail.models import PaymentDetail
 from django.db.models.functions import Coalesce
 from decimal import Decimal
-from .models import InvoiceTracker
+from .models import InvoiceTracker, NormalInvoiceTracker, EstimateInvoiceTracker
 from django.db.models import DecimalField
 
 
@@ -262,6 +262,12 @@ def delete_medicine_order(request, id):
     return JsonResponse(context)
 
 
+def normal_generate_invoice_number():
+    obj, _ = NormalInvoiceTracker.objects.get_or_create(year=datetime.now().year)
+    invoice_number = obj.get_next_invoice_number()
+    return invoice_number
+
+
 @login_required(login_url='/account/user_login/')
 def create_bill(request, order_type, id):
     if request.method == 'POST':
@@ -277,7 +283,7 @@ def create_bill(request, order_type, id):
         msg = 'Bill Creation failed.'
 
         medicines = json.loads(request.POST.get('medicines'))
-        invoice_number = form.get('invoice_number')
+        invoice_number = normal_generate_invoice_number()
         doctor_id = form.get('doctor_id')
 
         subtotal = float(form.get('sub_total'))
@@ -776,6 +782,12 @@ def update_medicine_order_bill(request, order_type, id):
             return render(request, 'normal_bill/update_order_bill_of_supply.html', context)
 
 
+def estimate_generate_invoice_number():
+    obj, _ = EstimateInvoiceTracker.objects.get_or_create(year=datetime.now().year)
+    invoice_number = obj.get_next_invoice_number()
+    return invoice_number
+
+
 @login_required(login_url='/account/user_login/')
 def estimate_medicine_order_bill(request, order_type, id):
     if request.method == 'POST':
@@ -793,7 +805,7 @@ def estimate_medicine_order_bill(request, order_type, id):
         medicines = json.loads(request.POST.get('medicines'))
         doctor_id = form.get('doctor_id')
         oder_id = form.get('oder_id')
-        invoice_number = form.get('invoice_number')
+        invoice_number = estimate_generate_invoice_number()
 
         subtotal = float(form.get('sub_total'))
         discount = int(form.get('total_discount'))

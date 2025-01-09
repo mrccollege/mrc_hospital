@@ -113,8 +113,10 @@ class MedicineOrderBillDetail(models.Model):
 
 
 class MedicineUnregisteredOrderBillHead(models.Model):
-    head = models.ForeignKey(MedicineOrderBillHead, related_name='headUnregisteredOrderBillHead', on_delete=models.CASCADE, null=True)
-    order_id = models.ForeignKey(MedicineOrderHead, related_name='order_idUnregisteredOrderBillHead', on_delete=models.CASCADE, null=True)
+    head = models.ForeignKey(MedicineOrderBillHead, related_name='headUnregisteredOrderBillHead',
+                             on_delete=models.CASCADE, null=True)
+    order_id = models.ForeignKey(MedicineOrderHead, related_name='order_idUnregisteredOrderBillHead',
+                                 on_delete=models.CASCADE, null=True)
     invoice_number = models.CharField(max_length=100, null=True)
     store = models.ForeignKey(Store, on_delete=models.CASCADE, null=True)
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE, null=True)
@@ -244,6 +246,46 @@ class EstimateMedicineOrderBillDetail(models.Model):
 
 
 class InvoiceTracker(models.Model):
+    year = models.IntegerField()
+    last_invoice_number = models.IntegerField(default=0)
+
+    def get_next_invoice_number(self):
+        """
+        Get the next invoice number in sequence.
+        Resets on 1st April every year.
+        """
+        from datetime import datetime
+        current_year = datetime.now().year
+        if self.year != current_year:  # Reset sequence for a new year
+            self.year = current_year
+            self.last_invoice_number = 0
+
+        self.last_invoice_number += 1
+        self.save()
+        return f"{self.last_invoice_number:05d}"  # Format as 5 digits
+
+
+class NormalInvoiceTracker(models.Model):
+    year = models.IntegerField()
+    last_invoice_number = models.IntegerField(default=0)
+
+    def get_next_invoice_number(self):
+        """
+        Get the next invoice number in sequence.
+        Resets on 1st April every year.
+        """
+        from datetime import datetime
+        current_year = datetime.now().year
+        if self.year != current_year:  # Reset sequence for a new year
+            self.year = current_year
+            self.last_invoice_number = 0
+
+        self.last_invoice_number += 1
+        self.save()
+        return f"{self.last_invoice_number:05d}"  # Format as 5 digits
+
+
+class EstimateInvoiceTracker(models.Model):
     year = models.IntegerField()
     last_invoice_number = models.IntegerField(default=0)
 
