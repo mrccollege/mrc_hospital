@@ -1292,7 +1292,7 @@ def view_normal_invoice(request, id):
     cash = user.cash
     online = user.online
 
-    remaining_amount = pay_amount - cash + online + old_credit_sum
+    remaining_amount = pay_amount - (cash + online) + old_credit_sum
     current = user.current
 
     medicine = MedicineOrderBillDetail.objects.filter(head_id=user.id)
@@ -1430,7 +1430,7 @@ def final_bill_invoice(request, id):
     cash = user.cash
     online = user.online
 
-    remaining_amount = pay_amount - cash + online + old_credit_sum
+    remaining_amount = pay_amount - (cash + online) + old_credit_sum
     current = user.current
 
     medicine = MedicineUnregisteredOrderBillDetail.objects.filter(head_id=user.id)
@@ -1569,7 +1569,7 @@ def view_normal_invoice_doctor(request, id):
     cash = user.cash
     online = user.online
 
-    remaining_amount = pay_amount - cash + online + old_credit_sum
+    remaining_amount = pay_amount - (cash + online) + old_credit_sum
     current = user.current
     medicine = MedicineOrderBillDetail.objects.filter(head_id=user.id)
     gst_per = MedicineOrderBillDetail.objects.filter(head_id=user.id).values_list('gst', flat=True).distinct()
@@ -1698,7 +1698,8 @@ def view_estimate_invoice(request, id):
     online = user.online
     total_amt = user.subtotal - user.discount_amount
 
-    remaining_amount = pay_amount - cash + online + old_credit_sum
+    remaining_amount = pay_amount - (cash + online) + old_credit_sum
+
     current = user.current
 
     medicine = EstimateMedicineOrderBillDetail.objects.filter(head_id=user.id)
