@@ -92,17 +92,6 @@
 <script src="/static/plugins/datatables/dataTables.bootstrap.js" type="text/javascript"></script>
 <!-- page script -->
 <script type="text/javascript">
-    $(function () {
-      $("#example1").dataTable();
-      $('#example2').dataTable({
-        "bPaginate": true,
-        "bLengthChange": false,
-        "bFilter": false,
-        "bSort": true,
-        "bInfo": true,
-        "bAutoWidth": false
-      });
-    });
 
     function delete_record(id){
         $('#loader-overlay').show();

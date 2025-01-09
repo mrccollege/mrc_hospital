@@ -61,7 +61,7 @@ def appointment_patient_bill_detail(request, id):
 
 
 def order_list(request):
-    order = MedicineOrderHead.objects.filter(status=0)
+    order = MedicineOrderHead.objects.filter(status=0).order_by('-id')
     context = {
         'order': order
     }
@@ -77,7 +77,7 @@ def normal_order_bill_list(request):
 
 
 def estimate_order_bill_list(request):
-    order = EstimateMedicineOrderBillHead.objects.filter(status=1)
+    order = EstimateMedicineOrderBillHead.objects.filter(status=1).order_by('-id')
     context = {
         'order': order
     }

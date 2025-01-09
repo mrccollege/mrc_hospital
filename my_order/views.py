@@ -1412,7 +1412,7 @@ def final_bill_invoice(request, id):
 
     order_type = user.order_type
     invoice_number = user.invoice_number
-    cash_online_amount = MedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).exclude(id=id).aggregate(
+    cash_online_amount = MedicineUnregisteredOrderBillHead.objects.filter(doctor_id=user.doctor.id).exclude(head_id=id).aggregate(
         total=Sum(
             Coalesce(F('cash'), 0) +
             Coalesce(F('online'), 0) +
@@ -1422,10 +1422,12 @@ def final_bill_invoice(request, id):
         )
     )['total'] or 0
 
-    total_pay_amount = MedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).exclude(id=id).aggregate(
+    total_pay_amount = MedicineUnregisteredOrderBillHead.objects.filter(doctor_id=user.doctor.id).exclude(head_id=id).aggregate(
         total=Sum('pay_amount')
     )['total'] or 0
 
+    print(total_pay_amount, '=====================total_pay_amount')
+    print(cash_online_amount, '=====================cash_online_amount')
     old_credit_sum = total_pay_amount - cash_online_amount
 
     pay_amount = user.pay_amount
