@@ -98,7 +98,8 @@ def doctor_registration(request):
         form = request.POST
         username = form.get('doctor_name')
         mobile = form.get('mobile')
-        email = mobile + '@yopmail.com'
+        email = form.get('email')
+        password = form.get('password')
         phone = form.get('phone')
 
         house_flat = form.get('house_flat')
@@ -116,7 +117,7 @@ def doctor_registration(request):
         try:
             user_obj = User.objects.create_user(username=username.title(),
                                                 email=email,
-                                                password='12345',
+                                                password=password,
                                                 mobile=mobile,
                                                 phone=phone,
                                                 house_flat=house_flat,
