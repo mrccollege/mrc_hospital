@@ -19,7 +19,18 @@ def dashboard(request):
     user_id = request.session.get('user_id')
     is_doctor = Doctor.objects.filter(user_id=user_id)
     if is_doctor:
-        return render(request, 'doctor_dashboard.html')
+        try:
+            user = User.objects.get(id=user_id)
+            doctor = Doctor.objects.get(user_id=user.id)
+            doctor_id = doctor.id
+        except:
+            doctor_id = 0
+
+        order_count = MedicineOrderHead.objects.filter(doctor_id=doctor_id).count()
+        context = {
+            'order_count': order_count,
+        }
+        return render(request, 'doctor_dashboard.html', context)
     is_store = Store.objects.filter(user_id=user_id)
     if is_store:
         store_type = is_store[0].type
