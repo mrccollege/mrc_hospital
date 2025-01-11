@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from django.contrib.auth import authenticate, login, logout
+from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 
@@ -101,7 +102,6 @@ def doctor_registration(request):
         email = form.get('email')
         password = form.get('password')
         phone = form.get('phone')
-
         house_flat = form.get('house_flat')
         street = form.get('street')
         city = form.get('city')
@@ -114,6 +114,18 @@ def doctor_registration(request):
         degree = form.get('degree')
         status = 'failed'
         msg = 'Doctor Registration failed.'
+
+        existing_user = User.objects.filter(Q(email__iexact=email) | Q(mobile__iexact=mobile)).first()
+
+        if existing_user:
+            if existing_user.email == email and existing_user.mobile == mobile:
+                msg = "This email and mobile number are already registered."
+            elif existing_user.email == email:
+                msg = "This email is already registered."
+            elif existing_user.mobile == mobile:
+                msg = "This mobile number is already registered."
+            return JsonResponse({'success': False, 'msg': msg})
+
         try:
             user_obj = User.objects.create_user(username=username.title(),
                                                 email=email,
