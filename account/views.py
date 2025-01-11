@@ -253,8 +253,8 @@ def user_login(request):
         msg = 'Account does not exist for this number, please enter the correct mobile number.'
 
         try:
-            user = User.objects.get(mobile__iexact=mobile)
-            user_name = user.username
+            user = User.objects.filter(mobile__iexact=mobile)
+            user_name = user[0].username
             user = authenticate(username=user_name, password=password)
             if user is not None:
                 login(request, user)
