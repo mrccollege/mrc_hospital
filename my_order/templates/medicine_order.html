@@ -152,30 +152,10 @@
                                     {% csrf_token %}
                                     <div class="box-body">
                                         <div class="table-responsive" style="overflow-x: auto;">
-                                            <div id="example1_filter" class="dataTables_filter">
-                                                <input type="text" id="customSearch" class="form-control"
-                                                       placeholder="Search for matching rows...">
-                                            </div>
-                                            <table id="example1" class="table table-condensed">
-                                                <thead>
-                                                <tr>
-                                                    <th>Medicine Name</th>
-                                                    <th>Type</th>
-                                                    <th>Qty</th>
-                                                    <th colspan="1">MRP.</th>
-                                                    <th>Amount</th>
-                                                    <th>Description</th>
-                                                    <th>Video</th>
-                                                    <!--                                                    <th>Action</th>-->
-                                                </tr>
-                                                </thead>
-                                                <tbody>
-                                                </tbody>
-                                            </table>
-
-                                            <hr>
                                             <h3 class="text-center"><strong><u>It is not original bill, it's only
-                                                estimate.</u></strong></h3>
+                                                estimate.</u></strong>
+                                            </h3>
+
                                             <div class="row col-lg-6">
                                                 <div class="row">
                                                     <div class="col-lg-6">
@@ -212,12 +192,41 @@
                                                                onkeypress="return isNumberKey(event)" readonly>
                                                     </div>
                                                 </div>
+
+                                                <div class="box-footer">
+                                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                                </div>
                                             </div>
+
+                                            <div class="row">
+                                                <div id="example1_filter" class="dataTables_filter">
+                                                    <input type="text" id="customSearch" class="form-control"
+                                                           placeholder="Search for matching rows...">
+                                                </div>
+                                            </div>
+
+                                            <table id="example1" class="table table-condensed">
+                                                <thead>
+                                                <tr>
+                                                    <th>Medicine Name</th>
+                                                    <th>Type</th>
+                                                    <th>Qty</th>
+                                                    <th colspan="1">MRP.</th>
+                                                    <th>Amount</th>
+                                                    <th>Description</th>
+                                                    <th>Video</th>
+                                                    <!--                                                    <th>Action</th>-->
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                </tbody>
+                                            </table>
+
+                                            <hr>
+
                                         </div>
                                     </div><!-- /.box-body -->
-                                    <div class="box-footer">
-                                        <button type="submit" class="btn btn-primary">Submit</button>
-                                    </div>
+
                                 </form>
 
                             </div>
@@ -666,17 +675,5 @@
         $('#new_credit').val(paid_amt.toFixed(2))
     }
 
-<!--    $(function () {-->
-<!--        var table = $("#example1").DataTable({-->
-<!--            paging: true,-->
-<!--            searching: true,-->
-<!--        });-->
-
-<!--        table.destroy();-->
-<!--        $("#example1").DataTable({-->
-<!--            paging: false,-->
-<!--            searching: false,-->
-<!--        });-->
-<!--    });-->
 </script>
 {% endblock js %}
