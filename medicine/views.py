@@ -218,8 +218,6 @@ def add_medicine_to_store(request):
         batch_no = form.getlist('batch_no')
         expiry_date = form.getlist('expiry_date')
         status = 'failed'
-        print(medicine_id, '=================medicine_id')
-        print(batch_no, '=================batch_no')
         try:
             for i in range(len(medicine_id)):
                 query = Q(to_store_id=store_id, medicine_id=int(medicine_id[i]), batch_no=batch_no[i].upper())

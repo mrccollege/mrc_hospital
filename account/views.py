@@ -1,3 +1,4 @@
+import time
 from datetime import datetime
 
 from django.contrib.auth import authenticate, login, logout
@@ -5,7 +6,7 @@ from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 
-from .models import User
+from .models import User, OtpVerify
 from hospital_detail.models import Hospital
 
 from store.models import Store
@@ -17,7 +18,7 @@ from patient.models import Patient, OtherReference
 from address_place.models import Country
 
 from patient.models import SocialMediaReference
-
+from django.core.mail import send_mail
 
 # Create your views here.
 def hospital_registration(request):
@@ -60,6 +61,7 @@ def store_registration(request):
         form = request.POST
         store_name = form.get('store_name')
         mobile = form.get('mobile')
+        mobile = mobile[-10:]
         email = mobile + '@yopmail.com'
         password = form.get('password')
         phone = form.get('phone')
@@ -99,6 +101,7 @@ def doctor_registration(request):
         form = request.POST
         username = form.get('doctor_name')
         mobile = form.get('mobile')
+        mobile = mobile[-10:]
         email = form.get('email')
         password = form.get('password')
         phone = form.get('phone')
@@ -172,6 +175,7 @@ def patient_registration(request):
         username = form.get('patient_name')
         care_of = form.get('care_of')
         mobile = form.get('mobile')
+        mobile = mobile[-10:]
         patient_age = form.get('patient_age')
         sex = form.get('sex')
         house_flat = form.get('house_flat')
@@ -248,6 +252,7 @@ def patient_registration(request):
 def user_login(request):
     if request.method == 'POST':
         mobile = request.POST.get('mobile')
+        mobile = mobile[-10:]
         password = request.POST.get('password')
         status = 'failed'
         msg = 'Account does not exist for this number, please enter the correct mobile number.'
@@ -280,6 +285,95 @@ def user_logout(request):
     logout(request)
     request.session.flush()
     return redirect('/account/user_login/')
+
+
+def generate_time_based_otp():
+    # Get the current time in seconds
+    current_time = int(time.time())
+    # Convert the current time to a string and use a portion of it as the OTP
+    otp = str(current_time)[-6:]
+
+    return otp
+
+def send_otp_email(email, otp):
+    subject = 'Your OTP for Verification'
+    message = f'Your OTP is: {otp}'
+    from_email = 'sanjay.singh@crebritech.com'
+    recipient_list = [email]
+
+    send_mail(subject, message, from_email, recipient_list)
+
+
+def forget_password(request):
+    if request.method == 'POST':
+        form = request.POST
+        email = form.get('email')
+        is_user = User.objects.filter(email__exact=email)
+        if is_user:
+            otp = generate_time_based_otp()
+            otp_obj = OtpVerify.objects.filter(email__exact=email)
+            if otp_obj:
+                OtpVerify.objects.filter(email__exact=email).update(otp=otp)
+                send_otp_email(email, otp)
+                status = 1
+                msg = f'OTP Send successfully on {email}'
+            else:
+                try:
+                    OtpVerify.objects.create(email=email, otp=otp)
+                    send_otp_email(email, otp)
+                    status = 1
+                    msg = f'OTP Send successfully on {email}'
+                except Exception as e:
+                    status = 0
+                    msg = str(e)
+        else:
+            status = 0
+            msg = 'Email is not registered'
+
+        context = {
+            'status': status,
+            'msg': msg,
+            'email': email,
+        }
+        return JsonResponse(context)
+    else:
+        return render(request, 'forget_password.html')
+
+
+def verity_otp(request, email=None):
+    if request.method == 'POST':
+        form = request.POST
+        email = form.get('email')
+        otp = form.get('otp')
+        new_password = form.get('new_password')
+        status = 0
+        msg = 'Password not reset'
+        is_user = User.objects.filter(email__iexact=email)
+        if is_user:
+            otp_obj = OtpVerify.objects.filter(email__iexact=email, otp__iexact=otp)
+            if otp_obj:
+                users = User.objects.filter(email__iexact=email)
+                user = users[0]
+                user.set_password(new_password)
+                user.save()
+                status = 1
+                msg = 'Password successfully reset'
+                OtpVerify.objects.filter(email__iexact=email).delete()
+            else:
+                status = 0
+                msg = msg
+
+        context = {
+            'status': status,
+            'msg': msg,
+            'email': email,
+        }
+        return JsonResponse(context)
+
+    context = {
+        'email': email
+    }
+    return render(request, 'verity_otp.html', context)
 
 
 def update_user_detail(request):
