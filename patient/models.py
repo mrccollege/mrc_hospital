@@ -181,6 +181,7 @@ class PatientMedicineUnregisteredBillDetail(models.Model):
 
 
 class PatientEstimateMedicineBillHead(models.Model):
+    head = models.ForeignKey(PatientMedicineBillHead, on_delete=models.CASCADE, null=True)
     invoice_number = models.CharField(max_length=100, null=True)
     store = models.ForeignKey(Store, on_delete=models.CASCADE, null=True)
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, null=True)
