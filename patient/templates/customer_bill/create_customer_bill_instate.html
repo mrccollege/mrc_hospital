@@ -34,13 +34,9 @@
                                     <div class="box-body">
                                         <div class="row">
                                             <div class="col-lg-3 form-group">
-                                                <input type="hidden" name="store_id" id="store_id"
-                                                       value="{{store_id}}">
-                                                <input type="hidden" name="invoice_number" id="invoice_number"
-                                                       value="{{user.invoice_number}}">
-                                                <label class="form-label">Doctor Name</label>
-                                                <input type="hidden" name="doctor_id" id="doctor_id"
-                                                       value="{{user.doctor.id}}">
+                                                <label class="form-label">Patient Name</label>
+                                                <input type="hidden" name="patient_id" id="patient_id"
+                                                       value="{{patient_id}}">
                                                 <input type="text" class="form-control" id="name" name="name"
                                                        value="{{patient.user.username}}">
                                             </div>
@@ -318,7 +314,7 @@
 
         var formData = {
             medicines: JSON.stringify(selectedMedicines),  // Selected medicines data
-            doctor_id: $('#doctor_id').val(),
+            patient_id: $('#patient_id').val(),
             sub_total: $('#sub_total').val(),
             total_discount: $('#total_discount').val(),
             sgst: $('#sgst').val(),
@@ -330,14 +326,13 @@
             online: $('#online').val(),
             old_credit: $('#old_credit').val(),
             new_credit: $('#new_credit').val(),
-            invoice_number: $('#invoice_number').val(),
 
             csrfmiddlewaretoken: '{{ csrf_token }}'  // Add CSRF token
         };
 
         if (selectedMedicines.length > 0) {
             $.ajax({
-                url: '/my_order/create_bill/{{order_type}}/{{id}}/',
+                url: '/patient/create_bill/{{order_type}}/{{id}}/',
                 type: 'POST',
                 data: formData,  // Send the form data with medicine and other inputs
                 success: function (response) {
@@ -353,7 +348,7 @@
                         confirmButtonColor: '#3085d6',
                         confirmButtonText: 'OK'
                       }).then((result) => {
-                        window.location.href = '/bill/normal_order_bill_list/';
+                        window.location.href = '/patient/normal_order_bill_list/';
                       });
                     }else{
                       Swal.fire({

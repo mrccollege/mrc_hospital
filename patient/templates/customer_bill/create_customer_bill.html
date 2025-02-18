@@ -104,7 +104,7 @@
                                             <label for="search_data">Customer Id / Mobile Number</label>
                                             <input type="text" id="search_data" name="search_data"
                                                    placeholder="Enter customer id"
-                                                   required value="">
+                                                   required value="" maxlength="10">
                                             <input type="hidden" name="patient_id1" id="patient_id1" value="0">
                                             <button type="submit" style="margin-bottom:10px">Submit</button>
                                             <button type="button" id="tab1continues_btn" class="hidden">Continue
@@ -167,14 +167,14 @@
     $('#tab1continues_btn').click(function(){
         patient_id = $('#patient_id1').val();
         if (patient_id != 0 || patient_id != ''){
-            window.location = '/bill/create_customer_bill_detail/'+patient_id+'/'
+            window.location = '/patient/create_patient_bill_detail/'+patient_id+'/'
         }
     });
 
     $('#tab2continues_btn').click(function(){
         patient_id = $('#patient_id2').val();
         if (patient_id != 0 || patient_id != ''){
-            window.location = '/bill/create_customer_bill_detail/'+patient_id+'/'
+            window.location = '/patient/create_patient_bill_detail/'+patient_id+'/'
         }
     });
 
@@ -215,7 +215,7 @@
         e.preventDefault();
         var formData = $('#tab1form').serialize();
         $.ajax({
-          url: '/bill/get_patient/',
+          url: '/patient/get_patient/',
           type: 'POST',
           data: formData,
           success: function (response) {
@@ -268,7 +268,7 @@
         e.preventDefault();
         var formData = $('#tab2form').serialize();
         $.ajax({
-          url: '/bill/create_customer_bill/',
+          url: '/patient/create_customer_bill/',
           type: 'POST',
           data: formData,
           success: function (response) {

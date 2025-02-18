@@ -12,10 +12,4 @@ urlpatterns = [
     path('order_list/', views.order_list, name='order_list'),
     path('order_detail/<int:id>/', views.order_detail, name='order_detail'),
     path('view_doctor_order_detail/<int:id>/', views.view_doctor_order_detail, name='view_doctor_order_detail'),
-
-    path('get_patient/', views.get_patient, name='get_patient'),
-    path('create_customer_bill/', views.create_customer_bill, name='create_customer_bill'),
-    path('create_customer_bill_detail/<int:patient_id>/', views.create_customer_bill_detail, name='create_customer_bill_detail'),
-
-    path('customer_generate_bill/<int:order_type>/<int:patient_id>/', views.customer_generate_bill, name='customer_generate_bill'),
 ]
