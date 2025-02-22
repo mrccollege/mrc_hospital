@@ -1005,34 +1005,34 @@ def update_estimate_medicine_order_bill(request, order_type, id):
                 tax = 0
             amount = float(medicine_data['amount'])
             query = Q(head_id=head_id, medicine_id=medicine_id)
-            already_obj = EstimateMedicineOrderBillDetail.objects.filter(query)
+            already_obj = PatientEstimateMedicineBillDetail.objects.filter(query)
             if already_obj:
-                EstimateMedicineOrderBillDetail.objects.filter(query).update(record_qty=record_qty,
-                                                                             sell_qty=sell_qty,
-                                                                             mrp=mrp,
-                                                                             discount=discount,
-                                                                             sale_rate=sale_rate,
-                                                                             hsn=hsn,
-                                                                             gst=gst,
-                                                                             taxable_amount=taxable_amount,
-                                                                             tax=tax,
-                                                                             amount=amount,
-                                                                             )
-        obj = EstimateMedicineOrderBillHead.objects.filter(id=id).update(store_id=store_id,
-                                                                         sgst=sgst,
-                                                                         cgst=cgst,
-                                                                         subtotal=subtotal,
-                                                                         current=current,
-                                                                         cash=cash,
-                                                                         online=online,
-                                                                         shipping=shipping_packing,
-                                                                         discount=discount1,
-                                                                         discount_amount=discount_amount,
-                                                                         pay_amount=after_dis_amount,
-                                                                         )
+                PatientEstimateMedicineBillDetail.objects.filter(query).update(record_qty=record_qty,
+                                                                               sell_qty=sell_qty,
+                                                                               mrp=mrp,
+                                                                               discount=discount,
+                                                                               sale_rate=sale_rate,
+                                                                               hsn=hsn,
+                                                                               gst=gst,
+                                                                               taxable_amount=taxable_amount,
+                                                                               tax=tax,
+                                                                               amount=amount,
+                                                                               )
+        obj = PatientEstimateMedicineBillHead.objects.filter(id=id).update(store_id=store_id,
+                                                                           sgst=sgst,
+                                                                           cgst=cgst,
+                                                                           subtotal=subtotal,
+                                                                           current=current,
+                                                                           cash=cash,
+                                                                           online=online,
+                                                                           shipping=shipping_packing,
+                                                                           discount=discount1,
+                                                                           discount_amount=discount_amount,
+                                                                           pay_amount=after_dis_amount,
+                                                                           )
         if obj:
-            EstimateMedicineOrderBillHead.objects.filter(id=id).update(status=1)
-            EstimateMedicineOrderBillDetail.objects.filter(head_id=id).exclude(medicine_id__in=medicine_ids).delete()
+            PatientEstimateMedicineBillHead.objects.filter(id=id).update(status=1)
+            PatientEstimateMedicineBillDetail.objects.filter(head_id=id).exclude(medicine_id__in=medicine_ids).delete()
             status = 'success'
             msg = 'Estimated Bill updated Successfully.'
 
@@ -1050,17 +1050,18 @@ def update_estimate_medicine_order_bill(request, order_type, id):
         except:
             store_id = 0
 
-        user = EstimateMedicineOrderBillHead.objects.get(id=id)
+        user = PatientEstimateMedicineBillHead.objects.get(id=id)
 
         is_last = user.id == \
-                  EstimateMedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).aggregate(Max('id'))['id__max']
+                  PatientEstimateMedicineBillHead.objects.filter(patient_id=user.patient.id).aggregate(Max('id'))[
+                      'id__max']
         if is_last:
             is_last = True
         else:
             is_last = False
 
         cash_online_amount = \
-            EstimateMedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).exclude(id=id).aggregate(
+            PatientEstimateMedicineBillHead.objects.filter(patient_id=user.patient.id).exclude(id=id).aggregate(
                 total=Sum(
                     Coalesce(F('cash'), 0) +
                     Coalesce(F('online'), 0) +
@@ -1071,14 +1072,14 @@ def update_estimate_medicine_order_bill(request, order_type, id):
             )['total'] or 0
 
         total_pay_amount = \
-            EstimateMedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).exclude(id=id).aggregate(
+            PatientEstimateMedicineBillHead.objects.filter(patient_id=user.patient.id).exclude(id=id).aggregate(
                 total=Sum('pay_amount')
             )['total'] or 0
 
         old_credit_sum = total_pay_amount - cash_online_amount
 
-        medicine = EstimateMedicineOrderBillDetail.objects.filter(head_id=id)
-        medicine_count = EstimateMedicineOrderBillDetail.objects.filter(head_id=id).count()
+        medicine = PatientEstimateMedicineBillDetail.objects.filter(head_id=id)
+        medicine_count = PatientEstimateMedicineBillDetail.objects.filter(head_id=id).count()
         medicine_list = []
 
         for i in medicine:
@@ -1120,13 +1121,13 @@ def update_estimate_medicine_order_bill(request, order_type, id):
             'is_last': is_last,
         }
         if order_type == 1:
-            return render(request, 'estimate_bill/update_estimate_medicine_order_bill_instate.html', context)
+            return render(request, 'patient_update_estimate/update_estimate_medicine_order_bill_instate.html', context)
         elif order_type == 2:
-            return render(request, 'estimate_bill/update_estimate_medicine_order_bill_other_state.html', context)
+            return render(request, 'patient_update_estimate/update_estimate_medicine_order_bill_other_state.html', context)
         elif order_type == 3:
-            return render(request, 'estimate_bill/update_estimate_medicine_order_bill_of_supply.html', context)
+            return render(request, 'patient_update_estimate/update_estimate_medicine_order_bill_of_supply.html', context)
         else:
-            return render(request, 'estimate_bill/update_estimate_medicine_order_bill_of_supply.html', context)
+            return render(request, 'patient_update_estimate/update_estimate_medicine_order_bill_of_supply.html', context)
 
 
 def normal_order_bill_list(request):
