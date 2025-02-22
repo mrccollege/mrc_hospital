@@ -28,7 +28,7 @@ from django.db.models import Sum, F, FloatField, ExpressionWrapper
 from order_payment_detail.models import PaymentDetail
 from django.db.models.functions import Coalesce
 from decimal import Decimal
-from .models import InvoiceTracker, NormalInvoiceTracker, EstimateInvoiceTracker
+from my_order.models import InvoiceTracker, NormalInvoiceTracker, EstimateInvoiceTracker
 from django.db.models import DecimalField
 
 

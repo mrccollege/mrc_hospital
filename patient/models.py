@@ -140,6 +140,7 @@ class PatientMedicineUnregisteredBillHead(models.Model):
 
     status = models.IntegerField(help_text='0=pending,1=inprocess,2=packing,3=dispatch,4=out of delivery,5=delivered')
     estimate_status = models.IntegerField(default=0, help_text='0=pending,1=complete')
+    final_bill_status = models.IntegerField(default=0, help_text='0=pending,1=complete')
     order_type = models.IntegerField(help_text='1=In state,2=other state,3=bill of supply')
     account_number = models.CharField(max_length=100, null=True, blank=True)
     ifc_number = models.CharField(max_length=100, null=True, blank=True)
