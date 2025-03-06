@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Bill Details</title>
+    <link rel="stylesheet" href="/static/common_css/normal_bill_invoice.css" media="all"/>
+    <style>
+        /* General header styles */
+        header {
+            padding: 0px;
+            border-bottom: 2px solid #000;
+        }
+
+        #logo {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .header-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* Two equal columns */
+            gap: 20px; /* Space between columns */
+            width: 100%;
+
+            display: flex;
+            justify-content: space-between; /* Pushes items to the edges */
+            align-items: center; /* Vertically centers the logos */
+            width: 95%; /* Adjust as needed */
+            padding: 10px; /* Optional padding */
+        }
+
+        #company, #client {
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        #company div, #client div {
+            margin-bottom: 5px; /* Adds spacing between rows */
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-container {
+                grid-template-columns: 1fr; /* Single-column layout on smaller screens */
+            }
+
+            #logo img {
+                width: 150px; /* Adjust logo size for smaller screens */
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 18px;
+            }
+        }
+
+         #logo {
+            display: flex;
+            justify-content: space-between; /* Pushes items to the edges */
+            align-items: center; /* Vertically centers the logos */
+            width: 90%; /* Adjust as needed */
+            padding: 10px; /* Optional padding */
+        }
+
+        .left-logo {
+            max-width: 150px; /* Adjust the size of the left logo */
+            height: auto;
+        }
+
+        .right-logo {
+            max-width: 150px; /* Adjust the size of the right logo */
+            height: auto;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+
+<div class="row">
+    <button id="download-pdf">Download Invoice</button>
+    <button id="download-address">Download Address</button>
+</div>
+
+<div id="pdf-content">
+    <header class="clearfix" id="pdf2-content">
+        <div id="logo">
+            <img src="/static/logo/bill_logo/naturo.png" alt="Company Logo" class="left-logo">
+            <!--            <img src="/static/logo/bill_logo/naturo_bar_code.jpeg" alt="Company Logo" class="right-logo">-->
+        </div>
+        <h1 style="text-align:center">(ESTIMATE)</h1>
+        <div><h4><span style="font-size:22px">M/s Mrc Naturocare</span> &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+            &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+            &nbsp; Address: Vrindavan - Mathura pin: 281121</h4></div>
+        <hr>
+        <div class="header-container">
+            <div id="client">
+                <div><strong>Date :</strong> {{user.created_at}}</div>
+                <div><strong>Invoice No :</strong> MRC-{{user.invoice_number}}</div>
+                <div><strong>Client :</strong> {{user.doctor.user.username}}</div>
+                <div><strong>Mobile :</strong> {{user.doctor.user.mobile}}</div>
+                <div><strong>Address :</strong> {{user.doctor.user.district}}, {{user.doctor.user.state}}</div>
+                <div><strong>Email :</strong> {{user.doctor.user.email}}</div>
+                <div><strong>GST :</strong> Unregistered</div>
+            </div>
+            <div id="company">
+                <div>Phone: 7417 7417 74</div>
+                <div>Email: <a href="mailto:mrcnaturocare@gmail.com">mrcnaturocare@gmail.com</a></div>
+            </div>
+        </div>
+    </header>
+    <main>
+        <table>
+            <thead>
+            <tr>
+                <th>S.N</th>
+                <th>Medicine Name</th>
+                <th>Qty</th>
+                <th>MRP.</th>
+                <th>Disc.%</th>
+                <th>S.Rate.</th>
+                <th>Amount</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for i in medicine %}
+            <tr>
+                <td>{{forloop.counter}}</td>
+                <td>{{i.medicine}}</td>
+                <td>{{i.sell_qty}}</td>
+                <td>{{i.mrp}}</td>
+                <td>{{i.discount}}</td>
+                <td>{{i.sale_rate}}</td>
+                <td>{{i.amount}}</td>
+            </tr>
+            {% endfor %}
+
+            <tr>
+                <td colspan="4">MRP Amount. {{subtotal_amount}}</td>
+                <td colspan="2">Total Discount. {{total_discounted_price}}</td>
+                <td colspan="4">Sub Total. {{user.subtotal}}</td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div style="display: flex; justify-content: space-between; width: 100%; gap: 10px;">
+            <!-- First Table -->
+            <table style="width: 70%; border-collapse: collapse; border: 1px solid black; text-align: left;">
+
+            </table>
+
+            <!-- Second Table -->
+            <table style="width: 30%; border-collapse: collapse; border: 1px solid black; text-align: left;">
+                <tr>
+                    <td colspan="2" class="grand total">Discount.</td>
+                    <td>{{user.discount}} %</td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="grand total">Discount Rs.</td>
+                    <td>{{user.discount_amount}}</td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="grand total">Shiping Charge.</td>
+                    <td>{{user.shipping}}</td>
+                </tr>
+
+                <tr>
+                    <td colspan="2" class="grand total">Special Discount.</td>
+                    <td>{{user.current}}</td>
+                </tr>
+
+                <tr>
+                    <td colspan="2" class="grand total">Grand Total Rs.</td>
+                    <td>{{user.pay_amount}}</td>
+                </tr>
+
+            </table>
+        </div>
+
+    </main>
+
+    <footer>
+        <p>It is not a original bill. it's just Estimate.
+        </p>
+    </footer>
+
+    <div>
+        <table>
+            <tr style="margin-top: 215px;">
+                <td colspan="2"></td>
+                <td colspan="2"><b>OLD CREADIT :Rs. {{old_credit_sum}}</b></td>
+                <td colspan="2"><b>CASH :Rs. {{user.cash}}</b></td>
+                <td colspan="2"><b>ONLINE :Rs. {{user.online}}</b></td>
+                <td colspan="2"><b>REMAINING :Rs. {{remaining_amount}}</b></td>
+                <td colspan="2"></td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+
+<script>
+    $('#download-pdf').on('click', function () {
+        const element = document.getElementById('pdf-content');
+        const options = {
+            margin: [10, 10, 10, 10],
+            filename: 'bill-details.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+        html2pdf().set(options).from(element).save();
+    });
+
+
+    $('#download-address').on('click', function () {
+        const element = document.getElementById('pdf2-content');
+        const options = {
+            margin: [10, 10, 10, 10],
+            filename: 'bill-details.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+        html2pdf().set(options).from(element).save();
+    });
+</script>
+</body>
+</html>
