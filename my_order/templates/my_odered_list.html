@@ -41,6 +41,7 @@
                                     <th>pay_amount</th>
                                     <th>Update</th>
                                     <th>Bill</th>
+                                    <th>Delivery Details</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -71,6 +72,18 @@
                                         <a href="/my_order/view_normal_invoice_doctor/{{i.id}}/" class="btn btn-primary" style="pointer-events: none; opacity: 0.6;">Normal Bill</a>
                                     </td>
                                     {% endif %}
+
+                                    {% if i.status == 1 %}
+                                    <td>
+                                        <a href="/my_order/delivery_detail_doctor/{{i.id}}/" class="btn btn-primary">Delivery Details</a>
+                                    </td>
+                                    {% else %}
+                                    <td>
+                                        <a href="/my_order/delivery_detail_doctor/{{i.id}}/" class="btn btn-primary" style="pointer-events: none; opacity: 0.6;">Delivery Details</a>
+                                    </td>
+                                    {% endif %}
+
+
 
                                 </tr>
                                 {% endfor %}

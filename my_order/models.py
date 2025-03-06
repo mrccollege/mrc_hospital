@@ -78,6 +78,10 @@ class MedicineOrderBillHead(models.Model):
     upi_id_number = models.CharField(max_length=100, null=True, blank=True)
     bar_code = models.ImageField(upload_to='bank_account_barcode', null=True, blank=True)
     state_code = models.CharField(max_length=10, null=True, blank=True)
+
+    delivery_status_id = models.IntegerField(help_text='1=pending,2=dispatched,3=delivered', null=True, blank=True)
+    track_id = models.CharField(max_length=30, null=True, blank=True)
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 

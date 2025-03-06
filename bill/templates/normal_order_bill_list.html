@@ -44,6 +44,7 @@
                                     <th>Action</th>
                                     <th>Order Med.</th>
                                     <th>Order Detail</th>
+                                    <th>Delivery</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -73,6 +74,7 @@
 
                                     <td><a href="/my_order/view_normal_invoice/{{i.id}}/" class="btn btn-primary">Order Med.</a></td>
                                     <td><a href="/bill/view_doctor_order_detail/{{i.order_id.id}}/" class="btn btn-primary">Order Detail</a></td>
+                                    <td><a href="/my_order/delivery_detail/{{i.id}}/" class="btn btn-primary">Delivery</a></td>
                                 </tr>
                                 {% endfor %}
 

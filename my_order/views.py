@@ -1,6 +1,6 @@
 import json
 from datetime import datetime
-
+from django.db.models import Case, When
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.http import JsonResponse
@@ -710,7 +710,8 @@ def update_medicine_order_bill(request, order_type, id):
             store_id = 0
 
         user = MedicineOrderBillHead.objects.get(id=id)
-        is_last = user.id == MedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).aggregate(Max('id'))['id__max']
+        is_last = user.id == MedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).aggregate(Max('id'))[
+            'id__max']
         is_estimated = EstimateMedicineOrderBillHead.objects.filter(order_id_id=user.order_id).exists()
         if is_last and is_estimated == False:
             is_last = True
@@ -1082,7 +1083,8 @@ def update_estimate_medicine_order_bill(request, order_type, id):
 
         user = EstimateMedicineOrderBillHead.objects.get(id=id)
 
-        is_last = user.id == EstimateMedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).aggregate(Max('id'))['id__max']
+        is_last = user.id == \
+                  EstimateMedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).aggregate(Max('id'))['id__max']
         if is_last:
             is_last = True
         else:
@@ -1422,19 +1424,21 @@ def final_bill_invoice(request, id):
 
     order_type = user.order_type
     invoice_number = user.invoice_number
-    cash_online_amount = MedicineUnregisteredOrderBillHead.objects.filter(doctor_id=user.doctor.id).exclude(head_id=id).aggregate(
-        total=Sum(
-            Coalesce(F('cash'), 0) +
-            Coalesce(F('online'), 0) +
-            Coalesce(F('extra_cash_amount'), 0) +
-            Coalesce(F('extra_online_amount'), 0),
-            output_field=DecimalField()
-        )
-    )['total'] or 0
+    cash_online_amount = \
+        MedicineUnregisteredOrderBillHead.objects.filter(doctor_id=user.doctor.id).exclude(head_id=id).aggregate(
+            total=Sum(
+                Coalesce(F('cash'), 0) +
+                Coalesce(F('online'), 0) +
+                Coalesce(F('extra_cash_amount'), 0) +
+                Coalesce(F('extra_online_amount'), 0),
+                output_field=DecimalField()
+            )
+        )['total'] or 0
 
-    total_pay_amount = MedicineUnregisteredOrderBillHead.objects.filter(doctor_id=user.doctor.id).exclude(head_id=id).aggregate(
-        total=Sum('pay_amount')
-    )['total'] or 0
+    total_pay_amount = \
+        MedicineUnregisteredOrderBillHead.objects.filter(doctor_id=user.doctor.id).exclude(head_id=id).aggregate(
+            total=Sum('pay_amount')
+        )['total'] or 0
 
     old_credit_sum = total_pay_amount - cash_online_amount
 
@@ -1883,3 +1887,42 @@ def estimate_add_extra_amount(request, id):
                 'msg': 'Extra amount added successfully.',
             }
             return JsonResponse(context)
+
+
+def delivery_detail(request, id):
+    if request.method == 'POST':
+        form = request.POST
+        track_id = form.get('track_id')
+        status_id = form.get('status_id')
+        obj = MedicineOrderBillHead.objects.filter(id=id).update(delivery_status_id=status_id,
+                                                                 track_id=track_id)
+
+        if obj:
+            status = 'success'
+            msg = 'Data saved successfully.'
+        else:
+            status = 'failed'
+            msg = 'Data not saved.'
+
+        context = {
+            'status': status,
+            'msg': msg,
+        }
+        return JsonResponse(context)
+
+    else:
+        delivery = MedicineOrderBillHead.objects.get(id=id)
+        context = {
+            'id': id,
+            'delivery': delivery,
+        }
+        return render(request, 'delivery_detail.html', context)
+
+
+def delivery_detail_doctor(request, id):
+    delivery = MedicineOrderBillHead.objects.get(order_id_id=id)
+    context = {
+        'id': id,
+        'delivery': delivery,
+    }
+    return render(request, 'delivery_detail_doctor.html', context)
