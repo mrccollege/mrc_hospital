@@ -72,6 +72,7 @@
             max-width: 150px; /* Adjust the size of the right logo */
             height: auto;
         }
+
     </style>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
@@ -87,27 +88,31 @@
     <header class="clearfix" id="pdf2-content">
         <div id="logo">
             <img src="/static/logo/bill_logo/ayur.png" alt="Company Logo" class="left-logo">
-<!--            <img src="/static/logo/bill_logo/scanner_mrc_ayurveda.jpeg" alt="Company Logo" class="right-logo">-->
+            <img src="/static/logo/bill_logo/scanner_mrc_ayurveda.jpeg" alt="Company Logo" class="right-logo">
         </div>
-        <h4 style="text-align:center">(BILL OF SUPPLY)</h4>
-        <div><h4><span style="font-size:22px">M/s Mrc Ayurveda & Research Center</span> &nbsp; &nbsp; &nbsp; Address:
-            Vrindavan - Mathura pin: 281121</h4></div>
+        <h4 style="text-align:center">(Order Medicine)</h4>
+        <div><h4><span style="font-size:20px">M/s Mrc Ayurveda & Research Center</span> &nbsp; Address: Vrindavan -
+            Mathura pin: 281121</h4></div>
         <hr>
         <div class="header-container">
             <div id="client">
-                <div><strong>Date:</strong> {{user.created_at}}</div>
+                <div><strong>Date :</strong> {{user.created_at}}</div>
                 <div><strong>Invoice No :</strong> MRC-{{user.invoice_number}}</div>
-                <div><strong>Client:</strong> {{user.patient.user.username}}</div>
-                <div><strong>Mobile:</strong> {{user.patient.user.mobile}}</div>
-                <div><strong>Address:</strong> {{user.patient.user.district}}, {{user.patient.user.state}}</div>
-                <div><strong>Email:</strong> {{user.patient.user.email}}</div>
+                <div><strong>Client :</strong> {{user.patient.user.username}}</div>
+                <div><strong>Mobile :</strong> {{user.patient.user.mobile}}</div>
+                <div><strong>Address :</strong> {{user.patient.user.district}}, {{user.patient.user.state}}</div>
+                <div><strong>Email :</strong> {{user.patient.user.email}}</div>
                 <div><strong>GST :</strong> Unregistered</div>
             </div>
 
             <div id="company">
+                <div></div>
                 <div>Phone: 9897 5465 31</div>
                 <div>Email: <a href="mailto:mrcayurveda@gmail.com">mrcayurveda@gmail.com</a></div>
                 <div>GSTIN: 09BRLPS1327P1Z1</div>
+                <div>Bank Name: Punjab National Bank</div>
+                <div>Account No: 4903002100000522</div>
+                <div>IFSC CODE: PUNB00463000</div>
             </div>
 
         </div>
@@ -141,7 +146,7 @@
 
             <tr>
                 <td colspan="4">MRP Amount. {{subtotal_amount}}</td>
-                <td colspan="2">Discount. {{total_discounted_price}}</td>
+                <td colspan="2">Total Discount. {{total_discounted_price}}</td>
                 <td colspan="8"></td>
             </tr>
             </tbody>
@@ -150,26 +155,18 @@
         <div style="display: flex; justify-content: space-between; width: 100%; gap: 10px;">
             <!-- First Table -->
             <table style="width: 70%; border-collapse: collapse; border: 1px solid black; text-align: left;">
-
             </table>
 
             <!-- Second Table -->
             <table style="width: 30%; border-collapse: collapse; border: 1px solid black; text-align: left;">
+
                 <tr>
                     <td colspan="2" class="grand total">Extra Discount.</td>
                     <td>{{user.discount}} %</td>
                 </tr>
                 <tr>
-                    <td colspan="2" class="grand total">Discount Rs.</td>
-                    <td>{{user.discount_amount}}</td>
-                </tr>
-                <tr>
                     <td colspan="2" class="grand total">Shiping Charge.</td>
                     <td>{{user.shipping}}</td>
-                </tr>
-                <tr>
-                    <td colspan="2" class="grand total">Special Discount.</td>
-                    <td>{{user.current}}</td>
                 </tr>
                 <tr>
                     <td colspan="2" class="grand total">Grand Total Rs.</td>
@@ -181,7 +178,8 @@
     </main>
 
     <footer>
-        <p>It is not a original bill. it's just Estimate.
+        <p>This is an Electronically generated Invoice, no signature required. All Disputes Subject to MATHURA
+            Jurisdiction Only.
         </p>
     </footer>
 

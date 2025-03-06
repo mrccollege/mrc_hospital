@@ -1149,6 +1149,144 @@ def estimate_order_bill_list(request):
     return render(request, 'patient_bill_list/estimate_order_bill_list.html', context)
 
 
+def view_normal_invoice(request, id):
+    user_id = request.session['user_id']
+    try:
+        store = Store.objects.get(user_id=user_id)
+        store_id = store.id
+    except:
+        store_id = 0
+    try:
+        user = PatientMedicineBillHead.objects.get(id=id)
+    except:
+        return redirect('/my_order/my_medicine_ordered_list/')
+
+    order_type = user.order_type
+    invoice_number = user.invoice_number
+    cash_online_amount = PatientMedicineBillHead.objects.filter(patient_id=user.patient.id).exclude(id=id).aggregate(
+        total=Sum(
+            Coalesce(F('cash'), 0) +
+            Coalesce(F('online'), 0) +
+            Coalesce(F('extra_cash_amount'), 0) +
+            Coalesce(F('extra_online_amount'), 0),
+            output_field=DecimalField()
+        )
+    )['total'] or 0
+
+    total_pay_amount = PatientMedicineBillHead.objects.filter(patient_id=user.patient.id).exclude(id=id).aggregate(
+        total=Sum('pay_amount')
+    )['total'] or 0
+
+    old_credit_sum = total_pay_amount - cash_online_amount
+
+    pay_amount = user.pay_amount
+    cash = user.cash
+    online = user.online
+
+    remaining_amount = pay_amount - (cash + online) + old_credit_sum
+    current = user.current
+
+    medicine = PatientMedicineBillDetail.objects.filter(head_id=user.id)
+    gst_per = PatientMedicineBillDetail.objects.filter(head_id=user.id).values_list('gst', flat=True).distinct()
+
+    total_taxable_by_gst_list = []
+    grand_sub_total = 0
+    grand_discount_total = 0
+    grand_taxable_amount_total = 0
+    grand_sgst_and_cgst_total = 0
+    grand_tax_total = 0
+    for gst in gst_per:
+        # Total taxable amounts
+        total_taxable = PatientMedicineBillDetail.objects.filter(
+            head_id=user.id, gst=gst
+        ).aggregate(total_taxable=Sum('taxable_amount'))['total_taxable'] or 0
+        grand_taxable_amount_total += total_taxable
+
+        # Sub totals
+        medicine_sub_totals = PatientMedicineBillDetail.objects.filter(
+            head_id=user.id, gst=gst
+        ).annotate(
+            total=F('sell_qty') * F('mrp'),
+            discount_amount=ExpressionWrapper(
+                (F('sell_qty') * F('mrp') * F('discount') / 100),
+                output_field=FloatField()
+            )
+        )
+
+        # Sub total calculation
+        sub_total = medicine_sub_totals.aggregate(grand_total=Sum('total'))['grand_total'] or 0
+        grand_sub_total += sub_total
+
+        # Discount total calculation
+        discount_total = medicine_sub_totals.aggregate(grand_discount=Sum('discount_amount'))['grand_discount'] or 0
+        grand_discount_total += discount_total
+
+        tax = PatientMedicineBillDetail.objects.filter(
+            head_id=user.id, gst=gst
+        ).aggregate(tax=Sum('tax'))['tax'] or 0
+        grand_tax_total += tax
+
+        if order_type == 1:
+            sgst_and_cgst = tax / 2
+        elif order_type == 2:
+            sgst_and_cgst = tax
+        else:
+            sgst_and_cgst = tax
+
+        grand_sgst_and_cgst_total += sgst_and_cgst
+        total_taxable_by_gst_list.append({
+            'gst': gst,
+            'taxable_amount': total_taxable,
+            'sub_total': sub_total,
+            'discount': discount_total,
+            'tax': tax,
+            'sgst_and_cgst': sgst_and_cgst,
+        })
+
+    total_discounted_price = 0
+    for item in medicine:
+        if item.mrp and item.discount and item.sell_qty:  # Ensure values are not None
+            discount_amount = (item.mrp * item.discount) / 100  # Calculate discount amount per unit
+            discounted_price_per_unit = discount_amount  # Calculate discounted price per unit
+            total_price_for_item = discounted_price_per_unit * item.sell_qty  # Multiply by sell quantity
+            total_discounted_price += total_price_for_item  # Add to total discounted price
+
+    subtotal_amount = medicine.aggregate(total_amount=Sum(F('sell_qty') * F('mrp')))['total_amount'] or 0
+    total_taxable_amount = medicine.aggregate(total_taxable=Sum('taxable_amount'))['total_taxable'] or 0
+
+    context = {
+        'id': id,
+        'order_type': order_type,
+        'store_id': store_id,
+        'user': user,
+        'medicine': medicine,
+        'total_taxable_by_gst': total_taxable_by_gst_list,
+        'total_discounted_price': total_discounted_price,
+        'subtotal_amount': subtotal_amount,
+        'total_taxable_amount': total_taxable_amount,
+
+        'grand_sub_total': grand_sub_total,
+        'grand_discount_total': grand_discount_total,
+        'grand_taxable_amount_total': grand_taxable_amount_total,
+        'grand_sgst_and_cgst_total': grand_sgst_and_cgst_total,
+        'grand_tax_total': grand_tax_total,
+
+        'remaining_amount': remaining_amount,
+        'current': current,
+        'old_credit_sum': old_credit_sum,
+        'invoice_number': invoice_number,
+    }
+
+    if order_type == 1:
+        return render(request, 'patient_normal_invoice/normal_invoice_instate.html', context)
+    elif order_type == 2:
+        return render(request, 'patient_normal_invoice/normal_invoice_other_state.html', context)
+    elif order_type == 3:
+        return render(request, 'patient_normal_invoice/normal_invoice_bill_of_supply.html', context)
+    else:
+        return render(request, 'patient_normal_invoice/normal_invoice_bill_of_supply.html', context)
+
+
 def final_bill_invoice(request, id):
     user_id = request.session['user_id']
     try:
@@ -1163,7 +1301,6 @@ def final_bill_invoice(request, id):
 
     order_type = user.order_type
     invoice_number = user.invoice_number
-    print(invoice_number, '===================invoice_number')
     cash_online_amount = \
         PatientMedicineUnregisteredBillHead.objects.filter(patient_id=user.patient.id).exclude(head_id=id).aggregate(
             total=Sum(
@@ -1315,7 +1452,8 @@ def view_estimate_invoice(request, id):
             )
         )['total'] or 0
 
-    total_pay_amount = PatientEstimateMedicineBillHead.objects.filter(patient_id=user.patient.id).exclude(id=id).aggregate(
+    total_pay_amount = \
+    PatientEstimateMedicineBillHead.objects.filter(patient_id=user.patient.id).exclude(id=id).aggregate(
         total=Sum('pay_amount')
     )['total'] or 0
 

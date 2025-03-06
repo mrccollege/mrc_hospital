@@ -12,6 +12,8 @@ from store.models import Store
 
 from my_order.models import MedicineOrderHead, MedicineOrderBillHead, EstimateMedicineOrderBillHead
 
+from patient.models import PatientEstimateMedicineBillHead, PatientMedicineBillHead
+
 
 # Create your views here.
 @login_required(login_url='/account/user_login/')
@@ -37,12 +39,17 @@ def dashboard(request):
         new_order = MedicineOrderHead.objects.filter(status=0).count()
         normal_bill_order = MedicineOrderBillHead.objects.filter().count()
         estimate_bill_order = EstimateMedicineOrderBillHead.objects.filter(status=1).count()
+
+        patient_normal_bill = PatientMedicineBillHead.objects.filter(status=1).count()
+        patient_estimate_bill = PatientEstimateMedicineBillHead.objects.filter(status=1).count()
         context = {
             'store_type': store_type,
             'store_id': is_store[0].id,
             'new_order': new_order,
             'normal_bill_order': normal_bill_order,
             'estimate_bill_order': estimate_bill_order,
+            'patient_normal_bill': patient_normal_bill,
+            'patient_estimate_bill': patient_estimate_bill,
         }
         return render(request, 'store_dashboard.html', context)
     else:
