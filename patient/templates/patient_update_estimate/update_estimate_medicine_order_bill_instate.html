@@ -329,7 +329,7 @@
 
         var formData = {
             medicines: JSON.stringify(selectedMedicines),  // Selected medicines data
-            doctor_id: $('#doctor_id').val(),
+            patient_id: $('#patient_id').val(),
             sub_total: $('#sub_total').val(),
             total_discount: $('#total_discount').val(),
             shipping_packing: $('#shipping_packing').val(),
@@ -347,7 +347,7 @@
 
         if (selectedMedicines.length > 0) {
             $.ajax({
-                url: '/my_order/update_estimate_medicine_order_bill/{{order_type}}/{{id}}/',
+                url: '/patient/update_estimate_medicine_order_bill/{{order_type}}/{{id}}/',
                 type: 'POST',
                 data: formData,  // Send the form data with medicine and other inputs
                 success: function (response) {
@@ -363,7 +363,7 @@
                         confirmButtonColor: '#3085d6',
                         confirmButtonText: 'OK'
                       }).then((result) => {
-                        window.location.href = '/bill/estimate_order_bill_list/';
+                        window.location.href = '/patient/estimate_order_bill_list/';
                       });
                     }else{
                       Swal.fire({
