@@ -717,7 +717,6 @@ def update_medicine_order_bill(request, order_type, id):
                     output_field=DecimalField()
                 )
             )['total'] or 0
-        print(cash_online_amount, '=============cash_online_amount')
         total_pay_amount = PatientMedicineBillHead.objects.filter(patient_id=user.patient.id).exclude(id=id).aggregate(
             total=Sum('pay_amount')
         )['total'] or 0

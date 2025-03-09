@@ -197,7 +197,7 @@
                                                 </button>
                                             </div>
                                             <hr>
-                                            <div class="row col-lg-6">
+                                            <div class="col-lg-6">
                                                 <div class="row">
                                                     <div class="col-lg-3">
                                                         <label for="sub_total">Sub. Total</label>
@@ -277,6 +277,28 @@
                                                 </div>
 
                                             </div>
+
+                                            <div class="col-lg-3">
+                                                    <div class="row text-center">
+                                                        <div class="col-lg-6">
+                                                            <label for="new_credit">Cash Credit</label>
+                                                            <input type="text" class="form-control" name="new_credit"
+                                                                   id="cash_add" value="{{user.extra_cash_amount}}"
+                                                                   onkeypress="return isNumberKey(event)"
+                                                                   readonly>
+                                                        </div>
+
+                                                        <div class="col-lg-6">
+                                                            <label for="new_credit">Online Credit</label>
+                                                            <input type="text" class="form-control" name="new_credit"
+                                                                   id="online_add" value="{{user.extra_online_amount}}"
+                                                                   onkeypress="return isNumberKey(event)"
+                                                                   readonly>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
                                         </div>
                                     </div><!-- /.box-body -->
                                     <div class="box-footer">
