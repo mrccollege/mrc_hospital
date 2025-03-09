@@ -275,10 +275,28 @@ def create_patient_bill_detail(request, patient_id):
 
 def patient_generate_bill(request, order_type, patient_id):
     patient = Patient.objects.get(id=patient_id)
+
+    cash_online_amount = PatientMedicineBillHead.objects.filter(patient_id=patient_id).aggregate(
+        total=Sum(
+            Coalesce(F('cash'), 0) +
+            Coalesce(F('online'), 0) +
+            Coalesce(F('extra_cash_amount'), 0) +
+            Coalesce(F('extra_online_amount'), 0),
+            output_field=DecimalField()
+        )
+    )['total'] or 0
+
+    total_pay_amount = PatientMedicineBillHead.objects.filter(patient_id=patient_id).aggregate(
+        total=Sum('pay_amount')
+    )['total'] or 0
+
+    old_credit_sum = total_pay_amount - cash_online_amount
+
     context = {
         'patient_id': patient_id,
         'patient': patient,
         'order_type': order_type,
+        'old_credit_sum': old_credit_sum,
     }
     if order_type == 1:
         return render(request, 'customer_bill/create_customer_bill_instate.html', context)
@@ -414,6 +432,8 @@ def create_bill(request, order_type, patient_id):
             store_id = store.id
         except:
             store_id = 0
+
+
 
         context = {
             'id': id,
@@ -697,7 +717,7 @@ def update_medicine_order_bill(request, order_type, id):
                     output_field=DecimalField()
                 )
             )['total'] or 0
-
+        print(cash_online_amount, '=============cash_online_amount')
         total_pay_amount = PatientMedicineBillHead.objects.filter(patient_id=user.patient.id).exclude(id=id).aggregate(
             total=Sum('pay_amount')
         )['total'] or 0
@@ -1453,9 +1473,9 @@ def view_estimate_invoice(request, id):
         )['total'] or 0
 
     total_pay_amount = \
-    PatientEstimateMedicineBillHead.objects.filter(patient_id=user.patient.id).exclude(id=id).aggregate(
-        total=Sum('pay_amount')
-    )['total'] or 0
+        PatientEstimateMedicineBillHead.objects.filter(patient_id=user.patient.id).exclude(id=id).aggregate(
+            total=Sum('pay_amount')
+        )['total'] or 0
 
     old_credit_sum = total_pay_amount - cash_online_amount
     pay_amount = user.pay_amount
@@ -1561,3 +1581,78 @@ def view_estimate_invoice(request, id):
         return render(request, 'patient_estimate_invoice/estimate_invoice_bill_of_supply.html', context)
     else:
         return render(request, 'patient_estimate_invoice/estimate_invoice_bill_of_supply.html', context)
+
+
+def add_extra_amount(request, id):
+    if request.method == 'POST':
+        form = request.POST
+        cash_amount = form.get('cash_amount')
+        online_amount = form.get('online_amount')
+        amount_remark = form.get('amount_remark')
+
+        if cash_amount:
+            cash_amount = Decimal(cash_amount)
+        else:
+            cash_amount = 0
+
+        if online_amount:
+            online_amount = Decimal(online_amount)
+        else:
+            online_amount = 0
+
+        record = PatientMedicineBillHead.objects.filter(id=id)
+        if record:
+            pre_cash = record[0].cash
+            pre_online = record[0].online
+
+            extra_cash = pre_cash + cash_amount
+            extra_online = record[0].online + online_amount
+            PatientMedicineBillHead.objects.filter(id=id).update(extra_cash_amount=cash_amount,
+                                                                 extra_online_amount=online_amount,
+                                                                 )
+
+            status = 'success'
+
+            context = {
+                'status': status,
+                'msg': 'Extra amount added successfully.',
+            }
+            return JsonResponse(context)
+
+
+def estimate_add_extra_amount(request, id):
+    if request.method == 'POST':
+        form = request.POST
+        cash_amount = form.get('cash_amount')
+        online_amount = form.get('online_amount')
+        amount_remark = form.get('amount_remark')
+
+        if cash_amount:
+            cash_amount = Decimal(cash_amount)
+        else:
+            cash_amount = 0
+
+        if online_amount:
+            online_amount = Decimal(online_amount)
+        else:
+            online_amount = 0
+
+        record = PatientEstimateMedicineBillHead.objects.filter(id=id)
+        if record:
+            pre_cash = record[0].cash
+            pre_online = record[0].online
+
+            extra_cash = pre_cash + cash_amount
+            extra_online = record[0].online + online_amount
+
+            PatientEstimateMedicineBillHead.objects.filter(id=id).update(extra_cash_amount=cash_amount,
+                                                                         extra_online_amount=online_amount,
+                                                                         )
+
+            status = 'success'
+
+            context = {
+                'status': status,
+                'msg': 'Extra amount added successfully.',
+            }
+            return JsonResponse(context)

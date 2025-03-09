@@ -900,7 +900,7 @@
         e.preventDefault();
         var formData = $('#category_form').serialize();
         $.ajax({
-          url: '/my_order/add_extra_amount/{{id}}/',
+          url: '/patient/add_extra_amount/{{id}}/',
           type: 'POST',
           data: formData,
           success: function (response) {

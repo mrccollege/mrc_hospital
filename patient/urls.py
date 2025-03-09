@@ -29,4 +29,8 @@ urlpatterns = [
     path('view_normal_invoice/<int:id>/', views.view_normal_invoice, name='view_normal_invoice'),
     path('final_bill_invoice/<int:id>/', views.final_bill_invoice, name='final_bill_invoice'),
     path('view_estimate_invoice/<int:id>/', views.view_estimate_invoice, name='view_estimate_invoice'),
+
+
+    path('add_extra_amount/<int:id>/', views.add_extra_amount, name='add_extra_amount'),
+    path('estimate_add_extra_amount/<int:id>/', views.estimate_add_extra_amount, name='estimate_add_extra_amount'),
 ]

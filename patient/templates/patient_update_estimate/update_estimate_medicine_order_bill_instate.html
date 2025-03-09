@@ -691,7 +691,7 @@
         e.preventDefault();
         var formData = $('#category_form').serialize();
         $.ajax({
-          url: '/my_order/estimate_add_extra_amount/{{id}}/',
+          url: '/patient/estimate_add_extra_amount/{{id}}/',
           type: 'POST',
           data: formData,
           success: function (response) {
