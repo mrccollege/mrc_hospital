@@ -31,6 +31,8 @@ from decimal import Decimal
 from my_order.models import InvoiceTracker, NormalInvoiceTracker, EstimateInvoiceTracker
 from django.db.models import DecimalField
 
+from my_order.models import DirectEstimateHead, DirectEstimateDetail
+
 
 # Create your views here.
 def search_medicine(request):
@@ -266,6 +268,184 @@ def normal_generate_invoice_number():
     obj, _ = NormalInvoiceTracker.objects.get_or_create(year=datetime.now().year)
     invoice_number = obj.get_next_invoice_number()
     return invoice_number
+
+
+@login_required(login_url='/account/user_login/')
+def direct_estimate_bill(request, order_type, id):
+    if request.method == 'POST':
+        form = request.POST
+        user_id = request.session['user_id']
+        try:
+            store = Store.objects.get(user_id=user_id)
+            store_id = store.id
+        except:
+            store_id = 0
+
+        status = 'failed'
+        msg = 'Bill Creation failed.'
+
+        medicines = json.loads(request.POST.get('medicines'))
+        invoice_number = normal_generate_invoice_number()
+        doctor_id = form.get('doctor_id')
+
+        subtotal = float(form.get('sub_total'))
+        discount = int(form.get('total_discount'))
+        shipping_packing = float(form.get('shipping_packing'))
+
+        discount_amount = subtotal * discount / 100
+        after_dis_amount = subtotal - discount_amount + shipping_packing
+
+        cash = float(form.get('cash'))
+        online = float(form.get('online'))
+
+        sgst = form.get('sgst')
+        cgst = form.get('cgst')
+
+        obj = DirectEstimateHead.objects.create(order_id_id=id,
+                                                invoice_number=invoice_number,
+                                                doctor_id=doctor_id,
+                                                store_id=store_id,
+                                                sgst=sgst,
+                                                cgst=cgst,
+                                                subtotal=subtotal,
+                                                discount_amount=discount_amount,
+                                                cash=cash,
+                                                online=online,
+                                                shipping=shipping_packing,
+                                                discount=discount,
+                                                pay_amount=after_dis_amount,
+                                                current=after_dis_amount,
+                                                status=1,
+                                                order_type=order_type,
+                                                )
+        if obj:
+            head_id = obj.id
+            for medicine_data in medicines:
+                medicine_id = medicine_data['medicine_id']
+                record_qty = int(medicine_data['record_qty'])
+                sell_qty = int(medicine_data['sell_qty'])
+                order_qty = int(medicine_data['order_qty'])
+                discount = int(medicine_data['discount'])
+                mrp = float(medicine_data['mrp'])
+                sale_rate = float(medicine_data['sale_rate'])
+                try:
+                    hsn = medicine_data['hsn']
+                except:
+                    hsn = ''
+
+                try:
+                    gst = int(medicine_data['gst'])
+                except:
+                    gst = 0
+
+                try:
+                    taxable_amount = float(medicine_data['taxable_amount'])
+                except:
+                    taxable_amount = 0
+
+                try:
+                    tax = float(medicine_data['tax'])
+                except:
+                    tax = 0
+
+                amount = float(medicine_data['amount'])
+
+                obj = DirectEstimateDetail.objects.create(head_id=head_id,
+                                                          medicine_id=medicine_id,
+                                                          record_qty=record_qty,
+                                                          sell_qty=sell_qty,
+                                                          order_qty=order_qty,
+                                                          mrp=mrp,
+                                                          discount=discount,
+                                                          sale_rate=sale_rate,
+                                                          hsn=hsn,
+                                                          gst=gst,
+                                                          taxable_amount=taxable_amount,
+                                                          tax=tax,
+                                                          amount=amount,
+                                                          )
+
+                if obj:
+                    if sell_qty <= record_qty:
+                        remaining_qty = int(record_qty) - int(sell_qty)
+                        MedicineStore.objects.filter(to_store_id=store_id, medicine_id=medicine_id).update(
+                            qty=remaining_qty)
+                        DirectEstimateDetail.objects.filter(id=obj.id).update(record_qty=remaining_qty)
+            MedicineOrderHead.objects.filter(id=id).update(status=1)
+            status = 'success'
+            msg = 'Bill creation Successfully.'
+
+        context = {
+            'status': status,
+            'msg': msg,
+        }
+        return JsonResponse(context)
+
+    else:
+        user_id = request.session['user_id']
+        try:
+            store = Store.objects.get(user_id=user_id)
+            store_id = store.id
+        except:
+            store_id = 0
+
+        user = MedicineOrderHead.objects.get(id=id)
+
+        cash_online_amount = MedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).aggregate(
+            total=Sum(
+                Coalesce(F('cash'), 0) +
+                Coalesce(F('online'), 0) +
+                Coalesce(F('extra_cash_amount'), 0) +
+                Coalesce(F('extra_online_amount'), 0),
+                output_field=DecimalField()
+            )
+        )['total'] or 0
+
+        total_pay_amount = MedicineOrderBillHead.objects.filter(doctor_id=user.doctor.id).aggregate(
+            total=Sum('pay_amount')
+        )['total'] or 0
+
+        old_credit_sum = total_pay_amount - cash_online_amount
+
+        medicine = MedicineOrderDetail.objects.filter(head_id=id)
+        medicine_list = []
+
+        for i in medicine:
+            data_dict = {}
+            query = Q(to_store_id=store_id, medicine_id=i.medicine.id)
+            store_medicine = MedicineStore.objects.filter(query).values('qty', 'price', 'expiry')
+            data_dict['medicine_id'] = i.medicine.id
+            data_dict['medicine_name'] = i.medicine.name
+            data_dict['order_qty'] = i.order_qty
+            data_dict['hsn'] = i.medicine.hsn
+            data_dict['gst'] = i.medicine.gst
+            data_dict['gst'] = i.medicine.gst
+            try:
+                data_dict['expiry'] = store_medicine[0]['expiry']
+            except:
+                data_dict['expiry'] = ''
+            try:
+                data_dict['record_qty'] = store_medicine[0]['qty']
+            except:
+                data_dict['record_qty'] = 0
+
+            try:
+                data_dict['mrp'] = store_medicine[0]['price']
+            except:
+                data_dict['mrp'] = 0
+
+            medicine_list.append(data_dict)
+
+        context = {
+            'id': id,
+            'order_type': order_type,
+            'store_id': store_id,
+            'user': user,
+            'invoice_number': user.invoice_number,
+            'medicine': medicine_list,
+            'old_credit_sum': old_credit_sum,
+        }
+        return render(request, 'normal_bill/direct_estimate.html', context)
 
 
 @login_required(login_url='/account/user_login/')
@@ -780,7 +960,215 @@ def update_medicine_order_bill(request, order_type, id):
         elif order_type == 3:
             return render(request, 'normal_bill/update_order_bill_of_supply.html', context)
         else:
-            return render(request, 'normal_bill/update_order_bill_of_supply.html', context)
+            return (render(request, 'normal_bill/update_order_bill_of_supply.html', context)
+
+                    @ login_required(login_url='/account/user_login/'))
+
+
+def update_estimate_detail(request, order_type, id):
+    if request.method == 'POST':
+        form = request.POST
+        user_id = request.session['user_id']
+        try:
+            store = Store.objects.get(user_id=user_id)
+            store_id = store.id
+        except:
+            store_id = 0
+
+        status = 'failed'
+        msg = 'Bill Creation failed.'
+        medicines = json.loads(request.POST.get('medicines'))
+
+        subtotal = float(form.get('sub_total'))
+        discount1 = int(form.get('total_discount'))
+        shipping_packing = float(form.get('shipping_packing'))
+
+        discount_amount = subtotal * discount1 / 100
+        after_dis_amount = subtotal - discount_amount + shipping_packing
+
+        cash = float(form.get('cash'))
+        online = float(form.get('online'))
+
+        sgst = form.get('sgst')
+        cgst = form.get('cgst')
+        state_code = form.get('state_code')
+
+        head_id = id
+
+        medicine_ids = []
+        for medicine_data in medicines:
+            medicine_id = medicine_data['medicine_id']
+            medicine_ids.append(medicine_id)
+            record_qty = int(medicine_data['record_qty'])
+            sell_qty = int(medicine_data['sell_qty'])
+            order_qty = int(medicine_data['order_qty'])
+            discount = int(medicine_data['discount'])
+            mrp = float(medicine_data['mrp'])
+            sale_rate = float(medicine_data['sale_rate'])
+            try:
+                hsn = medicine_data['hsn']
+            except:
+                hsn = 0
+
+            try:
+                gst = int(medicine_data['gst'])
+            except:
+                gst = 0
+
+            try:
+                taxable_amount = float(medicine_data['taxable_amount'])
+            except:
+                taxable_amount = 0
+
+            try:
+                tax = float(medicine_data['tax'])
+            except:
+                tax = 0
+            amount = float(medicine_data['amount'])
+
+            query = Q(head_id=head_id, medicine_id=medicine_id)
+            already_obj = DirectEstimateDetail.objects.filter(query)
+
+            if already_obj:
+                pre_sell_qty = already_obj[0].sell_qty
+                update_record_qty = int(record_qty + pre_sell_qty)
+                MedicineStore.objects.filter(to_store_id=store_id, medicine_id=medicine_id).update(
+                    qty=update_record_qty)
+                store_record = MedicineStore.objects.filter(to_store_id=store_id, medicine_id=medicine_id)
+                if store_record[0].qty >= sell_qty:
+                    record_qty = int(store_record[0].qty) - sell_qty
+                    DirectEstimateDetail.objects.filter(query).update(record_qty=record_qty,
+                                                                      sell_qty=sell_qty,
+                                                                      order_qty=order_qty,
+                                                                      mrp=mrp,
+                                                                      discount=discount,
+                                                                      sale_rate=sale_rate,
+                                                                      hsn=hsn,
+                                                                      gst=gst,
+                                                                      taxable_amount=taxable_amount,
+                                                                      tax=tax,
+                                                                      amount=amount,
+                                                                      )
+
+                    MedicineStore.objects.filter(to_store_id=store_id, medicine_id=medicine_id).update(
+                        qty=record_qty)
+            else:
+                store_record = MedicineStore.objects.filter(to_store_id=store_id, medicine_id=medicine_id)
+                if store_record[0].qty >= sell_qty:
+                    record_qty = int(store_record[0].qty) - sell_qty
+                    DirectEstimateDetail.objects.create(head_id=head_id,
+                                                        medicine_id=medicine_id,
+                                                        record_qty=record_qty,
+                                                        sell_qty=sell_qty,
+                                                        order_qty=order_qty,
+                                                        mrp=mrp,
+                                                        discount=discount,
+                                                        sale_rate=sale_rate,
+                                                        hsn=hsn,
+                                                        gst=gst,
+                                                        taxable_amount=taxable_amount,
+                                                        tax=tax,
+                                                        amount=amount,
+                                                        )
+                    MedicineStore.objects.filter(to_store_id=store_id, medicine_id=medicine_id).update(qty=record_qty)
+
+        obj = DirectEstimateHead.objects.filter(id=id).update(store_id=store_id,
+                                                              sgst=sgst,
+                                                              cgst=cgst,
+                                                              subtotal=subtotal,
+                                                              cash=cash,
+                                                              online=online,
+                                                              shipping=shipping_packing,
+                                                              discount=discount1,
+                                                              discount_amount=discount_amount,
+                                                              pay_amount=after_dis_amount,
+                                                              current=after_dis_amount,
+                                                              state_code=state_code,
+                                                              )
+        if obj:
+            MedicineOrderHead.objects.filter(id=id).update(status=1)
+            DirectEstimateDetail.objects.filter(head_id=id).exclude(medicine_id__in=medicine_ids).delete()
+            status = 'success'
+            msg = 'Bill creation Successfully.'
+
+        context = {
+            'status': status,
+            'msg': msg,
+        }
+        return JsonResponse(context)
+
+    else:
+        user_id = request.session['user_id']
+        try:
+            store = Store.objects.get(user_id=user_id)
+            store_id = store.id
+        except:
+            store_id = 0
+
+        user = DirectEstimateHead.objects.get(id=id)
+        is_last = user.id == DirectEstimateHead.objects.filter(doctor_id=user.doctor.id).aggregate(Max('id'))[
+            'id__max']
+        is_estimated = EstimateMedicineOrderBillHead.objects.filter(order_id_id=user.order_id).exists()
+        if is_last and is_estimated == False:
+            is_last = True
+        else:
+            is_last = False
+        cash_online_amount = DirectEstimateHead.objects.filter(doctor_id=user.doctor.id).exclude(id=id).aggregate(
+            total=Sum(
+                Coalesce(F('cash'), 0) +
+                Coalesce(F('online'), 0) +
+                Coalesce(F('extra_cash_amount'), 0) +
+                Coalesce(F('extra_online_amount'), 0),
+                output_field=DecimalField()
+            )
+        )['total'] or 0
+
+        total_pay_amount = DirectEstimateHead.objects.filter(doctor_id=user.doctor.id).exclude(id=id).aggregate(
+            total=Sum('pay_amount')
+        )['total'] or 0
+
+        old_credit_sum = total_pay_amount - cash_online_amount
+
+        medicine = DirectEstimateDetail.objects.filter(head_id=id)
+        medicine_list = []
+
+        for i in medicine:
+            data_dict = {}
+            query = Q(to_store_id=store_id, medicine_id=i.medicine.id)
+            store_medicine = MedicineStore.objects.filter(query).values('qty', 'price', 'expiry')
+            data_dict['medicine_id'] = i.medicine.id
+            data_dict['medicine_name'] = i.medicine.name
+            data_dict['record_qty'] = i.record_qty
+            data_dict['sell_qty'] = i.sell_qty
+            data_dict['order_qty'] = i.order_qty
+            data_dict['discount'] = i.discount
+            data_dict['hsn'] = i.hsn
+            data_dict['gst'] = i.gst
+            data_dict['taxable_amount'] = i.taxable_amount
+            data_dict['tax'] = i.tax
+            data_dict['expiry'] = store_medicine[0]['expiry']
+
+            try:
+                data_dict['record_qty'] = store_medicine[0]['qty']
+            except:
+                data_dict['record_qty'] = 0
+            try:
+                data_dict['mrp'] = store_medicine[0]['price']
+            except:
+                data_dict['mrp'] = 0
+
+            medicine_list.append(data_dict)
+
+        context = {
+            'id': id,
+            'order_type': order_type,
+            'store_id': store_id,
+            'user': user,
+            'medicine': medicine_list,
+            'old_credit_sum': old_credit_sum,
+            'is_last': is_last,
+        }
+        return render(request, 'normal_bill/update_direct_estimate.html', context)
 
 
 def estimate_generate_invoice_number():

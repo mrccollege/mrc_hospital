@@ -20,6 +20,8 @@ from django.utils.timezone import localtime
 from account.models import User
 from patient.models import Patient
 
+from my_order.models import DirectEstimateHead
+
 
 # Create your views here.
 @login_required(login_url='/account/user_login/')
@@ -68,6 +70,14 @@ def order_list(request):
     return render(request, 'order_list.html', context)
 
 
+def direct_estimate_list(request):
+    order = DirectEstimateHead.objects.all().order_by('-id')
+    context = {
+        'order': order
+    }
+    return render(request, 'direct_estimate_list.html', context)
+
+
 def normal_order_bill_list(request):
     order = MedicineOrderBillHead.objects.all().order_by('-id')
     context = {
@@ -104,8 +114,3 @@ def view_doctor_order_detail(request, id):
         'medicine': medicine,
     }
     return render(request, 'view_doctor_order_detail.html', context)
-
-
-
-
-

@@ -11,7 +11,7 @@
         <!-- Content Header (Page header) -->
         <section class="content-header">
             <h1>
-                Normal Oder Bill List
+                Estimate Order List
             </h1>
             <ol class="breadcrumb">
                 <li><a href="/"><i class="fa fa-dashboard"></i> Home</a></li>
@@ -59,19 +59,13 @@
                                     <td>{{i.pay_amount|floatformat:2}}</td>
                                     <td>{{i.pay_amount|sub:i.cash|add:i.online|floatformat:2}}</td>
 
-                                    <td><a href="/my_order/update_medicine_order_bill/{{i.order_type}}/{{i.id}}/" class="btn btn-primary">Update</a></td>
+                                    <td><a href="/my_order/update_estimate_detail/{{i.order_type}}/{{i.id}}/" class="btn btn-primary">Update</a></td>
                                     {% if i.estimate_status == 0 %}
                                     <td><a href="/my_order/estimate_medicine_order_bill/{{i.order_type}}/{{i.id}}/" class="btn btn-primary">Order Bill</a></td>
                                     {% else %}
                                     <td><button class="btn btn-primary" disabled>Order Bill</button></td>
                                     {% endif %}
-
-                                    {% if i.final_bill_status == 0 %}
-                                    <td><a href="/my_order/final_bill_invoice/{{i.id}}/" class="btn btn-primary" style="pointer-events: none; opacity: 0.6;">Final Bill</a></td>
-                                    {% else %}
-                                    <td><a href="/my_order/final_bill_invoice/{{i.id}}/" class="btn btn-primary">Final Bill</a></td>
-                                    {% endif %}
-<!--                                    <td><a href="/my_order/view_normal_invoice/{{i.id}}/" class="btn btn-primary">Order Med.</a></td>-->
+                                    <td><a href="/my_order/view_normal_invoice/{{i.id}}/" class="btn btn-primary">Order Med.</a></td>
                                     <td><a href="/bill/view_doctor_order_detail/{{i.order_id.id}}/" class="btn btn-primary">Order Detail</a></td>
                                     <td><a href="/my_order/delivery_detail/{{i.id}}/" class="btn btn-primary">Delivery</a></td>
                                 </tr>

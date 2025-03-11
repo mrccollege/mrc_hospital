@@ -96,8 +96,9 @@ def all_appointment(request):
     all_app = PatientAppointment.objects.all()
     user_id = request.session.get('user_id')
     is_admin = User.objects.get(id=user_id)
-    if is_admin.user_type.upper() == 'ADMIN':
-        query = Q()
+    if is_admin.user_type != None:
+        if is_admin.user_type.upper() == 'ADMIN':
+            query = Q()
     else:
         query = Q(doctor__user__id=user_id, appoint_status='unchecked')
     appointment = PatientAppointment.objects.filter(query)
