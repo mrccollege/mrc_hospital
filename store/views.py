@@ -331,11 +331,12 @@ def search_medicine(request):
                 query &= Q(medicine__name__icontains=term)
 
         medicines = MedicineStore.objects.filter(query).values('id', 'medicine__id', 'medicine__name', 'price', 'qty',
-                                                               'medicine__hsn', 'medicine__gst', 'expiry')
+                                                               'medicine__hsn', 'medicine__gst', 'expiry', 'batch_no')
         data_list = [
             {
                 'record_id': i['id'],
                 'medicine_id': i['medicine__id'],
+                'batch_no': i['batch_no'],
                 'name': i['medicine__name'].capitalize(),
                 'price': i['price'],
                 'record_qty': i['qty'],

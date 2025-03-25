@@ -95,6 +95,7 @@ class DirectEstimateHead(models.Model):
 class DirectEstimateDetail(models.Model):
     head = models.ForeignKey(DirectEstimateHead, on_delete=models.CASCADE, null=True)
     medicine = models.ForeignKey(Medicine, on_delete=models.CASCADE, null=True)
+    batch_no = models.CharField(max_length=50, null=True, blank=True)
     record_qty = models.IntegerField(default=0, null=True)
     order_qty = models.IntegerField(default=0, null=True)
     sell_qty = models.IntegerField(default=0, null=True)
@@ -165,6 +166,7 @@ class MedicineOrderBillHead(models.Model):
 class MedicineOrderBillDetail(models.Model):
     head = models.ForeignKey(MedicineOrderBillHead, on_delete=models.CASCADE, null=True)
     medicine = models.ForeignKey(Medicine, on_delete=models.CASCADE, null=True)
+    batch_no = models.CharField(max_length=50, null=True, blank=True)
     record_qty = models.IntegerField(default=0, null=True)
     order_qty = models.IntegerField(default=0, null=True)
     sell_qty = models.IntegerField(default=0, null=True)
@@ -233,6 +235,7 @@ class MedicineUnregisteredOrderBillHead(models.Model):
 class MedicineUnregisteredOrderBillDetail(models.Model):
     head = models.ForeignKey(MedicineUnregisteredOrderBillHead, on_delete=models.CASCADE, null=True)
     medicine = models.ForeignKey(Medicine, on_delete=models.CASCADE, null=True)
+    batch_no = models.CharField(max_length=50, null=True, blank=True)
     record_qty = models.IntegerField(default=0, null=True)
     order_qty = models.IntegerField(default=0, null=True)
     sell_qty = models.IntegerField(default=0, null=True)
@@ -297,6 +300,7 @@ class EstimateMedicineOrderBillHead(models.Model):
 class EstimateMedicineOrderBillDetail(models.Model):
     head = models.ForeignKey(EstimateMedicineOrderBillHead, on_delete=models.CASCADE, null=True)
     medicine = models.ForeignKey(Medicine, on_delete=models.CASCADE, null=True)
+    batch_no = models.CharField(max_length=50, null=True, blank=True)
     record_qty = models.IntegerField(default=0, null=True)
     order_qty = models.IntegerField(default=0, null=True)
     sell_qty = models.IntegerField(default=0, null=True)

@@ -10,6 +10,8 @@ urlpatterns = [
     path('search_medicine/', views.search_medicine, name='search_medicine'),
 
     path('direct_estimate_bill/<int:order_type>/<int:id>/', views.direct_estimate_bill, name='direct_estimate_bill'),
+    path('update_direct_estimate_bill/<int:order_type>/<int:id>/', views.update_direct_estimate_bill, name='update_direct_estimate_bill'),
+
     path('create_bill/<int:order_type>/<int:id>/', views.create_bill, name='create_bill'),
     path('unregistered_create_bill/<int:order_type>/<int:id>/', views.unregistered_create_bill, name='unregistered_create_bill'),
     path('update_medicine_order_bill/<int:order_type>/<int:id>/', views.update_medicine_order_bill, name='update_medicine_order_bill'),
