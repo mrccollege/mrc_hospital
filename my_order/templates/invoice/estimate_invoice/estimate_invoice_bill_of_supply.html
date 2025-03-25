@@ -189,8 +189,8 @@
         <table>
             <tr style="margin-top: 215px;">
                 <td colspan="2"></td>
-                <td colspan="2"><b>Cash Credit Rs. {{extra_cash_amount}}</b></td>
-                <td colspan="2"><b>Online Credit :Rs. {{extra_online_amount}}</b></td>
+                <td colspan="2"><b>Cash Credit Rs. {% if extra_cash_amount %}{{extra_cash_amount}}{% else %}0.00{% endif %}</b></td>
+                <td colspan="2"><b>Online Credit :Rs. {% if extra_online_amount %}{{extra_online_amount}}{% else %}0.00{% endif %}</b></td>
                 <td colspan="2"></td>
             </tr>
         </table>

@@ -87,7 +87,8 @@ def normal_order_bill_list(request):
 
 
 def estimate_order_bill_list(request):
-    order = EstimateMedicineOrderBillHead.objects.filter(status=1).order_by('-id')
+    # order = EstimateMedicineOrderBillHead.objects.filter(status=1).order_by('-id')
+    order = DirectEstimateHead.objects.all().order_by('-id')
     context = {
         'order': order
     }
