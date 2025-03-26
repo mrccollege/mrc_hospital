@@ -674,6 +674,7 @@
             if (event.key === 'Backspace' || event.key === 'Delete') {
                 $('#record_id' + indexID).val('');
                 $('#medicine_id' + indexID).val('');
+                $('#batch_no' + indexID).val('');
                 $('#mrp' + indexID).val('');
                 $('#record_qty' + indexID).val('');
                 $('#amount' + indexID).val(0);
@@ -714,6 +715,7 @@
                                     value: results.name,
                                     record_id: results.record_id,
                                     medicine_id: results.medicine_id,
+                                    batch_no: results.batch_no,
                                     record_qty: results.record_qty,
                                     price:results.price
                                 };
