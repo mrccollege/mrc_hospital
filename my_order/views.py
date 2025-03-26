@@ -370,7 +370,8 @@ def direct_estimate_bill(request, order_type, id):
                 if obj:
                     if sell_qty <= record_qty:
                         remaining_qty = int(record_qty) - int(sell_qty)
-                        MedicineStore.objects.filter(to_store_id=store_id, medicine_id=medicine_id, batch_no=batch_no).update(
+                        MedicineStore.objects.filter(to_store_id=store_id, medicine_id=medicine_id,
+                                                     batch_no=batch_no).update(
                             qty=remaining_qty)
                         DirectEstimateDetail.objects.filter(id=obj.id).update(record_qty=remaining_qty)
             MedicineOrderHead.objects.filter(id=id).update(status=1)
@@ -824,8 +825,10 @@ def update_medicine_order_bill(request, order_type, id):
             if already_obj:
                 pre_sell_qty = already_obj[0].sell_qty
                 update_record_qty = int(record_qty + pre_sell_qty)
-                MedicineStore.objects.filter(to_store_id=store_id, medicine_id=medicine_id, batch_no=batch_no).update(qty=update_record_qty)
-                store_record = MedicineStore.objects.filter(to_store_id=store_id, medicine_id=medicine_id, batch_no=batch_no)
+                MedicineStore.objects.filter(to_store_id=store_id, medicine_id=medicine_id, batch_no=batch_no).update(
+                    qty=update_record_qty)
+                store_record = MedicineStore.objects.filter(to_store_id=store_id, medicine_id=medicine_id,
+                                                            batch_no=batch_no)
                 if store_record[0].qty >= sell_qty:
                     record_qty = int(store_record[0].qty) - sell_qty
                     MedicineOrderBillDetail.objects.filter(query).update(record_qty=record_qty,
@@ -841,10 +844,12 @@ def update_medicine_order_bill(request, order_type, id):
                                                                          amount=amount,
                                                                          )
 
-                    MedicineStore.objects.filter(to_store_id=store_id, medicine_id=medicine_id, batch_no=batch_no).update(
+                    MedicineStore.objects.filter(to_store_id=store_id, medicine_id=medicine_id,
+                                                 batch_no=batch_no).update(
                         qty=record_qty)
             else:
-                store_record = MedicineStore.objects.filter(to_store_id=store_id, medicine_id=medicine_id, batch_no=batch_no)
+                store_record = MedicineStore.objects.filter(to_store_id=store_id, medicine_id=medicine_id,
+                                                            batch_no=batch_no)
                 if store_record[0].qty >= sell_qty:
                     record_qty = int(store_record[0].qty) - sell_qty
                     MedicineOrderBillDetail.objects.create(head_id=head_id,
@@ -861,7 +866,8 @@ def update_medicine_order_bill(request, order_type, id):
                                                            tax=tax,
                                                            amount=amount,
                                                            )
-                    MedicineStore.objects.filter(to_store_id=store_id, medicine_id=medicine_id, batch_no=batch_no).update(qty=record_qty)
+                    MedicineStore.objects.filter(to_store_id=store_id, medicine_id=medicine_id,
+                                                 batch_no=batch_no).update(qty=record_qty)
 
         obj = MedicineOrderBillHead.objects.filter(id=id).update(store_id=store_id,
                                                                  sgst=sgst,
@@ -1627,7 +1633,8 @@ def update_direct_estimate_bill(request, order_type, id):
                 update_record_qty = int(record_qty + pre_sell_qty)
                 MedicineStore.objects.filter(to_store_id=store_id, medicine_id=medicine_id, batch_no=batch_no).update(
                     qty=update_record_qty)
-                store_record = MedicineStore.objects.filter(to_store_id=store_id, medicine_id=medicine_id, batch_no=batch_no)
+                store_record = MedicineStore.objects.filter(to_store_id=store_id, medicine_id=medicine_id,
+                                                            batch_no=batch_no)
                 if store_record[0].qty >= sell_qty:
                     record_qty = int(store_record[0].qty) - sell_qty
                     DirectEstimateDetail.objects.filter(query).update(record_qty=record_qty,
@@ -1644,10 +1651,12 @@ def update_direct_estimate_bill(request, order_type, id):
                                                                       batch_no=batch_no,
                                                                       )
 
-                    MedicineStore.objects.filter(to_store_id=store_id, medicine_id=medicine_id, batch_no=batch_no).update(
+                    MedicineStore.objects.filter(to_store_id=store_id, medicine_id=medicine_id,
+                                                 batch_no=batch_no).update(
                         qty=record_qty)
             else:
-                store_record = MedicineStore.objects.filter(to_store_id=store_id, medicine_id=medicine_id, batch_no=batch_no)
+                store_record = MedicineStore.objects.filter(to_store_id=store_id, medicine_id=medicine_id,
+                                                            batch_no=batch_no)
                 if store_record[0].qty >= sell_qty:
                     record_qty = int(store_record[0].qty) - sell_qty
                     DirectEstimateDetail.objects.create(head_id=head_id,
@@ -1665,7 +1674,8 @@ def update_direct_estimate_bill(request, order_type, id):
                                                         amount=amount,
                                                         batch_no=batch_no,
                                                         )
-                    MedicineStore.objects.filter(to_store_id=store_id, medicine_id=medicine_id,batch_no=batch_no).update(qty=record_qty)
+                    MedicineStore.objects.filter(to_store_id=store_id, medicine_id=medicine_id,
+                                                 batch_no=batch_no).update(qty=record_qty)
 
         obj = DirectEstimateHead.objects.filter(id=id).update(store_id=store_id,
                                                               sgst=sgst,
@@ -2542,6 +2552,133 @@ def view_estimate_invoice(request, id):
         'total_amt': total_amt,
     }
     return render(request, 'invoice/estimate_invoice/estimate_invoice_bill_of_supply.html', context)
+
+
+def direct_estimate_invoice(request, id):
+    user_id = request.session['user_id']
+    try:
+        store = Store.objects.get(user_id=user_id)
+        store_id = store.id
+    except:
+        store_id = 0
+    try:
+        user = DirectEstimateHead.objects.get(id=id)
+    except:
+        return redirect('/my_order/my_medicine_ordered_list/')
+    order_type = user.order_type
+
+    cash_online_amount = \
+        DirectEstimateHead.objects.filter(doctor_id=user.doctor.id).exclude(id=id).aggregate(
+            total=Sum(
+                Coalesce(F('cash'), 0) +
+                Coalesce(F('online'), 0) +
+                Coalesce(F('extra_cash_amount'), 0) +
+                Coalesce(F('extra_online_amount'), 0),
+                output_field=DecimalField()
+            )
+        )['total'] or 0
+
+    total_pay_amount = DirectEstimateHead.objects.filter(doctor_id=user.doctor.id).exclude(id=id).aggregate(
+        total=Sum('pay_amount')
+    )['total'] or 0
+
+    old_credit_sum = total_pay_amount - cash_online_amount
+    pay_amount = user.pay_amount
+    cash = user.cash
+    online = user.online
+    total_amt = user.subtotal - user.discount_amount
+
+    remaining_amount = pay_amount - (cash + online) + old_credit_sum
+
+    current = user.current
+
+    medicine = DirectEstimateDetail.objects.filter(head_id=user.id)
+
+    gst_per = DirectEstimateDetail.objects.filter(head_id=user.id).values_list('gst', flat=True).distinct()
+
+    total_taxable_by_gst_list = []
+    grand_sub_total = 0
+    grand_discount_total = 0
+    grand_taxable_amount_total = 0
+    grand_sgst_and_cgst_total = 0
+    grand_tax_total = 0
+
+    for gst in gst_per:
+        # Total taxable amounts
+        total_taxable = DirectEstimateDetail.objects.filter(
+            head_id=user.id, gst=gst
+        ).aggregate(total_taxable=Sum('taxable_amount'))['total_taxable'] or 0
+        grand_taxable_amount_total += total_taxable
+
+        # Sub totals
+        medicine_sub_totals = DirectEstimateDetail.objects.filter(
+            head_id=user.id, gst=gst
+        ).annotate(
+            total=F('sell_qty') * F('mrp'),
+            discount_amount=ExpressionWrapper(
+                (F('sell_qty') * F('mrp') * F('discount') / 100),
+                output_field=FloatField()
+            )
+        )
+
+        # Sub total calculation
+        sub_total = medicine_sub_totals.aggregate(grand_total=Sum('total'))['grand_total'] or 0
+        grand_sub_total += sub_total
+
+        # Discount total calculation
+        discount_total = medicine_sub_totals.aggregate(grand_discount=Sum('discount_amount'))['grand_discount'] or 0
+        grand_discount_total += discount_total
+
+        tax = DirectEstimateDetail.objects.filter(
+            head_id=user.id, gst=gst
+        ).aggregate(tax=Sum('tax'))['tax'] or 0
+        grand_tax_total += tax
+        sgst_and_cgst = tax / 2
+        grand_sgst_and_cgst_total += sgst_and_cgst
+        total_taxable_by_gst_list.append({
+            'gst': gst,
+            'taxable_amount': total_taxable,
+            'sub_total': sub_total,
+            'discount': discount_total,
+            'tax': tax,
+            'sgst_and_cgst': sgst_and_cgst,
+        })
+
+    total_discounted_price = 0
+    for item in medicine:
+        if item.mrp and item.discount and item.sell_qty:  # Ensure values are not None
+            discount_amount = (item.mrp * item.discount) / 100  # Calculate discount amount per unit
+            discounted_price_per_unit = discount_amount  # Calculate discounted price per unit
+            total_price_for_item = discounted_price_per_unit * item.sell_qty  # Multiply by sell quantity
+            total_discounted_price += total_price_for_item  # Add to total discounted price
+
+    subtotal_amount = medicine.aggregate(total_amount=Sum(F('sell_qty') * F('mrp')))['total_amount'] or 0
+    total_taxable_amount = medicine.aggregate(total_taxable=Sum('taxable_amount'))['total_taxable'] or 0
+
+    context = {
+        'id': id,
+        'order_type': order_type,
+        'store_id': store_id,
+        'user': user,
+        'medicine': medicine,
+        'old_credit_sum': old_credit_sum,
+        'total_taxable_by_gst': total_taxable_by_gst_list,
+        'total_discounted_price': total_discounted_price,
+        'subtotal_amount': subtotal_amount,
+        'total_taxable_amount': total_taxable_amount,
+
+        'grand_sub_total': grand_sub_total,
+        'grand_discount_total': grand_discount_total,
+        'grand_taxable_amount_total': grand_taxable_amount_total,
+        'grand_sgst_and_cgst_total': grand_sgst_and_cgst_total,
+        'grand_tax_total': grand_tax_total,
+
+        'current': current,
+        'pay_amount': pay_amount,
+        'remaining_amount': remaining_amount,
+        'total_amt': total_amt,
+    }
+    return render(request, 'invoice/estimate_invoice/direct_estimate_invoice.html', context)
 
 
 def add_extra_amount(request, id):
