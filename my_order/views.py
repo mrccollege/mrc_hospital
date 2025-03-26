@@ -2564,7 +2564,7 @@ def direct_estimate_invoice(request, id):
     try:
         user = DirectEstimateHead.objects.get(id=id)
     except:
-        return redirect('/my_order/my_medicine_ordered_list/')
+        return redirect('/bill/estimate_order_bill_list/')
     order_type = user.order_type
 
     cash_online_amount = \
