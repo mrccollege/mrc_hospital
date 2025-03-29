@@ -94,6 +94,7 @@ class PatientMedicineBillHead(models.Model):
 class PatientMedicineBillDetail(models.Model):
     head = models.ForeignKey(PatientMedicineBillHead, on_delete=models.CASCADE, null=True)
     medicine = models.ForeignKey(Medicine, on_delete=models.CASCADE, null=True)
+    batch_no = models.CharField(max_length=50, null=True, blank=True)
     record_qty = models.IntegerField(default=0, null=True)
     order_qty = models.IntegerField(default=0, null=True)
     sell_qty = models.IntegerField(default=0, null=True)
@@ -160,6 +161,7 @@ class PatientMedicineUnregisteredBillHead(models.Model):
 class PatientMedicineUnregisteredBillDetail(models.Model):
     head = models.ForeignKey(PatientMedicineUnregisteredBillHead, on_delete=models.CASCADE, null=True)
     medicine = models.ForeignKey(Medicine, on_delete=models.CASCADE, null=True)
+    batch_no = models.CharField(max_length=50, null=True, blank=True)
     record_qty = models.IntegerField(default=0, null=True)
     order_qty = models.IntegerField(default=0, null=True)
     sell_qty = models.IntegerField(default=0, null=True)
@@ -224,6 +226,7 @@ class PatientEstimateMedicineBillHead(models.Model):
 class PatientEstimateMedicineBillDetail(models.Model):
     head = models.ForeignKey(PatientEstimateMedicineBillHead, on_delete=models.CASCADE, null=True)
     medicine = models.ForeignKey(Medicine, on_delete=models.CASCADE, null=True)
+    batch_no = models.CharField(max_length=50, null=True, blank=True)
     record_qty = models.IntegerField(default=0, null=True)
     order_qty = models.IntegerField(default=0, null=True)
     sell_qty = models.IntegerField(default=0, null=True)
