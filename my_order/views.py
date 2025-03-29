@@ -274,6 +274,7 @@ def normal_generate_invoice_number():
 def direct_estimate_bill(request, order_type, id):
     if request.method == 'POST':
         form = request.POST
+        print(form, '====================form')
         user_id = request.session['user_id']
         try:
             store = Store.objects.get(user_id=user_id)
@@ -320,6 +321,7 @@ def direct_estimate_bill(request, order_type, id):
                                                 )
         if obj:
             head_id = obj.id
+            l_counter = 0
             for medicine_data in medicines:
                 medicine_id = medicine_data['medicine_id']
                 batch_no = medicine_data['batch_no']
@@ -374,6 +376,9 @@ def direct_estimate_bill(request, order_type, id):
                                                      batch_no=batch_no).update(
                             qty=remaining_qty)
                         DirectEstimateDetail.objects.filter(id=obj.id).update(record_qty=remaining_qty)
+
+                l_counter += 1
+            print(l_counter, '============l_counter')
             MedicineOrderHead.objects.filter(id=id).update(status=1)
             status = 'success'
             msg = 'Bill creation Successfully.'
@@ -418,7 +423,10 @@ def direct_estimate_bill(request, order_type, id):
             query = Q(to_store_id=store_id, medicine_id=i.medicine.id)
             store_medicine = MedicineStore.objects.filter(query).values('qty', 'price', 'expiry', 'batch_no')
             data_dict['medicine_id'] = i.medicine.id
-            data_dict['batch_no'] = store_medicine[0]['batch_no']
+            try:
+                data_dict['batch_no'] = store_medicine[0]['batch_no']
+            except:
+                data_dict['batch_no'] = ''
             data_dict['medicine_name'] = i.medicine.name
             data_dict['order_qty'] = i.order_qty
             data_dict['hsn'] = i.medicine.hsn
@@ -642,7 +650,6 @@ def create_bill(request, order_type, id):
             return render(request, 'normal_bill/oder_bill_of_supply.html', context)
 
 
-
 @login_required(login_url='/account/user_login/')
 def direct_original_bill(request, order_type, id):
     if request.method == 'POST':
@@ -744,10 +751,10 @@ def direct_original_bill(request, order_type, id):
                 # query_set = Q(batch_no=batch_no, to_store_id=store_id, medicine_id=medicine_id)
 
                 # if obj:
-                    # if sell_qty <= record_qty:
-                        # remaining_qty = int(record_qty) - int(sell_qty)
-                        # MedicineStore.objects.filter(query_set).update(qty=remaining_qty)
-                        # MedicineOrderBillDetail.objects.filter(id=obj.id).update(record_qty=remaining_qty)
+                # if sell_qty <= record_qty:
+                # remaining_qty = int(record_qty) - int(sell_qty)
+                # MedicineStore.objects.filter(query_set).update(qty=remaining_qty)
+                # MedicineOrderBillDetail.objects.filter(id=obj.id).update(record_qty=remaining_qty)
             # MedicineOrderHead.objects.filter(id=id).update(status=1)
             status = 'success'
             msg = 'Bill creation Successfully.'
@@ -1757,6 +1764,7 @@ def update_estimate_medicine_order_bill(request, order_type, id):
 def update_direct_estimate_bill(request, order_type, id):
     if request.method == 'POST':
         form = request.POST
+        print(form, '==================form')
         user_id = request.session['user_id']
         try:
             store = Store.objects.get(user_id=user_id)
@@ -1785,6 +1793,7 @@ def update_direct_estimate_bill(request, order_type, id):
         head_id = id
 
         medicine_ids = []
+        l_counter = 0
         for medicine_data in medicines:
             medicine_id = medicine_data['medicine_id']
             medicine_ids.append(medicine_id)
@@ -1815,10 +1824,8 @@ def update_direct_estimate_bill(request, order_type, id):
             except:
                 tax = 0
             amount = float(medicine_data['amount'])
-
-            query = Q(head_id=head_id, medicine_id=medicine_id, batch_no=batch_no)
-            already_obj = DirectEstimateDetail.objects.filter(query)
-
+            already_obj = DirectEstimateDetail.objects.filter(head_id=head_id, medicine_id=medicine_id,
+                                                              batch_no=batch_no)
             if already_obj:
                 pre_sell_qty = already_obj[0].sell_qty
                 update_record_qty = int(record_qty + pre_sell_qty)
@@ -1828,19 +1835,19 @@ def update_direct_estimate_bill(request, order_type, id):
                                                             batch_no=batch_no)
                 if store_record[0].qty >= sell_qty:
                     record_qty = int(store_record[0].qty) - sell_qty
-                    DirectEstimateDetail.objects.filter(query).update(record_qty=record_qty,
-                                                                      sell_qty=sell_qty,
-                                                                      order_qty=order_qty,
-                                                                      mrp=mrp,
-                                                                      discount=discount,
-                                                                      sale_rate=sale_rate,
-                                                                      hsn=hsn,
-                                                                      gst=gst,
-                                                                      taxable_amount=taxable_amount,
-                                                                      tax=tax,
-                                                                      amount=amount,
-                                                                      batch_no=batch_no,
-                                                                      )
+                    DirectEstimateDetail.objects.filter(head_id=head_id, medicine_id=medicine_id,
+                                                        batch_no=batch_no).update(record_qty=record_qty,
+                                                                                  sell_qty=sell_qty,
+                                                                                  order_qty=order_qty,
+                                                                                  mrp=mrp,
+                                                                                  discount=discount,
+                                                                                  sale_rate=sale_rate,
+                                                                                  hsn=hsn,
+                                                                                  gst=gst,
+                                                                                  taxable_amount=taxable_amount,
+                                                                                  tax=tax,
+                                                                                  amount=amount,
+                                                                                  )
 
                     MedicineStore.objects.filter(to_store_id=store_id, medicine_id=medicine_id,
                                                  batch_no=batch_no).update(
@@ -1867,6 +1874,8 @@ def update_direct_estimate_bill(request, order_type, id):
                                                         )
                     MedicineStore.objects.filter(to_store_id=store_id, medicine_id=medicine_id,
                                                  batch_no=batch_no).update(qty=record_qty)
+
+            l_counter += 1
 
         obj = DirectEstimateHead.objects.filter(id=id).update(store_id=store_id,
                                                               sgst=sgst,
