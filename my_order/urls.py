@@ -13,9 +13,11 @@ urlpatterns = [
     path('update_direct_estimate_bill/<int:order_type>/<int:id>/', views.update_direct_estimate_bill, name='update_direct_estimate_bill'),
 
     path('create_bill/<int:order_type>/<int:id>/', views.create_bill, name='create_bill'),
+    path('update_medicine_order_bill/<int:order_type>/<int:id>/', views.update_medicine_order_bill, name='update_medicine_order_bill'),
+
     path('direct_original_bill/<int:order_type>/<int:id>/', views.direct_original_bill, name='direct_original_bill'),
 
-    path('update_medicine_order_bill/<int:order_type>/<int:id>/', views.update_medicine_order_bill, name='update_medicine_order_bill'),
+
     path('update_estimate_detail/<int:order_type>/<int:id>/', views.update_estimate_detail, name='update_estimate_detail'),
 
     path('estimate_medicine_order_bill/<int:order_type>/<int:id>/', views.estimate_medicine_order_bill, name='estimate_medicine_order_bill'),
