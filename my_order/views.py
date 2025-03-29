@@ -1764,7 +1764,6 @@ def update_estimate_medicine_order_bill(request, order_type, id):
 def update_direct_estimate_bill(request, order_type, id):
     if request.method == 'POST':
         form = request.POST
-        print(form, '==================form')
         user_id = request.session['user_id']
         try:
             store = Store.objects.get(user_id=user_id)
