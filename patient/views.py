@@ -236,8 +236,9 @@ def get_patient(request):
 def create_patient_bill(request, patient_id=0):
     if request.method == 'POST':
         form = request.POST
-        username = form.get('name')
+        first_name = form.get('name')
         mobile = form.get('mobile')
+        mobile = mobile[-10:]
         email = form.get('email')
         patient_age = form.get('age')
         sex = form.get('gender')
@@ -246,7 +247,8 @@ def create_patient_bill(request, patient_id=0):
         status = 'failed'
         msg = 'Patient Registration failed.'
         try:
-            user_obj = User.objects.create_user(username=username.title(),
+            user_obj = User.objects.create_user(username=mobile,
+                                                first_name=first_name,
                                                 email=email,
                                                 password='12345',
                                                 mobile=mobile,
