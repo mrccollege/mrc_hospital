@@ -442,7 +442,7 @@
                         if (result.results) {
                             var suggestedProducts = result.results.map(function (results) {
                                 return {
-                                    label: results.name,
+                                    label: results.name + ' - ' + results.batch_no,
                                     value: results.name,
                                     record_id: results.record_id,
                                     medicine_id: results.medicine_id,

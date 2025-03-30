@@ -255,12 +255,6 @@ def create_patient_bill(request, patient_id=0):
             'patient_id': patient_id,
         }
         return JsonResponse(context)
-    # if order_type == 1:
-    #     return render(request, 'customer_bill/create_customer_bill_instate.html', context)
-    # elif order_type == 2:
-    #     return render(request, 'customer_bill/create_customer_bill_other_state.html', context)
-    # elif order_type == 3:
-    #     return render(request, 'customer_bill/create_customer_bill_of_supply.html', context)
     return render(request, 'customer_bill/create_customer_bill.html')
 
 

@@ -33,6 +33,8 @@ from django.db.models import DecimalField
 
 from my_order.models import DirectEstimateHead, DirectEstimateDetail
 
+from my_order.models import DirectEstimateInvoiceTracker
+
 
 # Create your views here.
 def search_medicine(request):
@@ -274,7 +276,6 @@ def normal_generate_invoice_number():
 def direct_estimate_bill(request, order_type, id):
     if request.method == 'POST':
         form = request.POST
-        print(form, '====================form')
         user_id = request.session['user_id']
         try:
             store = Store.objects.get(user_id=user_id)
@@ -286,7 +287,7 @@ def direct_estimate_bill(request, order_type, id):
         msg = 'Bill Creation failed.'
 
         medicines = json.loads(request.POST.get('medicines'))
-        invoice_number = normal_generate_invoice_number()
+        invoice_number = direct_estimate_InvoiceTracker()
         doctor_id = form.get('doctor_id')
 
         subtotal = float(form.get('sub_total'))
@@ -1385,6 +1386,12 @@ def update_estimate_detail(request, order_type, id):
 
 def estimate_generate_invoice_number():
     obj, _ = EstimateInvoiceTracker.objects.get_or_create(year=datetime.now().year)
+    invoice_number = obj.get_next_invoice_number()
+    return invoice_number
+
+
+def direct_estimate_InvoiceTracker():
+    obj, _ = DirectEstimateInvoiceTracker.objects.get_or_create(year=datetime.now().year)
     invoice_number = obj.get_next_invoice_number()
     return invoice_number
 

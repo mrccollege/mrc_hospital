@@ -248,6 +248,7 @@
             if (event.key === 'Backspace' || event.key === 'Delete') {
                 $('#record_id' + indexID).val('');
                 $('#medicine_id' + indexID).val('');
+                $('#batch_no' + indexID).val('');
                 $('#mrp' + indexID).val('');
                 $('#record_qty' + indexID).val('');
                 $('#amount' + indexID).val(0);
@@ -284,10 +285,11 @@
                         if (result.results) {
                             var suggestedProducts = result.results.map(function (results) {
                                 return {
-                                    label: results.name,
+                                    label: results.name + ' - ' + results.batch_no,
                                     value: results.name,
                                     record_id: results.record_id,
                                     medicine_id: results.medicine_id,
+                                    batch_no: results.batch_no,
                                     record_qty: results.record_qty,
                                     price:results.price
                                 };
@@ -304,6 +306,7 @@
             select: function (event, ui) {
                 $('#record_id' + indexID).val(ui.item.record_id);
                 $('#medicine_id' + indexID).val(ui.item.medicine_id);
+                $('#batch_no' + indexID).val(ui.item.batch_no);
                 $('#mrp' + indexID).val(ui.item.price);
                 $('#record_qty' + indexID).val(ui.item.record_qty);
                 //add_medicine()
@@ -327,6 +330,7 @@
                 var row = $(this).closest('tr');  // Get the closest row to this input
                 var medicineData = {
                     medicine_id: row.find('input[name="medicine_id"]').val(),
+                    batch_no: row.find('input[name="batch_no"]').val(),
                     record_qty: row.find('input[name="record_qty"]').val(),
                     sell_qty: row.find('input[name="sell_qty"]').val(),
                     discount: row.find('input[name="discount"]').val(),
@@ -427,6 +431,7 @@
             html += '<td><input style="width: 300px;" value="{{i.medicine_name}}" type="text" id="medicine'+index+'" name="medicine" class="form-control" autocomplete="off" placeholder="Search medicine: " required></td>';
             html += '<input type="hidden" name="record_id" class="form-control" id="record_id'+index+'" required>';
             html += '<input value="{{i.medicine_id}}" type="hidden" name="medicine_id" class="form-control" id="medicine_id'+index+'" required>';
+            html += '<input value="{{i.batch_no}}" type="hidden" name="batch_no" class="form-control" id="batch_no'+index+'" required>';
 
             html += '<td><input style="width: 100px;" value="{{ i.expiry|date:"d-m-Y" }}" type="text" id="expiry'+index+'" name="expiry" class="form-control" readonly required></td>';
 
@@ -468,6 +473,8 @@
         html += '<td><input style="width: 300px;" onkeyup="search_medicine('+index+');" type="text" id="medicine'+index+'" name="medicine" class="form-control" autocomplete="off" placeholder="Search medicine: " required></td>';
         html += '<input type="hidden" name="record_id" class="form-control" id="record_id'+index+'" required>';
         html += '<input type="hidden" name="medicine_id" class="form-control" id="medicine_id'+index+'" required>';
+        html += '<input type="hidden" name="batch_no" class="form-control" id="batch_no'+index+'" required>';
+
         html += '<td><input style="width: 100px;" type="text" id="expiry'+index+'" name="expiry" class="form-control" readonly required></td>';
         html += '<td><input style="width: 90px;" type="text" id="record_qty'+index+'" name="record_qty" class="form-control" readonly required></td>';
 

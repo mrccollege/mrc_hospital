@@ -268,7 +268,7 @@
         e.preventDefault();
         var formData = $('#tab2form').serialize();
         $.ajax({
-          url: '/patient/create_customer_bill/',
+          url: '/patient/create_patient_bill/',
           type: 'POST',
           data: formData,
           success: function (response) {
