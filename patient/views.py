@@ -21,6 +21,24 @@ from django.db.models import Sum, F, FloatField, ExpressionWrapper
 
 
 # Create your views here.
+def normal_generate_invoice_number():
+    obj, _ = NormalInvoiceTracker.objects.get_or_create(year=datetime.now().year)
+    invoice_number = obj.get_next_invoice_number()
+    return invoice_number
+
+
+def generate_invoice_number():
+    obj, _ = InvoiceTracker.objects.get_or_create(year=datetime.now().year)
+    invoice_number = obj.get_next_invoice_number()
+    return invoice_number
+
+
+def estimate_generate_invoice_number():
+    obj, _ = EstimateInvoiceTracker.objects.get_or_create(year=datetime.now().year)
+    invoice_number = obj.get_next_invoice_number()
+    return invoice_number
+
+
 def patient_list(request):
     patient = Patient.objects.all()
     context = {
@@ -300,18 +318,6 @@ def patient_generate_bill(request, order_type, patient_id):
         return render(request, 'customer_bill/create_customer_bill_of_supply.html', context)
 
 
-def normal_generate_invoice_number():
-    obj, _ = NormalInvoiceTracker.objects.get_or_create(year=datetime.now().year)
-    invoice_number = obj.get_next_invoice_number()
-    return invoice_number
-
-
-def generate_invoice_number():
-    obj, _ = InvoiceTracker.objects.get_or_create(year=datetime.now().year)
-    invoice_number = obj.get_next_invoice_number()
-    return invoice_number
-
-
 @login_required(login_url='/account/user_login/')
 def create_bill(request, order_type, patient_id):
     if request.method == 'POST':
@@ -505,6 +511,7 @@ def unregistered_create_bill(request, order_type, id):
             head_id = obj.id
             for medicine_data in medicines:
                 medicine_id = medicine_data['medicine_id']
+                batch_no = medicine_data['batch_no']
                 record_qty = int(medicine_data['record_qty'])
                 sell_qty = int(medicine_data['sell_qty'])
                 discount = int(medicine_data['discount'])
@@ -544,6 +551,7 @@ def unregistered_create_bill(request, order_type, id):
                                                                            taxable_amount=taxable_amount,
                                                                            tax=tax,
                                                                            amount=amount,
+                                                                           batch_no=batch_no,
                                                                            )
                 PatientMedicineBillHead.objects.filter(id=id).update(final_bill_status=1)
                 if obj:
@@ -782,12 +790,6 @@ def update_medicine_order_bill(request, order_type, id):
             return render(request, 'patient_update_bill/update_order_bill_of_supply.html', context)
 
 
-def estimate_generate_invoice_number():
-    obj, _ = EstimateInvoiceTracker.objects.get_or_create(year=datetime.now().year)
-    invoice_number = obj.get_next_invoice_number()
-    return invoice_number
-
-
 @login_required(login_url='/account/user_login/')
 def estimate_medicine_order_bill(request, order_type, id):
     if request.method == 'POST':
@@ -931,9 +933,14 @@ def estimate_medicine_order_bill(request, order_type, id):
         for i in medicine:
             data_dict = {}
             query = Q(to_store_id=store_id, medicine_id=i.medicine.id)
-            store_medicine = MedicineStore.objects.filter(query).values('qty', 'price', 'expiry')
+            store_medicine = MedicineStore.objects.filter(query).values('qty', 'price', 'expiry', 'batch_no')
             data_dict['medicine_id'] = i.medicine.id
             data_dict['medicine_name'] = i.medicine.name
+            try:
+                data_dict['batch_no'] = store_medicine[0]['batch_no']
+            except:
+                data_dict['batch_no'] = ''
+
             data_dict['order_qty'] = i.order_qty
             data_dict['sell_qty'] = i.sell_qty
             data_dict['discount'] = i.discount
@@ -1116,9 +1123,13 @@ def update_estimate_medicine_order_bill(request, order_type, id):
         for i in medicine:
             data_dict = {}
             query = Q(to_store_id=store_id, medicine_id=i.medicine.id)
-            store_medicine = MedicineStore.objects.filter(query).values('qty', 'price', 'expiry')
+            store_medicine = MedicineStore.objects.filter(query).values('qty', 'price', 'expiry', 'batch_no')
             data_dict['medicine_id'] = i.medicine.id
             data_dict['medicine_name'] = i.medicine.name
+            try:
+                data_dict['batch_no'] = store_medicine[0]['batch_no']
+            except:
+                data_dict['batch_no'] = ''
             data_dict['order_qty'] = i.order_qty
             data_dict['sell_qty'] = i.sell_qty
             data_dict['discount'] = i.discount
@@ -1613,11 +1624,6 @@ def add_extra_amount(request, id):
 
         record = PatientMedicineBillHead.objects.filter(id=id)
         if record:
-            pre_cash = record[0].cash
-            pre_online = record[0].online
-
-            extra_cash = pre_cash + cash_amount
-            extra_online = record[0].online + online_amount
             PatientMedicineBillHead.objects.filter(id=id).update(extra_cash_amount=cash_amount,
                                                                  extra_online_amount=online_amount,
                                                                  )
@@ -1650,12 +1656,6 @@ def estimate_add_extra_amount(request, id):
 
         record = PatientEstimateMedicineBillHead.objects.filter(id=id)
         if record:
-            pre_cash = record[0].cash
-            pre_online = record[0].online
-
-            extra_cash = pre_cash + cash_amount
-            extra_online = record[0].online + online_amount
-
             PatientEstimateMedicineBillHead.objects.filter(id=id).update(extra_cash_amount=cash_amount,
                                                                          extra_online_amount=online_amount,
                                                                          )
