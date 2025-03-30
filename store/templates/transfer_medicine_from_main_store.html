@@ -38,7 +38,7 @@
                                                 <label for="medicine_name" class="form-label">Medicine Name</label>
                                                 <input type="text" class="form-control" id="medicine_name"
                                                        name="medicine_name" value="{{store_medicine.medicine.name}}"
-                                                       required>
+                                                       readonly required>
                                                 <input type="hidden" name="medicine_id" id="medicine_id"
                                                        value="{{store_medicine.medicine.id}}">
                                             </div>
@@ -53,12 +53,18 @@
                                             </div>
                                         </div>
                                         <div class="row">
-                                            <div class="col-lg-4 form-group">
+                                            <div class="col-lg-3 form-group">
+                                                <label for="medicine_qty" class="form-label">Batch No.</label>
+                                                <input type="text" class="form-control" id="batch_no"
+                                                       name="batch_no" value="{{store_medicine.batch_no}}" readonly required>
+                                            </div>
+
+                                             <div class="col-lg-3 form-group">
                                                 <label for="medicine_qty" class="form-label">Medicine Qty</label>
                                                 <input type="number" class="form-control" id="medicine_qty"
                                                        name="medicine_qty" value="{{store_medicine.qty}}" readonly required>
                                             </div>
-                                            <div class="col-lg-4 form-group">
+                                            <div class="col-lg-3 form-group">
                                                 <label for="medicine_qty" class="form-label">Transfer Qty</label>
                                                 <input type="text" class="form-control" id="add_medicine_qty"
                                                        name="transfer_medicine_qty" onkeypress="return isNumberKey(event)"

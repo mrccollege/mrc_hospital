@@ -64,8 +64,6 @@ def transfer_mini_store_medicine_detail(request, record_id):
     store_medicine = MedicineStore.objects.get(id=record_id)
     from_store_id = store_medicine.to_store.id
     store_name = store_medicine.to_store.user.username
-    print(from_store_id, '========from_store_id')
-    print(store_name, '========store_name')
     mini_store = Store.objects.all().exclude(id=from_store_id)
     context = {
         'recorde_id': record_id,
@@ -81,6 +79,7 @@ def transfer_medicine_from_main(request, id):
     if request.method == 'POST':
         form = request.POST
         medicine_id = int(form.get('medicine_id'))
+        batch_no = form.get('batch_no')
         to_store_id = int(form.get('to_store_id'))
         transfer_medicine_qty = int(form.get('transfer_medicine_qty'))
         medicine = MedicineStore.objects.get(id=id)
@@ -91,7 +90,6 @@ def transfer_medicine_from_main(request, id):
 
         category = medicine.medicine.category.name
         price = medicine.price
-        batch_no = medicine.batch_no
 
         medicine_manufacture = medicine.medicine.manufacture
         medicine_expiry = medicine.expiry
@@ -104,12 +102,12 @@ def transfer_medicine_from_main(request, id):
                 'status': status
             }
             return JsonResponse(context)
-        query = Q(medicine_id=medicine_id, to_store_id=to_store_id)
-        is_medicine = MedicineStore.objects.filter(query)
+
+        is_medicine = MedicineStore.objects.filter(medicine_id=medicine_id, to_store_id=to_store_id, batch_no=batch_no)
         if is_medicine:
             pre_qty = is_medicine[0].qty
             total_transfer_qty = pre_qty + transfer_medicine_qty
-            obj = MedicineStore.objects.filter(query).update(qty=total_transfer_qty)
+            obj = MedicineStore.objects.filter(medicine_id=medicine_id, to_store_id=to_store_id, batch_no=batch_no).update(qty=total_transfer_qty)
         else:
             obj = MedicineStore.objects.create(from_store_id=main_store_id,
                                                to_store_id=to_store_id,
@@ -122,8 +120,8 @@ def transfer_medicine_from_main(request, id):
             obj_id = obj.id
 
         if obj:
-            MedicineStore.objects.filter(medicine_id=medicine_id, to_store_id=main_store_id).update(qty=medicine_qty)
-            available_stock = MedicineStore.objects.get(medicine_id=medicine_id, to_store_id=to_store_id)
+            MedicineStore.objects.filter(medicine_id=medicine_id, to_store_id=main_store_id, batch_no=batch_no).update(qty=medicine_qty)
+            available_stock = MedicineStore.objects.get(medicine_id=medicine_id, to_store_id=main_store_id, batch_no=batch_no)
             MedicineStoreTransactionHistory.objects.create(from_store_id=main_store_id,
                                                            to_store_id=to_store_id,
                                                            medicine_id=medicine_id,
@@ -138,7 +136,7 @@ def transfer_medicine_from_main(request, id):
                                                            )
             status = 'success'
         else:
-            MedicineStore.objects.filter(query).update(qty=pre_qty)
+            MedicineStore.objects.filter(medicine_id=medicine_id, to_store_id=main_store_id, batch_no=batch_no).update(qty=pre_qty)
             MedicineStore.objects.filter(id=obj_id).delete()
             status = 'failed'
 
@@ -151,19 +149,17 @@ def transfer_medicine_from_main(request, id):
 def transfer_medicine_from_mini(request):
     if request.method == 'POST':
         form = request.POST
+        batch_no = form.get('batch_no')
         recorde_id = int(form.get('recorde_id'))
         from_store_id = int(form.get('from_store_id'))
         to_store_id = int(form.get('to_store_id'))
         transfer_medicine_qty = int(form.get('transfer_medicine_qty'))
         medicine = MedicineStore.objects.get(id=recorde_id)
         medicine_id = medicine.medicine.id
-        print(medicine_id, '==================medicine_id')
-        print(to_store_id, '==================to_store_id')
         medicine_name = medicine.medicine.name
         existing_qty = medicine.qty
         medicine_manufacture = medicine.medicine.manufacture
         medicine_expiry = medicine.expiry
-        batch_no = medicine.batch_no
         category = medicine.medicine.category.name
         price = medicine.price
 
@@ -177,12 +173,12 @@ def transfer_medicine_from_mini(request):
                 'msg': msg,
             }
             return JsonResponse(context)
-        query = Q(medicine_id=medicine_id, to_store_id=to_store_id, batch_no=batch_no)
-        is_medicine = MedicineStore.objects.filter(query)
+
+        is_medicine = MedicineStore.objects.filter(medicine_id=medicine_id, to_store_id=to_store_id, batch_no=batch_no)
         if is_medicine:
             pre_qty = is_medicine[0].qty
             total_transfer_qty = pre_qty + transfer_medicine_qty
-            obj = MedicineStore.objects.filter(query).update(qty=total_transfer_qty)
+            obj = MedicineStore.objects.filter(medicine_id=medicine_id, to_store_id=to_store_id, batch_no=batch_no).update(qty=total_transfer_qty)
         else:
             obj = MedicineStore.objects.create(from_store_id=from_store_id,
                                                to_store_id=to_store_id,
@@ -197,7 +193,7 @@ def transfer_medicine_from_mini(request):
         if obj:
             MedicineStore.objects.filter(medicine_id=medicine_id, to_store_id=from_store_id, batch_no=batch_no).update(
                 qty=medicine_qty)
-            available_stock = MedicineStore.objects.get(query)
+            available_stock = MedicineStore.objects.get(medicine_id=medicine_id, to_store_id=to_store_id, batch_no=batch_no)
             MedicineStoreTransactionHistory.objects.create(from_store_id=from_store_id,
                                                            to_store_id=to_store_id,
                                                            medicine_id=medicine_id,
@@ -213,7 +209,7 @@ def transfer_medicine_from_mini(request):
             status = 'success'
             msg = 'Medicine Transfer successfully.'
         else:
-            MedicineStore.objects.filter(query).update(qty=pre_qty)
+            MedicineStore.objects.filter(medicine_id=medicine_id, to_store_id=to_store_id, batch_no=batch_no).update(qty=pre_qty)
             MedicineStore.objects.filter(id=obj_id).delete()
             status = 'failed'
             msg = 'Medicine Transfer failed'
