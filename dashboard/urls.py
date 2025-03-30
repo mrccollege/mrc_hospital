@@ -3,5 +3,5 @@ from . import views
 
 urlpatterns = [
     path('', views.dashboard, name='dashboard'),
-    path('data_table/', views.data_table, name='data_table'),
+    path('upload_medicine_excel/', views.upload_medicine_excel, name='upload_medicine_excel'),
 ]

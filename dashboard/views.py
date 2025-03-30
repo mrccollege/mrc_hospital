@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from django.shortcuts import render, redirect
 
 from menu.models import MenuUser, MenuCategory
-
+from decimal import Decimal
 from account.models import User
 
 from doctor.models import Doctor
@@ -13,6 +13,11 @@ from store.models import Store
 from my_order.models import MedicineOrderHead, MedicineOrderBillHead, EstimateMedicineOrderBillHead
 
 from patient.models import PatientEstimateMedicineBillHead, PatientMedicineBillHead
+
+import pandas as pd
+from django.shortcuts import render
+from django.core.files.storage import FileSystemStorage
+from medicine.models import Medicine
 
 
 # Create your views here.
@@ -89,5 +94,52 @@ def get_menus(request):
         return redirect('/account/user_login/')
 
 
-def data_table(request):
-    return render(request, 'data.html')
+def clean_price(value):
+    """Convert price from '100/-' to Decimal(100.00)"""
+    if isinstance(value, str):
+        value = value.replace('/-', '').strip()  # Remove '/-'
+    try:
+        return Decimal(value)  # Convert to Decimal
+    except:
+        return Decimal(0)  # Default value if conversion fails
+
+
+def clean_gst(value):
+    """Convert GST from '5%' to Decimal(0.05)"""
+    if isinstance(value, str):
+        value = value.replace('%', '').strip()  # Remove '%'
+    try:
+        return  int(value)
+    except:
+        return  int(0)
+
+
+def upload_medicine_excel(request):
+    if request.method == "POST" and request.FILES.get("excel_file"):
+        excel_file = request.FILES["excel_file"]
+        fs = FileSystemStorage()
+        file_path = fs.save(excel_file.name, excel_file)
+        file_url = fs.url(file_path)
+
+        # Read the Excel file
+        df = pd.read_excel(fs.path(file_path))
+        # medici_cat = MedicineCategory.objects.get(id=2)
+        # Iterate and save data
+        for _, row in df.iterrows():
+            price = clean_price(row['MEDICINE PRICE'])
+            gst = clean_price(row['GST'])
+            Medicine.objects.create(
+                name=row.get("MEDICINE NAME"),
+                price=price,
+                category_id=2,
+                manufacture=row.get("MANUFACTURE"),
+                mobile=row.get("MANUFACTURE_MOBILE"),
+                desc=row.get("DESCRIPTION"),
+                hsn=row.get("HSN"),
+                gst=gst,
+                recom_to_doctor=True,
+            )
+
+        return render(request, "upload_excel_medicine.html", {"success": "Data uploaded successfully!"})
+
+    return render(request, "upload_excel_medicine.html")
