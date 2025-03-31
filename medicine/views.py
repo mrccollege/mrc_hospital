@@ -8,7 +8,8 @@ from .models import Medicine, MedicineCategory
 from django.core.files.storage import FileSystemStorage
 from store.models import Store, MedicineStore, MedicineStoreTransactionHistory
 from django.db.models import Case, When
-
+from django.http import HttpResponse
+from decimal import Decimal
 
 # Create your views here.
 def add_category(request):
@@ -72,6 +73,145 @@ def all_medicine_category(request):
         'category': category,
     }
     return render(request, 'all_medicine_category.html', context)
+
+
+def export_medicine_excel(request):
+    # Fetch all medicine data
+    medicines = Medicine.objects.all().values()
+
+    # Convert queryset to a list of dictionaries
+    medicine_list = list(medicines)
+
+    # Convert timezone-aware DateTime fields to naive datetime
+    for med in medicine_list:
+        if med["created_at"]:
+            med["created_at"] = med["created_at"].replace(tzinfo=None)
+        if med["updated_at"]:
+            med["updated_at"] = med["updated_at"].replace(tzinfo=None)
+
+    # Convert list of dictionaries to DataFrame
+    df = pd.DataFrame(medicine_list)
+
+    # Rename columns for better readability (optional)
+    df.rename(columns={
+        "name": "Medicine Name",
+        "price": "Price",
+        "category_id": "Category ID",
+        "desc": "Description",
+        "video_link": "Video Link",
+        "image": "Image Path",
+        "manufacture": "Manufacture",
+        "hsn": "HSN Code",
+        "gst": "GST",
+        "mobile": "Mobile",
+        "recom_to_doctor": "Recommended to Doctor",
+    }, inplace=True)
+
+    # Create HTTP response with Excel content
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename="registered_medicines.xlsx"'
+
+    # Save DataFrame to Excel
+    with pd.ExcelWriter(response, engine='openpyxl') as writer:
+        df.to_excel(writer, index=False, sheet_name="Medicines")
+
+    return response
+
+
+def clean_price(value):
+    """Convert price from '100/-' to Decimal(100.00)"""
+    if isinstance(value, str):
+        value = value.replace('/-', '').strip()  # Remove '/-'
+    try:
+        return Decimal(value)  # Convert to Decimal
+    except:
+        return Decimal(0)  # Default value if conversion fails
+
+
+def clean_gst(value):
+    """Convert GST from '5%' to Decimal(0.05)"""
+    if isinstance(value, str):
+        value = value.replace('%', '').strip()  # Remove '%'
+    try:
+        return int(value)
+    except:
+        return int(0)
+
+
+def register_medicine_excel(request):
+    if request.method == "POST" and request.FILES.get("excel_file"):
+        excel_file = request.FILES["excel_file"]
+        fs = FileSystemStorage()
+        file_path = fs.save(excel_file.name, excel_file)
+        file_url = fs.url(file_path)
+
+        # Read the Excel file
+        df = pd.read_excel(fs.path(file_path))
+        # Iterate and save data
+        for _, row in df.iterrows():
+            price = clean_price(row['MEDICINE PRICE'])
+            gst = clean_price(row['GST'])
+            Medicine.objects.create(
+                name=row.get("MEDICINE NAME"),
+                price=price,
+                category_id=row.get("CATEGORY"),
+                manufacture=row.get("MANUFACTURE"),
+                mobile=row.get("MANUFACTURE_MOBILE"),
+                desc=row.get("DESCRIPTION"),
+                hsn=row.get("HSN"),
+                gst=gst,
+                recom_to_doctor=True,
+            )
+
+        return render(request, "upload_excel_medicine.html", {"success": "Data uploaded successfully!"})
+
+    return render(request, "upload_excel_medicine.html")
+
+
+def purchase_medicine_excel(request):
+    if request.method == "POST" and request.FILES.get("excel_file"):
+        user_id = request.session.get('user_id')
+        store_data = Store.objects.filter(user_id=user_id)
+        if store_data:
+            store_id = store_data[0].id
+        else:
+            return render(request, "upload_excel_medicine.html")
+        excel_file = request.FILES["excel_file"]
+        fs = FileSystemStorage()
+        file_path = fs.save(excel_file.name, excel_file)
+        file_url = fs.url(file_path)
+
+        # Read the Excel file
+        df = pd.read_excel(fs.path(file_path))
+        # Iterate and save data
+        for _, row in df.iterrows():
+            medicine_id = row.get('medicine_id')
+            mini_record_qty = row.get('Min Required Qty')
+            qty = row.get('Add Qty')
+            batch_no = row.get('batch_no')
+            expiry_date = row.get('Expiry Date')
+            expiry_date_formatted = expiry_date.strftime("%Y-%m-%d")
+            price = clean_price(row['MEDICINE PRICE'])
+            is_obj = MedicineStore.objects.filter(to_store_id=store_id, medicine_id=int(medicine_id), batch_no=batch_no.upper())
+            if is_obj:
+                pre_qty = is_obj[0].qty
+                total_qty = pre_qty + int(qty)
+                MedicineStore.objects.filter(to_store_id=store_id, medicine_id=int(medicine_id), batch_no=batch_no.upper()).update(qty=total_qty, min_medicine_record_qty=int(mini_record_qty))
+            else:
+                print(medicine_id,'--------------------medicine_id')
+                MedicineStore.objects.create(from_store_id=store_id,
+                                             to_store_id=store_id,
+                                             medicine_id=medicine_id,
+                                             min_medicine_record_qty=mini_record_qty,
+                                             qty=qty,
+                                             price=float(price),
+                                             batch_no=batch_no.upper(),
+                                             expiry=expiry_date_formatted,
+                                             )
+
+        return render(request, "upload_excel_medicine.html", {"success": "Data uploaded successfully!"})
+
+    return render(request, "upload_excel_medicine.html")
 
 
 def add_medicine(request):
@@ -225,7 +365,8 @@ def add_medicine_to_store(request):
                 if is_obj:
                     pre_qty = is_obj[0].qty
                     total_qty = pre_qty + int(qty[i])
-                    store_obj = MedicineStore.objects.filter(query).update(qty=total_qty, min_medicine_record_qty=int(mini_record_qty[i]))
+                    store_obj = MedicineStore.objects.filter(query).update(qty=total_qty, min_medicine_record_qty=int(
+                        mini_record_qty[i]))
                 else:
                     store_obj = MedicineStore.objects.create(from_store_id=store_id,
                                                              to_store_id=store_id,
@@ -401,7 +542,8 @@ def search_batch_no(request):
         batch_noIds = form.getlist('batch_noIds[]')
         print(batch_noIds, '=========batch_noIds=')
         store_id = int(form.get('store_id'))
-        medicine = MedicineStore.objects.filter(batch_no__icontains=search_value, to_store=store_id).order_by('medicine__name')
+        medicine = MedicineStore.objects.filter(batch_no__icontains=search_value, to_store=store_id).order_by(
+            'medicine__name')
         data_list = []
         for i in medicine:
             data_dict = {}
@@ -420,69 +562,3 @@ def search_batch_no(request):
             'results': data_list,
         }
         return JsonResponse(context)
-
-
-def upload_medicine_excel(request):
-    if request.method == 'POST' and request.FILES.get('medicine_excel'):
-        status = 'failed?'
-        try:
-            excel_file = request.FILES['medicine_excel']
-
-            # Check if the file is an Excel file
-            if not excel_file.name.endswith(('.xls', '.xlsx')):
-                return JsonResponse({'msg': 'Invalid file format. Please upload an Excel file.'})
-
-            # Save the file temporarily
-            fs = FileSystemStorage()
-            filename = fs.save(excel_file.name, excel_file)
-            file_path = fs.path(filename)
-
-            # Read the Excel file
-            try:
-                df = pd.read_excel(file_path)
-            except Exception as e:
-                fs.delete(filename)
-                return JsonResponse({'msg': f'Error reading Excel file: {str(e)}'})
-
-            # Normalize column names to avoid issues with case or extra spaces
-            df.columns = df.columns.str.strip().str.lower()
-
-            # Adjusted column mappings for normalized names
-            column_mappings = {
-                'medicine name': 'medicine_name',
-                'medicine price': 'medicine_price',
-                'medicine manufacturer/ supplier': 'medicine_manufacturer',
-                'medicine type': 'type',
-            }
-
-            # Ensure that all required columns are present
-            missing_columns = [col for col in column_mappings if col not in df.columns]
-            if missing_columns:
-                fs.delete(filename)
-                return JsonResponse({'msg': f'Excel file is missing required columns: {", ".join(missing_columns)}'})
-
-            # Proceed with data insertion
-            for index, row in df.iterrows():
-                medicine = Medicine(
-                    medicine_name=row[column_mappings['medicine name']],
-                    medicine_price=row[column_mappings['medicine price']],
-                    type=row[column_mappings['medicine type']],
-                    medicine_manufacturer=row[column_mappings['medicine manufacturer/ supplier']],
-                )
-                medicine.save()
-
-            fs.delete(filename)
-            status = 'success'
-            msg = 'Excel sheet uploaded and processed successfully.'
-        except Exception as e:
-            print(e, '================e====================')
-            msg = f"An error occurred: {str(e)}"
-            status = status
-
-        context = {
-            'status': status,
-            'msg': msg
-        }
-        return JsonResponse(context)
-
-    return render(request, 'upload_medicine_excel.html')

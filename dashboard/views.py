@@ -94,51 +94,7 @@ def get_menus(request):
         return redirect('/account/user_login/')
 
 
-def clean_price(value):
-    """Convert price from '100/-' to Decimal(100.00)"""
-    if isinstance(value, str):
-        value = value.replace('/-', '').strip()  # Remove '/-'
-    try:
-        return Decimal(value)  # Convert to Decimal
-    except:
-        return Decimal(0)  # Default value if conversion fails
 
 
-def clean_gst(value):
-    """Convert GST from '5%' to Decimal(0.05)"""
-    if isinstance(value, str):
-        value = value.replace('%', '').strip()  # Remove '%'
-    try:
-        return  int(value)
-    except:
-        return  int(0)
 
 
-def upload_medicine_excel(request):
-    if request.method == "POST" and request.FILES.get("excel_file"):
-        excel_file = request.FILES["excel_file"]
-        fs = FileSystemStorage()
-        file_path = fs.save(excel_file.name, excel_file)
-        file_url = fs.url(file_path)
-
-        # Read the Excel file
-        df = pd.read_excel(fs.path(file_path))
-        # Iterate and save data
-        for _, row in df.iterrows():
-            price = clean_price(row['MEDICINE PRICE'])
-            gst = clean_price(row['GST'])
-            Medicine.objects.create(
-                name=row.get("MEDICINE NAME"),
-                price=price,
-                category_id=row.get("CATEGORY"),
-                manufacture=row.get("MANUFACTURE"),
-                mobile=row.get("MANUFACTURE_MOBILE"),
-                desc=row.get("DESCRIPTION"),
-                hsn=row.get("HSN"),
-                gst=gst,
-                recom_to_doctor=True,
-            )
-
-        return render(request, "upload_excel_medicine.html", {"success": "Data uploaded successfully!"})
-
-    return render(request, "upload_excel_medicine.html")

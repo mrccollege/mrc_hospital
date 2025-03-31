@@ -5,5 +5,9 @@ from .models import Medicine, MedicineCategory
 class MedicineCategoryAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'created_at')
 
-admin.site.register(Medicine)
+
+class MedicineAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name', 'price', 'created_at')
+
+admin.site.register(Medicine, MedicineAdmin)
 admin.site.register(MedicineCategory, MedicineCategoryAdmin)
