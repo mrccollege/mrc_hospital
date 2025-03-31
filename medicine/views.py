@@ -198,7 +198,6 @@ def purchase_medicine_excel(request):
                 total_qty = pre_qty + int(qty)
                 MedicineStore.objects.filter(to_store_id=store_id, medicine_id=int(medicine_id), batch_no=batch_no.upper()).update(qty=total_qty, min_medicine_record_qty=int(mini_record_qty))
             else:
-                print(medicine_id,'--------------------medicine_id')
                 MedicineStore.objects.create(from_store_id=store_id,
                                              to_store_id=store_id,
                                              medicine_id=medicine_id,
