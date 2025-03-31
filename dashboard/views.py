@@ -123,7 +123,6 @@ def upload_medicine_excel(request):
 
         # Read the Excel file
         df = pd.read_excel(fs.path(file_path))
-        # medici_cat = MedicineCategory.objects.get(id=2)
         # Iterate and save data
         for _, row in df.iterrows():
             price = clean_price(row['MEDICINE PRICE'])
@@ -131,7 +130,7 @@ def upload_medicine_excel(request):
             Medicine.objects.create(
                 name=row.get("MEDICINE NAME"),
                 price=price,
-                category_id=2,
+                category_id=row.get("CATEGORY"),
                 manufacture=row.get("MANUFACTURE"),
                 mobile=row.get("MANUFACTURE_MOBILE"),
                 desc=row.get("DESCRIPTION"),

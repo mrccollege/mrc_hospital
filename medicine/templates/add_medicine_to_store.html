@@ -206,48 +206,106 @@
     }
 </script>
 <script>
+<!--    function search_medicine(indexID) {-->
+<!--        var medicineIds = [];-->
+
+<!--        $('input[name="medicine_id"]').each(function() {-->
+<!--            medicineIds.push($(this).val());-->
+<!--        });-->
+<!--        medicineIds = medicineIds.filter(function(id) {-->
+<!--            return id.trim() !== '';-->
+<!--        });-->
+
+<!--        $('#medicine' + indexID).autocomplete({-->
+<!--            source: function (request, response) {-->
+<!--                $.ajax({-->
+<!--                    url: '/medicine/search_medicine/',-->
+<!--                    type: 'GET',-->
+<!--                    data: {-->
+<!--                        search_value: request.term,-->
+<!--                        medicineIds: medicineIds,-->
+<!--                    },-->
+<!--                    success: function (result) {-->
+<!--                        if (result.results) {-->
+<!--                            var suggestedProducts = result.results.map(function (results) {-->
+<!--                                return {-->
+<!--                                    label: results.name,-->
+<!--                                    value: results.name,-->
+<!--                                    id: results.id,-->
+<!--                                };-->
+<!--                            });-->
+<!--                            response(suggestedProducts);-->
+<!--                        }-->
+<!--                    },-->
+<!--                    error: function (xhr, errmsg, err) {-->
+<!--                        console.log(xhr.status + ": " + xhr.responseText);-->
+<!--                    }-->
+<!--                });-->
+<!--            },-->
+<!--            select: function (event, ui) {-->
+<!--                $('#medicine_id' + indexID).val(ui.item.id);-->
+<!--                //add_medicine()-->
+<!--            }-->
+<!--        });-->
+<!--    }-->
+
+
+
     function search_medicine(indexID) {
-        var medicineIds = [];
+    var medicineIds = [];
 
-        $('input[name="medicine_id"]').each(function() {
-            medicineIds.push($(this).val());
-        });
-        medicineIds = medicineIds.filter(function(id) {
-            return id.trim() !== '';
-        });
+    $('input[name="medicine_id"]').each(function () {
+        medicineIds.push($(this).val());
+    });
+    medicineIds = medicineIds.filter(function (id) {
+        return id.trim() !== '';
+    });
 
-        $('#medicine' + indexID).autocomplete({
-            source: function (request, response) {
-                $.ajax({
-                    url: '/medicine/search_medicine/',
-                    type: 'GET',
-                    data: {
-                        search_value: request.term,
-                        medicineIds: medicineIds,
-                    },
-                    success: function (result) {
-                        if (result.results) {
-                            var suggestedProducts = result.results.map(function (results) {
-                                return {
-                                    label: results.name,
-                                    value: results.name,
-                                    id: results.id,
-                                };
-                            });
-                            response(suggestedProducts);
-                        }
-                    },
-                    error: function (xhr, errmsg, err) {
-                        console.log(xhr.status + ": " + xhr.responseText);
-                    }
-                });
-            },
-            select: function (event, ui) {
-                $('#medicine_id' + indexID).val(ui.item.id);
-                //add_medicine()
-            }
-        });
+    var $input = $('#medicine' + indexID);
+
+    function triggerAutocomplete() {
+        setTimeout(function () {
+            $input.autocomplete("search", $input.val());
+        }, 100);  // Small delay to allow paste action to complete
     }
+
+    $input.autocomplete({
+        source: function (request, response) {
+            $.ajax({
+                url: '/medicine/search_medicine/',
+                type: 'GET',
+                data: {
+                    search_value: request.term,
+                    medicineIds: medicineIds,
+                },
+                success: function (result) {
+                    if (result.results) {
+                        var suggestedProducts = result.results.map(function (results) {
+                            return {
+                                label: results.name,
+                                value: results.name,
+                                id: results.id,
+                            };
+                        });
+                        response(suggestedProducts);
+                    }
+                },
+                error: function (xhr, errmsg, err) {
+                    console.log(xhr.status + ": " + xhr.responseText);
+                }
+            });
+        },
+        select: function (event, ui) {
+            $('#medicine_id' + indexID).val(ui.item.id);
+            //add_medicine()
+        }
+    });
+
+    // Trigger autocomplete on paste
+    $input.on('paste', triggerAutocomplete);
+}
+
+
 
 </script>
 
