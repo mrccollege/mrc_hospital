@@ -350,8 +350,7 @@ def create_bill(request, order_type, patient_id):
         sgst = form.get('sgst')
         cgst = form.get('cgst')
 
-        obj = PatientMedicineBillHead.objects.create(invoice_number=invoice_number,
-                                                     patient_id=patient_id,
+        obj = PatientMedicineBillHead.objects.create(patient_id=patient_id,
                                                      store_id=store_id,
                                                      sgst=sgst,
                                                      cgst=cgst,
@@ -420,7 +419,7 @@ def create_bill(request, order_type, patient_id):
                                                      batch_no=batch_no).update(
                             qty=remaining_qty)
                         PatientMedicineBillDetail.objects.filter(id=obj.id).update(record_qty=remaining_qty)
-            PatientMedicineBillHead.objects.filter(id=head_id).update(status=1)
+            PatientMedicineBillHead.objects.filter(id=head_id).update(status=1, invoice_number=invoice_number,)
             status = 'success'
             msg = 'Bill creation Successfully.'
 
@@ -559,6 +558,8 @@ def unregistered_create_bill(request, order_type, id):
                 if obj:
                     status = 'success'
                     msg = 'Bill creation Successfully.'
+
+            PatientMedicineUnregisteredBillHead.objects.filter(id=head_id).update(invoice_number=invoice_number)
 
         context = {
             'status': status,
@@ -829,7 +830,6 @@ def estimate_medicine_order_bill(request, order_type, id):
         obj = PatientEstimateMedicineBillHead.objects.create(head_id=id,
                                                              patient_id=patient_id,
                                                              store_id=store_id,
-                                                             invoice_number=invoice_number,
                                                              sgst=sgst,
                                                              cgst=cgst,
                                                              subtotal=subtotal,
@@ -894,6 +894,7 @@ def estimate_medicine_order_bill(request, order_type, id):
                                                  batch_no=batch_no).update(
                         qty=remaining_qty)
             PatientMedicineBillHead.objects.filter(id=id).update(status=1, estimate_status=1)
+            PatientEstimateMedicineBillHead.filter(id=head_id).update(invoice_number=invoice_number)
             status = 'success'
             msg = 'Bill creation Successfully.'
 
