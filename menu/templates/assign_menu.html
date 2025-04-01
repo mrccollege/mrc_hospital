@@ -15,7 +15,7 @@
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
         <section class="content-header">
-            <h1>Create New Bill</h1>
+            <h1>Assign Menu</h1>
             <ol class="breadcrumb">
                 <li><a href="/"><i class="fa fa-dashboard"></i> Home</a></li>
                 <li><a href="/">Tables</a></li>
@@ -39,15 +39,35 @@
                                         <div class="row">
                                             <div class="col-lg-4">
                                                 <div class="form-group">
-                                                    <label for="user_id" class="form-label">Store User</label>
-                                                    <select name="user_id" id="user_id" class="form-control">
-                                                        <option value="0">Select Store</option>
-                                                        {% for i in store_user %}
-                                                            <option value="{{i.user.id}}">{{i}}</option>
-                                                        {% endfor %}
+                                                    <label for="user_id" class="form-label">Account Type</label>
+                                                    <select name="user_type" id="user_type" class="form-control">
+                                                        <option value="0">Select Account Type</option>
+                                                        <option value="1">Store Dashboard</option>
+                                                        <option value="2">Doctor Dashboard</option>
+                                                        <option value="3">Patient Dashboard</option>
                                                     </select>
                                                 </div>
                                             </div>
+
+
+                                            <div class="col-lg-4">
+                                                <div class="form-group">
+                                                    <label for="user_id" class="form-label">User Type</label>
+                                                    <select name="user_id" id="user_id" class="form-control">
+                                                        <option value="0">Select User</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg-4">
+                                                <div class="form-group">
+                                                    <label for="menu_type" class="form-label">Menu Type</label>
+                                                    <select name="menu_type" id="menu_type" class="form-control">
+                                                        <option value="0">Select Type Menu</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
                                         </div>
 
                                     </div><!-- /.box-body -->
@@ -100,6 +120,64 @@
 {% block js %}
 
 <script>
+    $(document).ready(function () {
+        $("#user_type").change(function () {
+            var selectedValue = $(this).val();
+            $('#loader-overlay').show(); // Show overlay
+            $('#loader').show(); // Show loader
+            if (selectedValue !== "0") {
+                $.ajax({
+                    url: "/menu/get_user_data/",
+                    type: "GET",
+                    data: { user_type: selectedValue },
+                    success: function (response) {
+                        console.log(response.menu_list, '=============menu_list')
+                        $("#user_id").find("option:not(:first)").remove();
+                        $("#menu_type").find("option:not(:first)").remove();
+
+                        $.each(response.user_data_list, function (index, user) {
+                            $("#user_id").append('<option value="' + user.user_id + '">' + user.username + ' - ' + user.user_mobile + '</option>');
+
+                        });
+
+                        $.each(response.menu_list, function (index, menu) {
+                            $("#menu_type").append('<option value="' + menu.cat_id + '">' + menu.cat_title + '</option>');
+
+                        });
+
+                        $('#loader-overlay').hide(); // Show overlay
+                        $('#loader').hide(); // Show loader
+                    },
+                });
+            }
+        });
+    });
+
+</script>
+
+<script>
+    $("#menu_type").change(function () {
+        var selectedValue = $(this).val();
+        $('#loader-overlay').show(); // Show overlay
+        $('#loader').show(); // Show loader
+        if (selectedValue !== "0") {
+            $.ajax({
+                url: "/menu/get_menu_data/",
+                type: "GET",
+                data: { menu_type: selectedValue },
+                success: function (response) {
+                    console.log(response.menus_data_list, '=============menus_data_list')
+
+                    $('#loader-overlay').hide(); // Show overlay
+                    $('#loader').hide(); // Show loader
+                },
+            });
+        }
+    });
+</script>
+
+<script>
+
     $('#medicine_form').on('submit', function (e) {
         e.preventDefault()
         var user_id = $('#user_id').val()

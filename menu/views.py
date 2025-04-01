@@ -1,38 +1,74 @@
 from django.http import JsonResponse
 from django.shortcuts import render
 
-from .models import MenuMaster, MenuUser
+from .models import MenuMaster, MenuUser, MenuCategory
 from store.models import Store
+
+from patient.models import Patient
+
+from doctor.models import Doctor
 
 
 # Create your views here.
-def assigne_menu(request):
-    if request.method == 'POST':
-        form = request.POST
-        user_id = form.get('user_id')
-        checked_values = form.getlist('checked_values[]')
-        status = 'failed'
-        try:
-            MenuUser.objects.filter(user_id=user_id).delete()
-            for i in range(len(checked_values)):
-                MenuUser.objects.create(user_id=user_id,
-                                        menu_id=checked_values[i]
-                                        )
-            status = 'success'
-            msg = 'Menu assigned successfully.'
-        except Exception as e:
-            msg = str(e)
+def assign_menu(request):
+    return render(request, 'assign_menu.html')
+
+
+def get_user_data(request):
+    if request.method == 'GET':
+        form = request.GET
+        user_type = int(form.get('user_type'))
+        if user_type == 1:
+            user_data = Store.objects.all()
+            menus = MenuCategory.objects.filter()
+        elif user_type == 2:
+            user_data = Doctor.objects.all()
+            menus = MenuCategory.objects.filter()
+        elif user_type == 3:
+            user_data = Patient.objects.all()
+            menus = MenuCategory.objects.filter()
+        else:
+            user_data = []
+            menus = []
+
+        user_data_list = []
+        for i in user_data:
+            data_dict = {}
+            data_dict['user_id'] = i.user.id
+            data_dict['username'] = i.user.username
+            data_dict['user_mobile'] = i.user.mobile
+            user_data_list.append(data_dict)
+
+        menu_list = []
+        for i in menus:
+            data_dict = {}
+            data_dict['cat_id'] = i.id
+            data_dict['cat_title'] = i.cat_title
+            data_dict['cat_desc'] = i.cat_desc
+            menu_list.append(data_dict)
 
         context = {
-            'status': status,
-            'msg': msg,
+            'user_data_list': user_data_list,
+            'menu_list': menu_list,
         }
         return JsonResponse(context)
-    else:
-        store_user = Store.objects.filter()
-        menu = MenuMaster.objects.all()
+
+
+def get_menu_data(request):
+    if request.method == 'GET':
+        form = request.GET
+        menu_type = int(form.get('menu_type'))
+        menus = MenuMaster.objects.filter(menu_category_id=menu_type)
+
+        menus_data_list = []
+        for i in menus:
+            data_dict = {}
+            data_dict['user_id'] = i.user.id
+            data_dict['username'] = i.user.username
+            data_dict['user_mobile'] = i.user.mobile
+            menus_data_list.append(data_dict)
+
         context = {
-            'store_user': store_user,
-            'menu': menu
+            'menus_data_list': menus_data_list,
         }
-        return render(request, 'assigne_menu.html', context)
+        return JsonResponse(context)
