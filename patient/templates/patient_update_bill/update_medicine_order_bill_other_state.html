@@ -329,6 +329,11 @@
 {% block js %}
 
 <script>
+    $(document).ready(function() {
+    $("input").attr("autocomplete", "off");
+});
+
+
     $('#update_record1').on('click', function (e) {
         $('#loader-overlay').show(); // Show overlay
         $('#loader').show(); // Show loader

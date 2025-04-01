@@ -320,6 +320,10 @@
 {% block js %}
 
 <script>
+    $(document).ready(function() {
+    $("input").attr("autocomplete", "off");
+});
+
     function search_medicine(indexID) {
 
         $('#medicine'+indexID).on('keydown', function(event) {

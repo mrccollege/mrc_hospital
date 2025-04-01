@@ -164,6 +164,10 @@
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 
 <script>
+    $(document).ready(function() {
+        $("input").attr("autocomplete", "off");
+    });
+
     $('#tab1continues_btn').click(function(){
         patient_id = $('#patient_id1').val();
         if (patient_id != 0 || patient_id != ''){

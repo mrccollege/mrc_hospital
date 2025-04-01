@@ -134,5 +134,9 @@
 {% endblock content %}
 
 {% block js %}
-
+<script>
+    $(document).ready(function() {
+    $("input").attr("autocomplete", "off");
+});
+</script>
 {% endblock js %}
