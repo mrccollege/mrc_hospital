@@ -11,7 +11,7 @@ class MenuPurpose(models.Model):
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 
     def __str__(self):
-        return self.cat_title
+        return self.title
 
     class Meta:
         db_table = 'menu_purpose'
