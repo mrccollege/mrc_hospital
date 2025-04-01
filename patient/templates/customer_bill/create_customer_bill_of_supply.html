@@ -117,9 +117,10 @@
                                                 <tr>
                                                     <th>S.N</th>
                                                     <th>Medicine Name</th>
+                                                    <th>Sell Qty</th>
                                                     <th>Expiry</th>
                                                     <th>Record Qty</th>
-                                                    <th>Sell Qty</th>
+
                                                     <th>Order Qty</th>
                                                     <th colspan="1">MRP.</th>
                                                     <th>Disc.%</th>
@@ -427,6 +428,7 @@
         html += '<tr id="medicine_tr'+index+'">';
         html += '<td>'+index+'</td>';
         html += '<td><input style="width: 200px;" onkeyup="search_medicine('+index+');" type="text" id="medicine'+index+'" name="medicine" class="form-control" autocomplete="off" placeholder="Search medicine: " required></td>';
+        html += '<td><input value="1" style="width: 90px;" autocomplete="off" type="text" onkeyup="sell_qty_function('+index+')" onkeypress="return isNumberKey(event)" id="sell_qty'+index+'" name="sell_qty" class="form-control" placeholder="Sell quantity" required></td>';
         html += '<input type="hidden" name="record_id" class="form-control" id="record_id'+index+'" required>';
         html += '<input type="hidden" name="medicine_id" class="form-control" id="medicine_id'+index+'" required>';
         html += '<input type="hidden" name="batch_no" class="form-control" id="batch_no'+index+'" required>';
