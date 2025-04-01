@@ -20,13 +20,13 @@ def get_user_data(request):
         user_type = int(form.get('user_type'))
         if user_type == 1:
             user_data = Store.objects.all()
-            menus = MenuCategory.objects.filter()
+            menus = MenuCategory.objects.filter(menu_purpose__title='Store_Dashboard')
         elif user_type == 2:
             user_data = Doctor.objects.all()
-            menus = MenuCategory.objects.filter()
+            menus = MenuCategory.objects.filter(menu_purpose__title='Doctor_Dashboard')
         elif user_type == 3:
             user_data = Patient.objects.all()
-            menus = MenuCategory.objects.filter()
+            menus = MenuCategory.objects.filter(menu_purpose__title='Patient_Dashboard')
         else:
             user_data = []
             menus = []
