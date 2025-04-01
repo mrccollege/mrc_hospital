@@ -50,7 +50,7 @@
                                 <tr>
                                     <td>{{ forloop.counter }}</td>
                                     <td>{{ i.created_at|date:"d-M-Y h:i A" }}</td>
-                                    <td>{{i.patient|title}}</td>
+                                    <td>{{i.patient.user.first_name|title}}</td>
                                     <td>{{i.patient.user.mobile}}</td>
                                     <td>{{i.patient.user.district}}, {{i.doctor.user.state}}</td>
                                     <td>{{i.pay_amount|floatformat:2}}</td>
