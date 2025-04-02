@@ -12,7 +12,7 @@ class MenuCategoryAdmin(admin.ModelAdmin):
 
 
 class MenuMasterAdmin(admin.ModelAdmin):
-    list_display = ('menu_title', 'menu_url', 'created_at', 'id')
+    list_display = ('menu_category' ,'menu_title', 'menu_url', 'created_at', 'id')
 
 
 class MenuUserAdmin(admin.ModelAdmin):

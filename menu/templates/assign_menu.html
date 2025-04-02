@@ -131,7 +131,6 @@
                     type: "GET",
                     data: { user_type: selectedValue },
                     success: function (response) {
-                        console.log(response.menu_list, '=============menu_list')
                         $("#user_id").find("option:not(:first)").remove();
                         $("#menu_type").find("option:not(:first)").remove();
 

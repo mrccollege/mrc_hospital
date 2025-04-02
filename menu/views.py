@@ -59,7 +59,7 @@ def get_menu_data(request):
         form = request.GET
         menu_type = int(form.get('menu_type'))
         menus = MenuMaster.objects.filter(menu_category_id=menu_type)
-
+        print(menus, '================menus')
         menus_data_list = []
         for i in menus:
             data_dict = {}
