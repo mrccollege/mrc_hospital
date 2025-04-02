@@ -19,6 +19,8 @@ from django.shortcuts import render
 from django.core.files.storage import FileSystemStorage
 from medicine.models import Medicine
 
+from menu.models import MenuMaster
+
 
 # Create your views here.
 @login_required(login_url='/account/user_login/')
@@ -94,7 +96,24 @@ def get_menus(request):
         return redirect('/account/user_login/')
 
 
+def get_menu_data(request):
+    user_id = request.session.get('user_id')
+    menu_cate = MenuUser.objects.filter(user_id=user_id).values_list('menu__menu_category', flat=True).distinct()
+    menu_data = []
+    categories = MenuCategory.objects.all().order_by('-id')
+    for category in categories:
+        menus = MenuMaster.objects.filter(menu_category=category)
+        menu_list = [
+            {
+                "title": menu.menu_title,
+                "url": menu.menu_url,
+                "desc": menu.menu_desc,
+            }
+            for menu in menus
+        ]
 
-
-
-
+        menu_data.append({
+            "category": category.cat_title,
+            "menus": menu_list,
+        })
+    return JsonResponse({"menu_data": menu_data})
