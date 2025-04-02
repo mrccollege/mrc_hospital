@@ -34,7 +34,7 @@
                         <div class="box-body">
                             <div class="box box-primary">
                                 <!-- form start -->
-                                <form id="medicine_form" role="form">{% csrf_token %}
+                                <form id="menu_submit_form" role="form">{% csrf_token %}
                                     <div class="box-body">
                                         <div class="row">
                                             <div class="col-lg-4">
@@ -74,34 +74,23 @@
 
                                     <div class="box-body">
                                         <div class="table-responsive">
-                                            <table class="table table-condensed">
+                                            <table id="menu_table" class="table table-condensed">
                                                 <thead>
                                                 <tr>
                                                     <th>SN.</th>
                                                     <th>Menu Name</th>
                                                     <th colspan="1">Menu Url</th>
-                                                    <th colspan="1">Menu Created</th>
-                                                    <th colspan="1">Menu Updated</th>
+                                                    <th colspan="1">Action</th>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
-                                                {% for i in menu %}
-                                                <tr>
-                                                    <td><input type="checkbox" name="checked_menu" value="{{i.id}}">
-                                                    </td>
-                                                    <td>{{i.menu_title}}</td>
-                                                    <td>{{i.menu_url}}</td>
-                                                    <td>{{i.created_at}}</td>
-                                                    <td>{{i.updated_at}}</td>
-                                                </tr>
-                                                {% endfor%}
                                                 </tbody>
                                             </table>
                                         </div>
                                     </div><!-- /.box-body -->
 
                                     <div class="box-footer">
-                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                        <button type="button" id="save_selected_menus" class="btn btn-primary">Submit</button>
                                     </div>
                                 </form>
                             </div>
@@ -121,6 +110,10 @@
 
 <script>
     $(document).ready(function () {
+        $("#menu_table tbody").append(`
+            <tr><td colspan="5" class="text-center">No data found</td></tr>
+        `);
+
         $("#user_type").change(function () {
             var selectedValue = $(this).val();
             $('#loader-overlay').show(); // Show overlay
@@ -131,6 +124,7 @@
                     type: "GET",
                     data: { user_type: selectedValue },
                     success: function (response) {
+                        selectedMenuIds = [];
                         $("#user_id").find("option:not(:first)").remove();
                         $("#menu_type").find("option:not(:first)").remove();
 
@@ -155,94 +149,141 @@
 </script>
 
 <script>
+    var index_no = 1;
+    var selectedMenuIds = [];
+    var unselectedMenuIds = [];
+
+    $("#user_id").change(function () {
+        var menu_type = $("#menu_type").val();
+
+        // Reset selectedMenuIds when user changes
+        selectedMenuIds = [];
+
+        if (menu_type != "0") {
+            $("#menu_type").trigger("change");
+        }
+    });
+
+
+
+
     $("#menu_type").change(function () {
+        var user_id = $("#user_id").val();
+        if (user_id === "0") {
+            alert("Please select a user before changing the menu type.");
+            $(this).val("0"); // Reset menu type selection
+            return;
+        }
+
         var selectedValue = $(this).val();
-        $('#loader-overlay').show(); // Show overlay
-        $('#loader').show(); // Show loader
+        $('#loader-overlay').show();
+        $('#loader').show();
+
         if (selectedValue !== "0") {
             $.ajax({
                 url: "/menu/get_menu_data/",
                 type: "GET",
-                data: { menu_type: selectedValue },
+                data: { menu_type: selectedValue, user_id: user_id },
                 success: function (response) {
-                    console.log(response.menus_data_list, '=============menus_data_list')
+                    selectedMenuIds = [];
+                    $("#menu_table tbody").empty();
+                    selectedMenuIds = [];
+                    if (response.menus_data_list.length > 0) {
+                        $.each(response.menus_data_list, function (index, menu) {
+                            var html = '<tr>';
+                            html += '<td><input type="hidden" name="menu_id" id="menu_id' + index + '" value="' + menu.menu_id + '">' + (index + 1) + '</td>';
+                            html += '<td>' + menu.menu_title + '</td>';
+                            html += '<td>' + menu.menu_url + '</td>';
 
-                    $('#loader-overlay').hide(); // Show overlay
-                    $('#loader').hide(); // Show loader
+                            var checkedAttr = (menu.is_selected === true || menu.is_selected === "true") ? ' checked' : '';
+                            html += '<td><input type="checkbox" class="menu_checkbox" data-menu-id="' + menu.menu_id + '" id="menu_checkbox' + index + '"' + checkedAttr + '></td>';
+
+                            html += '</tr>';
+
+
+                            $("#menu_table tbody").append(html);
+                        });
+                    } else {
+                        $("#menu_table tbody").append(`
+                            <tr><td colspan="5" class="text-center">No data found</td></tr>
+                        `);
+                    }
+
+                    $('#loader-overlay').hide();
+                    $('#loader').hide();
                 },
+                error: function () {
+                    alert("Failed to fetch data. Please try again.");
+                    $('#loader-overlay').hide();
+                    $('#loader').hide();
+                }
             });
+        } else {
+            $("#menu_table tbody").empty();
+            selectedMenuIds = [];
+        }
+    });
+
+    // Handle checkbox change
+    $(document).on("change", ".menu_checkbox", function () {
+        var menuId = $(this).data("menu-id"); // Get menu ID
+        if ($(this).is(":checked")) {
+            if (!selectedMenuIds.includes(menuId)) {
+                selectedMenuIds.push(menuId);
+            }
+            unselectedMenuIds = unselectedMenuIds.filter(id => id !== menuId);
+        } else {
+
+            if (!unselectedMenuIds.includes(menuId)) {
+                unselectedMenuIds.push(menuId);
+            }
+            selectedMenuIds = selectedMenuIds.filter(id => id !== menuId);
         }
     });
 </script>
 
 <script>
+    function saveMenuSelection(user_id) {
+        $('#loader-overlay').show();
+        $('#loader').show();
+        $.ajax({
+            url: "/menu/save_selected_menus/",
+            type: "POST",
+            data: JSON.stringify({
+                selectedMenuIds: selectedMenuIds,
+                unselectedMenuIds: unselectedMenuIds,
+                user_id: user_id,
+            }),
+            success: function (response) {
+                $('#loader-overlay').hide();
+                $('#loader').hide();
+                alert("Menu selection updated successfully!");
+            },
+            error: function () {
+                alert("Failed to update menu selection. Please try again.");
+            }
+        });
+    }
 
-    $('#medicine_form').on('submit', function (e) {
-        e.preventDefault()
-        var user_id = $('#user_id').val()
-        if (user_id == 0){
-            Swal.fire({
-                  title: 'Error',
-                  text: 'Please select user first.',
-                  icon: 'error',
-                  confirmButtonColor: '#3085d6',
-                  confirmButtonText: 'OK'
-             });
+
+    $("#save_selected_menus").click(function () {
+        var user_id = parseInt($("#user_id").val());
+        if (user_id === 0) {
+            alert("Please select a user.");
             return false;
+        }else{
+            saveMenuSelection(user_id)
         }
 
-        $('#loader-overlay').show(); // Show overlay
-        $('#loader').show(); // Show loader
-
-        var checkedValues = $("input[name='checked_menu']:checked").map(function() {
-            return $(this).val();
-        }).get();
-
-        var formData = $(this).serializeArray()
-        $.each(checkedValues, function(index, value) {
-            formData.push({name: 'checked_values[]', value: value});
-        });
-        $.ajax({
-          url: '/menu/assigne_menu/',
-          type: 'POST',
-          data: formData,
-          success: function (response) {
-            $('#loader-overlay').hide(); // Show overlay
-            $('#loader').hide(); // Show loader
-            if(response.status == 'success'){
-              Swal.fire({
-                title: 'Success',
-                text: response.msg,
-                icon: 'success',
-                showCancelButton: false,
-                confirmButtonColor: '#3085d6',
-                confirmButtonText: 'OK'
-              }).then((result) => {
-                window.location.href = '/menu/assigne_menu/';
-              });
-            } else {
-              Swal.fire({
-                  title: 'Error',
-                  text: response.msg,
-                  icon: 'error',
-                  confirmButtonColor: '#3085d6',
-                  confirmButtonText: 'OK'
-              });
-              $('#password').val('');
-              return false;
-            }
-          },
-          error: function(xhr, status, error) {
-              Swal.fire({
-                  title: 'Error',
-                  text: 'Something went wrong!',
-                  icon: 'error',
-                  confirmButtonColor: '#3085d6',
-                  confirmButtonText: 'OK'
-              });
-          }
-        });
     });
+
+    // Function to get CSRF token from the cookie
+    function getCSRFToken() {
+        return document.cookie.split('; ')
+            .find(row => row.startsWith('csrftoken='))
+            ?.split('=')[1];
+    }
+
 </script>
 
 {% endblock js %}
