@@ -20,6 +20,7 @@ from address_place.models import Country
 from patient.models import SocialMediaReference
 from django.core.mail import send_mail
 
+
 # Create your views here.
 def hospital_registration(request):
     if request.method == 'POST':
@@ -72,7 +73,7 @@ def store_registration(request):
                                                 email=email,
                                                 password=password,
                                                 mobile=mobile,
-                                                phone=phone,)
+                                                phone=phone, )
             if user_obj:
                 store_id = user_obj.id
                 is_main_store = Store.objects.filter(type='MAIN')
@@ -172,7 +173,7 @@ def doctor_registration(request):
 def patient_registration(request):
     if request.method == 'POST':
         form = request.POST
-        username = form.get('patient_name')
+        patient_name = form.get('patient_name')
         care_of = form.get('care_of')
         mobile = form.get('mobile')
         mobile = mobile[-10:]
@@ -194,8 +195,10 @@ def patient_registration(request):
         patient_code = datetime.now().strftime("%Y%d%H%M%S")
         status = 'failed'
         msg = 'Patient Registration failed.'
+        patient_id = 0
         try:
-            user_obj = User.objects.create_user(username=username.title(),
+            user_obj = User.objects.create_user(username=mobile,
+                                                first_name=patient_name,
                                                 email=email,
                                                 password='12345',
                                                 mobile=mobile,
@@ -219,22 +222,26 @@ def patient_registration(request):
                 if reference_by_patient:
                     reference_by_patient = None
                 patient_id = user_obj.id
-                Patient.objects.create(user_id=patient_id,
-                                       patient_code=patient_code,
-                                       social_media_id=social_media,
-                                       other_reference_id=reference_by_other,
-                                       reference_by_patient_id=reference_by_patient,
-                                       )
-                status = 'success'
-                msg = 'Patient Registration successfully.'
+                patient_obj = Patient.objects.create(user_id=patient_id,
+                                                     patient_code=patient_code,
+                                                     social_media_id=social_media,
+                                                     other_reference_id=reference_by_other,
+                                                     reference_by_patient_id=reference_by_patient,
+                                                     )
+                if patient_obj:
+                    patient_id = patient_obj.id
+                    status = 'success'
+                    msg = 'Patient Registration successfully.'
 
         except Exception as e:
             status = status
             msg = str(e)
+            patient_id = 0
 
         context = {
             'status': status,
             'msg': msg,
+            'patient_id': patient_id,
         }
         return JsonResponse(context)
     else:
@@ -294,6 +301,7 @@ def generate_time_based_otp():
     otp = str(current_time)[-6:]
 
     return otp
+
 
 def send_otp_email(email, otp):
     subject = 'Your OTP for Verification'

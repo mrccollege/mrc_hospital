@@ -40,7 +40,7 @@ def estimate_generate_invoice_number():
 
 
 def patient_list(request):
-    patient = Patient.objects.all()
+    patient = Patient.objects.all().order_by('-id')
     context = {
         'patient': patient
     }
@@ -274,7 +274,16 @@ def create_patient_bill(request, patient_id=0):
             'patient_id': patient_id,
         }
         return JsonResponse(context)
-    return render(request, 'customer_bill/create_customer_bill.html')
+    else:
+        country = Country.objects.all()
+        social_media = SocialMediaReference.objects.all()
+        reference_by_other = OtherReference.objects.all()
+        context = {
+            'country': country,
+            'social_media': social_media,
+            'reference_by_other': reference_by_other
+        }
+        return render(request, 'customer_bill/create_customer_bill.html', context)
 
 
 def create_patient_bill_detail(request, patient_id):
