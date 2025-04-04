@@ -100,7 +100,7 @@ def get_menu_data(request):
     user_id = request.session.get('user_id')
     menu_data = MenuUser.objects.filter(user_id=user_id).select_related(
         'menu__menu_category'
-    ).order_by('menu__menu_category__cat_title')
+    ).order_by('-menu__menu_category__id')
 
     grouped_data = defaultdict(list)
     for item in menu_data:
