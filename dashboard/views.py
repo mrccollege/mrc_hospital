@@ -108,7 +108,8 @@ def get_menu_data(request):
         grouped_data[category.cat_title].append({
             'title': item.menu.menu_title,
             'url': item.menu.menu_url,
-            'desc': item.menu.menu_desc
+            'desc': item.menu.menu_desc,
+            'cat_color': item.menu.menu_category.cat_color
         })
 
     # Convert to a list of dictionaries for JSON
@@ -118,5 +119,4 @@ def get_menu_data(request):
             'category': cat_title,
             'menus': menus
         })
-
     return JsonResponse({"menu_data": menu_data})

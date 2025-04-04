@@ -19,6 +19,7 @@ class MenuPurpose(models.Model):
 
 class MenuCategory(models.Model):
     cat_title = models.CharField(max_length=100, null=True)
+    cat_color = models.CharField(max_length=10, null=True)
     cat_desc = models.TextField(null=True, blank=True)
     menu_purpose = models.ForeignKey(MenuPurpose, on_delete=models.CASCADE, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
