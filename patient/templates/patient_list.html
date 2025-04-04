@@ -44,7 +44,7 @@
                                 {% for i in patient %}
                                 <tr>
                                     <td>{{i.patient_code}}</td>
-                                    <td>{{i.user.username|title}}</td>
+                                    <td>{{i.user.first_name|title}}</td>
                                     <td>{{i.user.mobile}}</td>
                                     <td>{{i.user.age}}</td>
                                     <td><a href="/patient/patient_detail/{{i.id}}/">View</a></td>

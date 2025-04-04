@@ -19,7 +19,10 @@ def get_state(request):
                 )
             ).order_by('is_patient_state', 'name').values('id', 'name')
         else:
-            states = State.objects.filter(country_id=country_id).values('id', 'name')
+            try:
+                states = State.objects.filter(country_id=country_id).values('id', 'name')
+            except:
+                states = State.objects.all()
 
         state_list = list(states)
         context = {

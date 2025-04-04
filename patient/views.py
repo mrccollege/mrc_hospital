@@ -118,12 +118,11 @@ def patient_detail(request, id):
         return JsonResponse(context)
     else:
         patient = Patient.objects.get(id=id)
-        country = Country.objects.annotate(
-            is_patient_country=Case(
-                When(id=patient.user.country.id, then=0),
-                default=1,
-            )
-        ).order_by('is_patient_country', 'name')
+        try:
+            country = Country.objects.annotate(is_patient_country=Case(When(id=patient.user.country.id,
+                                                                        then=0),default=1,)).order_by('is_patient_country', 'name')
+        except:
+            country = Country.objects.all()
 
         if patient.social_media:
             reference_social_media_id = patient.social_media.id

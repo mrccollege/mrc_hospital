@@ -9,7 +9,7 @@ from account.models import User
 from doctor.models import Doctor
 
 from store.models import Store
-
+from collections import defaultdict
 from my_order.models import MedicineOrderHead, MedicineOrderBillHead, EstimateMedicineOrderBillHead
 
 from patient.models import PatientEstimateMedicineBillHead, PatientMedicineBillHead
@@ -98,22 +98,25 @@ def get_menus(request):
 
 def get_menu_data(request):
     user_id = request.session.get('user_id')
-    menu_cate = MenuUser.objects.filter(user_id=user_id).values_list('menu__menu_category', flat=True).distinct()
-    menu_data = []
-    categories = MenuCategory.objects.all().order_by('-id')
-    for category in categories:
-        menus = MenuMaster.objects.filter(menu_category=category)
-        menu_list = [
-            {
-                "title": menu.menu_title,
-                "url": menu.menu_url,
-                "desc": menu.menu_desc,
-            }
-            for menu in menus
-        ]
+    menu_data = MenuUser.objects.filter(user_id=user_id).select_related(
+        'menu__menu_category'
+    ).order_by('menu__menu_category__cat_title')
 
-        menu_data.append({
-            "category": category.cat_title,
-            "menus": menu_list,
+    grouped_data = defaultdict(list)
+    for item in menu_data:
+        category = item.menu.menu_category
+        grouped_data[category.cat_title].append({
+            'title': item.menu.menu_title,
+            'url': item.menu.menu_url,
+            'desc': item.menu.menu_desc
         })
+
+    # Convert to a list of dictionaries for JSON
+    menu_data = []
+    for cat_title, menus in grouped_data.items():
+        menu_data.append({
+            'category': cat_title,
+            'menus': menus
+        })
+
     return JsonResponse({"menu_data": menu_data})
