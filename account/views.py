@@ -16,10 +16,10 @@ from doctor.models import Doctor
 from patient.models import Patient, OtherReference
 
 from address_place.models import Country
-
+import requests
 from patient.models import SocialMediaReference
 from django.core.mail import send_mail
-from common_function.send_message import send_sms
+
 
 # Create your views here.
 def hospital_registration(request):
@@ -230,7 +230,6 @@ def patient_registration(request):
                                                      reference_by_patient_id=reference_by_patient,
                                                      )
                 if patient_obj:
-                    send_sms(mobile, message)
                     patient_id = patient_obj.id
                     status = 'success'
                     msg = 'Patient Registration successfully.'
