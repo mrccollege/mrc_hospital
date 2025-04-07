@@ -19,7 +19,7 @@ from address_place.models import Country
 
 from patient.models import SocialMediaReference
 from django.core.mail import send_mail
-
+from common_function.send_message import send_sms
 
 # Create your views here.
 def hospital_registration(request):
@@ -196,7 +196,7 @@ def patient_registration(request):
         status = 'failed'
         msg = 'Patient Registration failed.'
         patient_id = 0
-        message = "Thank you. We have received a payment of Rs 100 Against Bill no 02158 on Date at time.Thanks for visiting Mrc Ayurveda"
+        message = "Your registration has been successfully. thanks for visiting Mrc Ayurveda"
         try:
             user_obj = User.objects.create_user(username=mobile,
                                                 first_name=patient_name,
@@ -230,6 +230,7 @@ def patient_registration(request):
                                                      reference_by_patient_id=reference_by_patient,
                                                      )
                 if patient_obj:
+                    send_sms(mobile, message)
                     patient_id = patient_obj.id
                     status = 'success'
                     msg = 'Patient Registration successfully.'

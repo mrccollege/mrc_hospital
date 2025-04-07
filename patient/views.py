@@ -19,6 +19,7 @@ from decimal import Decimal
 from django.db.models import DecimalField
 from django.db.models import Sum, F, FloatField, ExpressionWrapper
 
+from common_function.send_message import send_sms
 
 
 # Create your views here.
@@ -235,6 +236,7 @@ def get_patient(request):
 
 
 def create_patient_bill(request, patient_id=0):
+    send_sms('8279408396', "Your registration has been successfully. thanks for visiting Mrc Ayurveda")
     if request.method == 'POST':
         form = request.POST
         first_name = form.get('name')
