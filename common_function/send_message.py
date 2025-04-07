@@ -13,7 +13,7 @@ def send_sms(mobile, message):
     }
 
     response = requests.get(url, params=params)
-
+    print(response, '================response')
     if response.status_code == 200:
         print("SMS sent successfully!")
     else:
