@@ -162,7 +162,8 @@
                                                             Name</label>
                                                         <input type="text" class="form-control" id="patient_name"
                                                                name="patient_name" required>
-                                                        <input type="hidden" name="patient_id2" id="patient_id2" value="0">
+                                                        <input type="hidden" name="patient_id2" id="patient_id2"
+                                                               value="0">
                                                     </div>
 
                                                     <div class="col-lg-4 form-group">
@@ -324,16 +325,15 @@
                                                         <div class="row">
                                                             <div class="col-lg-2">
                                                                 <label for="tobacco">Tobacco</label>
-                                                                <input type="checkbox" id="tobacco"
-                                                                       onclick="get_value()">
+                                                                <input type="checkbox" name="tobacco" id="tobacco">
                                                             </div>
                                                             <div class="col-lg-2">
                                                                 <label for="alcohol">Alcohol</label>
-                                                                <input type="checkbox" id="alcohol">
+                                                                <input type="checkbox" name="alcohol" id="alcohol">
                                                             </div>
                                                             <div class="col-lg-2">
                                                                 <label for="smoking">Smoking</label>
-                                                                <input type="checkbox" id="smoking">
+                                                                <input type="checkbox" name="smoking" id="smoking">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -342,7 +342,7 @@
                                             <div class="box-footer">
                                                 <button type="submit" class="btn btn-success">Submit</button>
                                                 <button type="button" id="tab2continues_btn" class="hidden">Continue
-                                            </button>
+                                                </button>
                                             </div>
                                         </form>
 
@@ -365,7 +365,9 @@
 {% block js %}
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 
+
 <script>
+
     $(document).ready(function() {
         $("input").attr("autocomplete", "off");
     });
@@ -492,57 +494,7 @@
               return false;
             }
           },
-    });
-
-
-<!--        $('#loader-overlay').show(); // Show overlay-->
-<!--        $('#loader').show(); // Show loader-->
-
-<!--        gender = $('#gender').val();-->
-<!--        if(gender == 0){-->
-<!--            Swal.fire({-->
-<!--                  title: 'Error',-->
-<!--                  text: 'Please select Gender first.',-->
-<!--                  icon: 'error',-->
-<!--                  confirmButtonColor: '#3085d6',-->
-<!--                  confirmButtonText: 'OK'-->
-<!--             });-->
-<!--            return false;-->
-<!--        }-->
-
-<!--        e.preventDefault();-->
-<!--        var formData = $('#tab2form').serialize();-->
-<!--        $.ajax({-->
-<!--          url: '/patient/create_patient_bill/',-->
-<!--          type: 'POST',-->
-<!--          data: formData,-->
-<!--          success: function (response) {-->
-<!--            $('#loader-overlay').hide(); // Show overlay-->
-<!--            $('#loader').hide(); // Show loader-->
-<!--            if(response.status == 'success'){-->
-<!--                Swal.fire({-->
-<!--                    title: 'Success',-->
-<!--                    text: response.msg,-->
-<!--                    icon: 'success',-->
-<!--                    showCancelButton: false,-->
-<!--                    confirmButtonColor: '#3085d6',-->
-<!--                    confirmButtonText: 'OK'-->
-<!--                  }).then((result) => {-->
-<!--                      $('#tab2continues_btn').removeClass('hidden')-->
-<!--                      $('#patient_id2').val(response.patient_id)-->
-<!--                  });-->
-<!--            }else{-->
-<!--              Swal.fire({-->
-<!--                  title: 'Error',-->
-<!--                  text: response.msg,-->
-<!--                  icon: 'error',-->
-<!--                  confirmButtonColor: '#3085d6',-->
-<!--                  confirmButtonText: 'OK'-->
-<!--              });-->
-<!--              return false;-->
-<!--            }-->
-<!--          },-->
-<!--        });-->
+        });
     });
 </script>
 
@@ -706,42 +658,13 @@
 </script>
 
 <script>
-
-    $('#tobacco').click(function(){
-        console.log('=============v')
-        var is_tobacco = $('#tobacco').prop('checked');
-        console.log(is_tobacco, '===============is_tobacco=')
-        if (is_tobacco == true){
-            $('#tobacco').val('tobacco')
-        }else{
-            $('#tobacco').val('None')
-        }
-
-    });
-
-    $('#alcohol').click(function(){
-        console.log('=============v')
-        var is_alcohol = $('#alcohol').prop('checked');
-        console.log(is_alcohol, '===============is_alcohol=')
-        if (is_alcohol == true){
-            $('#alcohol').val('alcohol')
-        }else{
-            $('#alcohol').val('None')
-        }
-
-    });
-
-    $('#smoking').click(function(){
-        console.log('=============v')
-        var is_smoking = $('#smoking').prop('checked');
-        console.log(is_smoking, '===============is_smoking=')
-        if (is_smoking == true){
-            $('#smoking').val('smoking')
-        }else{
-            $('#smoking').val('None')
-        }
-
-    });
-
+  $('#tobacco, #alcohol, #smoking').change(function() {
+    let id = $(this).attr('id');
+    if ($(this).is(':checked')) {
+      alert(id.charAt(0).toUpperCase() + id.slice(1) + ' is checked');
+    } else {
+      alert(id.charAt(0).toUpperCase() + id.slice(1) + ' is unchecked');
+    }
+  });
 </script>
 {% endblock js %}

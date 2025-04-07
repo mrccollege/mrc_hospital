@@ -1,6 +1,6 @@
 import time
 from datetime import datetime
-
+import requests
 from django.contrib.auth import authenticate, login, logout
 from django.db.models import Q
 from django.http import JsonResponse
@@ -20,7 +20,7 @@ from address_place.models import Country
 from patient.models import SocialMediaReference
 from django.core.mail import send_mail
 
-
+import urllib.parse
 # Create your views here.
 def hospital_registration(request):
     if request.method == 'POST':
@@ -170,6 +170,27 @@ def doctor_registration(request):
         return render(request, 'doctor_registration.html', context)
 
 
+def send_sms(mobile, message):
+    print(mobile, '======================1')
+    print(message, '======================1')
+    url = "http://msg.msgclub.net/rest/services/sendSMS/sendGroupSms"
+    params = {
+        'AUTH_KEY': '3380567192fd2e6d18f63985aace',
+        'message': message,
+        'senderId': 'MRCARC',
+        'routeId': 1,
+        'mobileNos': mobile,
+        'smsContentType': 'english'
+    }
+
+    response = requests.get(url, params=params)
+
+    if response.status_code == 200:
+        print("SMS sent successfully!")
+    else:
+        print("Failed to send SMS", response.text)
+
+
 def patient_registration(request):
     if request.method == 'POST':
         form = request.POST
@@ -196,6 +217,7 @@ def patient_registration(request):
         status = 'failed'
         msg = 'Patient Registration failed.'
         patient_id = 0
+        message = "Thank you. We have received a payment of Rs 100 Against Bill no 02158 on Date at time.Thanks for visiting Mrc Ayurveda"
         try:
             user_obj = User.objects.create_user(username=mobile,
                                                 first_name=patient_name,
@@ -229,6 +251,11 @@ def patient_registration(request):
                                                      reference_by_patient_id=reference_by_patient,
                                                      )
                 if patient_obj:
+                    # send_sms(mobile, message)
+                    encoded_message = urllib.parse.quote(message)
+                    url = f"http://msg.msgclub.net/rest/services/sendSMS/sendGroupSms?AUTH_KEY=3380567192fd2e6d18f63985aace&message={message}&senderId=MRCARC&routeId=1&mobileNos={mobile}&smsContentType=english"
+                    print(mobile, '===============mobile')
+                    print(message, '===============message')
                     patient_id = patient_obj.id
                     status = 'success'
                     msg = 'Patient Registration successfully.'
