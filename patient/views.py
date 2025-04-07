@@ -20,6 +20,7 @@ from django.db.models import DecimalField
 from django.db.models import Sum, F, FloatField, ExpressionWrapper
 
 
+
 # Create your views here.
 def normal_generate_invoice_number():
     obj, _ = NormalInvoiceTracker.objects.get_or_create(year=datetime.now().year)
@@ -120,7 +121,8 @@ def patient_detail(request, id):
         patient = Patient.objects.get(id=id)
         try:
             country = Country.objects.annotate(is_patient_country=Case(When(id=patient.user.country.id,
-                                                                        then=0),default=1,)).order_by('is_patient_country', 'name')
+                                                                            then=0), default=1, )).order_by(
+                'is_patient_country', 'name')
         except:
             country = Country.objects.all()
 
@@ -427,7 +429,7 @@ def create_bill(request, order_type, patient_id):
                                                      batch_no=batch_no).update(
                             qty=remaining_qty)
                         PatientMedicineBillDetail.objects.filter(id=obj.id).update(record_qty=remaining_qty)
-            PatientMedicineBillHead.objects.filter(id=head_id).update(status=1, invoice_number=invoice_number,)
+            PatientMedicineBillHead.objects.filter(id=head_id).update(status=1, invoice_number=invoice_number, )
             status = 'success'
             msg = 'Bill creation Successfully.'
 
