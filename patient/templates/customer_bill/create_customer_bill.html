@@ -437,6 +437,7 @@
                     confirmButtonText: 'OK'
                   }).then((result) => {
                       $('#tab2continues_btn').removeClass('hidden')
+                      $('#tab1continues_btn').removeClass('hidden')
                       $('#patient_id1').val(response.patient_id)
                   });
             }else{
