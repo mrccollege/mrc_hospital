@@ -232,7 +232,10 @@ def patient_registration(request):
                                                      reference_by_patient_id=reference_by_patient,
                                                      )
                 if patient_obj:
-                    send_sms(mobile, message)
+                    try:
+                        send_sms(mobile, message)
+                    except:
+                        pass
                     patient_id = patient_obj.id
                     status = 'success'
                     msg = 'Patient Registration successfully.'
