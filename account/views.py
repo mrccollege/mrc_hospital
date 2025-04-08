@@ -196,9 +196,9 @@ def patient_registration(request):
         status = 'failed'
         msg = 'Patient Registration failed.'
         patient_id = 0
-        mobile_no = str(mobile)
-        message = str('Your registration has been successfully. thanks for visiting Mrc Ayurveda')
-        base_url = f'http://msg.msgclub.net/rest/services/sendSMS/sendGroupSms?AUTH_KEY=3380567192fd2e6d18f63985aace&message={messages}&senderId=MRCARC&routeId=1&mobileNos={mobile_no}&smsContentType=english'
+
+        message = f'Namaste!! Welcome to MRC Ayurveda, Access your more Details www.MrcAyurveda.com Using User ID {mobile} Password{12345}'
+        # base_url = f'http://msg.msgclub.net/rest/services/sendSMS/sendGroupSms?AUTH_KEY=3380567192fd2e6d18f63985aace&message={message}&senderId=MRCARC&routeId=1&mobileNos={mobile}&smsContentType=english'
         try:
             user_obj = User.objects.create_user(username=mobile,
                                                 first_name=patient_name,
