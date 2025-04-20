@@ -389,6 +389,7 @@ def create_bill(request, order_type, patient_id):
                                                      sgst=sgst,
                                                      cgst=cgst,
                                                      subtotal=subtotal,
+                                                     flat_discount=flat_discount,
                                                      discount_amount=discount_amount,
                                                      cash=cash,
                                                      online=online,
@@ -505,11 +506,13 @@ def unregistered_create_bill(request, order_type, id):
         patient_id = form.get('patient_id')
 
         subtotal = float(form.get('sub_total'))
+        flat_discount = float(form.get('flat_discount'))
         discount = int(form.get('total_discount'))
         shipping_packing = float(form.get('shipping_packing'))
 
         discount_amount = subtotal * discount / 100
         after_dis_amount = subtotal - discount_amount + shipping_packing
+        after_dis_amount = after_dis_amount - flat_discount
 
         cash = float(form.get('cash'))
         online = float(form.get('online'))
@@ -531,6 +534,7 @@ def unregistered_create_bill(request, order_type, id):
                                                                  sgst=sgst,
                                                                  cgst=cgst,
                                                                  subtotal=subtotal,
+                                                                 flat_discount=flat_discount,
                                                                  discount_amount=discount_amount,
                                                                  cash=cash,
                                                                  online=online,
@@ -618,11 +622,13 @@ def update_medicine_order_bill(request, order_type, id):
         medicines = json.loads(request.POST.get('medicines'))
 
         subtotal = float(form.get('sub_total'))
+        flat_discount = float(form.get('flat_discount'))
         discount1 = int(form.get('total_discount'))
         shipping_packing = float(form.get('shipping_packing'))
 
         discount_amount = subtotal * discount1 / 100
         after_dis_amount = subtotal - discount_amount + shipping_packing
+        after_dis_amount = after_dis_amount - flat_discount
 
         cash = float(form.get('cash'))
         online = float(form.get('online'))
@@ -724,6 +730,7 @@ def update_medicine_order_bill(request, order_type, id):
                                                                    cash=cash,
                                                                    online=online,
                                                                    shipping=shipping_packing,
+                                                                   flat_discount=flat_discount,
                                                                    discount=discount1,
                                                                    discount_amount=discount_amount,
                                                                    pay_amount=after_dis_amount,
@@ -846,6 +853,7 @@ def estimate_medicine_order_bill(request, order_type, id):
         oder_id = form.get('oder_id')
         invoice_number = estimate_generate_invoice_number()
 
+        flat_discount = float(form.get('flat_discount'))
         subtotal = float(form.get('sub_total'))
         discount = int(form.get('total_discount'))
         shipping_packing = float(form.get('shipping_packing'))
@@ -854,6 +862,7 @@ def estimate_medicine_order_bill(request, order_type, id):
         discount_amount = subtotal * discount / 100
         after_dis_amount = subtotal - discount_amount + shipping_packing
         after_dis_amount = after_dis_amount - current
+        after_dis_amount = after_dis_amount - flat_discount
 
         cash = float(form.get('cash'))
         online = float(form.get('online'))
@@ -871,6 +880,7 @@ def estimate_medicine_order_bill(request, order_type, id):
                                                              cash=cash,
                                                              online=online,
                                                              shipping=shipping_packing,
+                                                             flat_discount=flat_discount,
                                                              discount=discount,
                                                              discount_amount=discount_amount,
                                                              pay_amount=after_dis_amount,
@@ -1035,6 +1045,7 @@ def update_estimate_medicine_order_bill(request, order_type, id):
         medicines = json.loads(request.POST.get('medicines'))
 
         subtotal = float(form.get('sub_total'))
+        flat_discount = float(form.get('flat_discount'))
         discount1 = int(form.get('total_discount'))
         shipping_packing = float(form.get('shipping_packing'))
         current = float(form.get('current'))
@@ -1042,6 +1053,7 @@ def update_estimate_medicine_order_bill(request, order_type, id):
         discount_amount = subtotal * discount1 / 100
         after_dis_amount = subtotal - discount_amount + shipping_packing
         after_dis_amount = after_dis_amount - current
+        after_dis_amount = after_dis_amount - flat_discount
 
         cash = float(form.get('cash'))
         online = float(form.get('online'))
@@ -1101,6 +1113,7 @@ def update_estimate_medicine_order_bill(request, order_type, id):
                                                                            cash=cash,
                                                                            online=online,
                                                                            shipping=shipping_packing,
+                                                                           flat_discount=flat_discount,
                                                                            discount=discount1,
                                                                            discount_amount=discount_amount,
                                                                            pay_amount=after_dis_amount,
