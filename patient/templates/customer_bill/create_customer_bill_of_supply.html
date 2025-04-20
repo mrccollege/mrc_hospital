@@ -157,12 +157,12 @@
                                                             </div>
 
                                                             <div class="col-lg-3">
-                                                                <label for="flat_discount">Flate Discount </label>
+                                                                <label for="flat_discount">Flat Discount </label>
                                                                 <input type="text" class="form-control"
                                                                        name="flat_discount"
                                                                        id="flat_discount" value="0"
                                                                        onkeypress="return isNumberKey(event)"
-                                                                       onkeyup="flat_discount_apply_function()">
+                                                                       onkeyup="total_discount_apply_function()">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -474,6 +474,7 @@
         $('#medicine_tr'+index).remove()
         sub_total_function()
         total_discount_apply_function()
+
         cash_online_function()
     }
 </script>
@@ -568,6 +569,7 @@
 <script>
     function total_discount_apply_function(){
         var dis_apply = Number($('#total_discount').val()) || 0;
+        var flat_discount = Number($('#flat_discount').val()) || 0;
         var shipping_packing = Number($('#shipping_packing').val()) || 0;
 
         var sub_total = Number($('#sub_total').val())
@@ -575,28 +577,7 @@
 
         var disc_amt = (dis_apply / 100) * sub_total;
         var amt =  sub_total - disc_amt
-        var amt =  amt +  shipping_packing
-        $('#total').val(amt.toFixed(2))
-
-        var old_credit = Number($('#old_credit').val()) || 0;
-        var total = Number($('#total').val()) || 0;
-
-        var total_pay_bill = old_credit + total
-        Number($('#total_pay_bill_amount').val(total_pay_bill.toFixed(2)))
-
-        cash_online_function()
-    }
-
-
-
-    function flat_discount_apply_function(){
-        var flat_discount = Number($('#flat_discount').val()) || 0;
-        var shipping_packing = Number($('#shipping_packing').val()) || 0;
-
-        var sub_total = Number($('#sub_total').val())
-
-        var amt =  sub_total - flat_discount
-        var amt =  amt +  shipping_packing
+        var amt =  amt +  shipping_packing - flat_discount
         $('#total').val(amt.toFixed(2))
 
         var old_credit = Number($('#old_credit').val()) || 0;
