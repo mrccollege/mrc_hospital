@@ -370,11 +370,13 @@ def create_bill(request, order_type, patient_id):
         invoice_number = normal_generate_invoice_number()
 
         subtotal = float(form.get('sub_total'))
+        flat_discount = float(form.get('flat_discount'))
         discount = int(form.get('total_discount'))
         shipping_packing = float(form.get('shipping_packing'))
 
         discount_amount = subtotal * discount / 100
         after_dis_amount = subtotal - discount_amount + shipping_packing
+        after_dis_amount = after_dis_amount - flat_discount
 
         cash = float(form.get('cash'))
         online = float(form.get('online'))
