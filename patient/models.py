@@ -86,7 +86,7 @@ class PatientMedicineBillHead(models.Model):
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 
     def __str__(self):
-        return str(self.doctor)
+        return str(self.patient)
 
     class Meta:
         db_table = 'patient_medicine_bill_head'

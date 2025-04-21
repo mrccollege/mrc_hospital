@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'hospital_detail',
     'homepage',
     'medicine',
+    'procedure',
     'store',
     'patient',
     'doctor',

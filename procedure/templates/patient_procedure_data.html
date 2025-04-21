@@ -1,0 +1,670 @@
+{% extends 'base.html' %}
+
+{% block css %}
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+
+<style>
+    .tabs {
+      display: flex;
+      border-bottom: 2px solid #ccc;
+      margin-bottom: 20px;
+    }
+
+    .tab {
+      padding: 10px 20px;
+      cursor: pointer;
+      border: 1px solid #ccc;
+      border-bottom: none;
+      background-color: #f9f9f9;
+    }
+
+    .tab.active {
+      background-color: #fff;
+      font-weight: bold;
+    }
+
+    .tab-content {
+      display: none;
+      border: 1px solid #ccc;
+      padding: 20px;
+      background-color: #fff;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+
+    label {
+      margin-bottom: 10px;
+    }
+
+    input {
+      margin-bottom: 15px;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    button {
+      padding: 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+</style>
+
+{% endblock css %}
+
+
+{% block content %}
+<!-- Modal -->
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Add New Reference</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="add_other_reference_form">{% csrf_token %}
+                <div class="modal-body">
+                    <div class="mb-2 form-group">
+                        <label for="reference_name">Name</label>
+                        <input type="text" class="form-control" name="reference_name" id="reference_name"
+                               placeholder="Enter name..">
+                    </div>
+
+                    <div class="mb-2 form-group">
+                        <label for="reference_mobile">Mobile</label>
+                        <input type="text" class="form-control" name="reference_mobile" id="reference_mobile"
+                               placeholder="Enter mobile..">
+                    </div>
+
+                    <div class="mb-2 form-group">
+                        <label for="reference_address">Address</label>
+                        <input type="text" class="form-control" name="reference_address" id="reference_address"
+                               placeholder="Enter address..">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" id="category_model">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div class="wrapper">
+    <!-- Right side column. Contains the navbar and content of the page -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <h1>Customer Medicine Bill</h1>
+            <ol class="breadcrumb">
+                <li><a href="/"><i class="fa fa-dashboard"></i> Home</a></li>
+                <li><a href="/">Tables</a></li>
+                <li class="active">Data tables</li>
+            </ol>
+        </section>
+
+        <!-- Main content -->
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="box">
+                        <div class="box-header">
+                            <h3 class="box-title">Fill Complete Customer Details</h3>
+                        </div><!-- /.box-header -->
+                        <div class="box-body">
+                            <div class="box box-primary">
+                                <!-- form start -->
+                                <div class="box-body">
+                                    <div class="tabs">
+                                        <div class="tab active" id="selecttab1" data-target="tab1">Old Customer</div>
+                                        <div class="tab" id="selecttab2" data-target="tab2">New Customer</div>
+                                    </div>
+
+                                    <div id="tab1" class="tab-content active">
+                                        <form id="tab1form">{% csrf_token %}
+                                            <label for="search_data">Customer Id / Mobile Number</label>
+                                            <input type="text" id="search_data" name="search_data"
+                                                   placeholder="Enter customer id"
+                                                   required value="" maxlength="10">
+                                            <input type="hidden" name="patient_id1" id="patient_id1" value="0">
+                                            <button type="submit" style="margin-bottom:10px">Submit</button>
+                                            <button type="button" id="tab1continues_btn" class="hidden">Continue
+                                            </button>
+                                        </form>
+                                    </div>
+
+                                    <div id="tab2" class="tab-content">
+                                        <form id="tab2form" role="form">{% csrf_token %}
+                                            <div class="box-body">
+                                                <div class="row">
+                                                    <div class="col-lg-4 form-group">
+                                                        <label for="patient_name" class="form-label">Patient
+                                                            Name</label>
+                                                        <input type="text" class="form-control" id="patient_name"
+                                                               name="patient_name" required>
+                                                        <input type="hidden" name="patient_id2" id="patient_id2"
+                                                               value="0">
+                                                    </div>
+
+                                                    <div class="col-lg-4 form-group">
+                                                        <label for="care_of" class="form-label">Father/Wife of</label>
+                                                        <input type="text" class="form-control" id="care_of"
+                                                               name="care_of" required>
+                                                    </div>
+
+                                                    <div class="col-lg-4 form-group">
+                                                        <label for="mobile" class="form-label">Mobile Number</label>
+                                                        <input type="text" class="form-control" id="mobile"
+                                                               name="mobile"
+                                                               onkeypress="return isNumberKey(event)"
+                                                               required maxlength="10" autocomplete="off">
+                                                    </div>
+                                                    <div class="col-lg-4 form-group">
+                                                        <label for="patient_age" class="form-label">Patient Age</label>
+                                                        <input type="text" class="form-control" id="patient_age"
+                                                               name="patient_age"
+                                                               onkeypress="return isNumberKey(event)"
+                                                               required maxlength="3">
+                                                    </div>
+
+                                                    <div class="col-lg-4 form-group">
+                                                        <label for="sex" class="form-label">Gender</label>
+                                                        <select name="sex" id="sex" class="form-control">
+                                                            <option value="0">Select Gender</option>
+                                                            <option value="MALE">Male</option>
+                                                            <option value="FEMALE">Female</option>
+                                                            <option value="OTHER">Other</option>
+                                                        </select>
+                                                    </div>
+
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="col-lg-3 form-group">
+                                                        <label for="house_flat" class="form-label">House No</label>
+                                                        <input type="text" class="form-control" name="house_flat"
+                                                               id="house_flat">
+                                                    </div>
+
+                                                    <div class="col-lg-3 form-group">
+                                                        <label for="street" class="form-label">Street / Colony</label>
+                                                        <input type="text" class="form-control" name="street"
+                                                               id="street">
+                                                    </div>
+
+                                                    <div class="col-lg-3 form-group">
+                                                        <label for="city" class="form-label">City</label>
+                                                        <input type="text" class="form-control" name="city" id="city">
+                                                    </div>
+
+                                                    <div class="col-lg-3 form-group">
+                                                        <label for="district" class="form-label">District</label>
+                                                        <input type="text" class="form-control" name="district"
+                                                               id="district">
+                                                    </div>
+                                                </div>
+
+
+                                                <div class="row">
+                                                    <div class="col-lg-4 form-group">
+                                                        <label for="pincode" class="form-label">Pin</label>
+                                                        <input type="text" class="form-control" name="pincode"
+                                                               id="pincode">
+                                                    </div>
+
+                                                    <div class="col-lg-4 form-group">
+                                                        <label for="country" class="form-label">Country</label>
+                                                        <select id="country" name="country" class="form-control"
+                                                                onchange="change_country()">
+                                                            {% for i in country %}
+                                                            <option value="{{i.id}}">{{i.name}}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+
+                                                    <div class="col-lg-4 form-group">
+                                                        <label for="state" class="form-label">State</label>
+                                                        <select id="state" name="state" class="form-control">
+                                                            <!--                                                    <option value="0">Uttar Pradesh</option>-->
+                                                            <!--                                                    <option value="0">Haryana</option>-->
+                                                            <!--                                                    <option value="0">Delhi</option>-->
+                                                            <!--                                                    <option value="0">Rajasthan</option>-->
+                                                            <!--                                                    <option value="0">Madhya Pradesh</option>-->
+                                                            <!--                                                    <option value="0">Uttarakhand</option>-->
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="col-lg-4 form-group">
+                                                        <label class="form-label">Reference by
+                                                            patient</label>
+                                                        <input type="text" class="form-control" id="patient_search"
+                                                               placeholder="Search Patient">
+                                                        <input type="hidden" class="form-control" id="patient_search_id"
+                                                               name="patient_search_id" placeholder="Search Patient id">
+                                                        <select id="patient_select" name="patient" size="5">
+                                                            <option value="0"></option>
+                                                        </select>
+                                                    </div>
+
+                                                    <div class="col-lg-4">
+                                                        <div class="row">
+                                                            <div class="col-lg-8 form-group">
+                                                                <label for="reference_by_other" class="form-label">Reference
+                                                                    By
+                                                                    doctor /
+                                                                    medical/ other</label>
+                                                                <select class="form-control" name="reference_by_other"
+                                                                        id="reference_by_other">
+                                                                    {% for i in reference_by_other %}
+                                                                    <option value="{{i.id}}">{{i.name}}</option>
+                                                                    {% endfor %}
+                                                                </select>
+                                                            </div>
+
+                                                            <div class="col-lg-4 form-group">
+                                                                <label for="add_other" class="form-label">Add</label>
+                                                                <button type="button" class="form-control btn-primary"
+                                                                        data-toggle="modal"
+                                                                        data-target="#exampleModalCenter"
+                                                                        id="add_other">Add New
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-lg-4 form-group">
+                                                        <label for="social_media" class="form-label">Reference By Social
+                                                            Media</label>
+                                                        <select class="form-control" name="social_media"
+                                                                id="social_media">
+                                                            {% for i in social_media %}
+                                                            <option value="i.id">{{i.title}}</option>
+                                                            {% endfor %}
+                                                            <!--                                                    <option value="FACEBOOK">Facebook</option>-->
+                                                            <!--                                                    <option value="YOUTUBE">Youtube</option>-->
+                                                            <!--                                                    <option value="GOOGLE">Google</option>-->
+                                                            <!--                                                    <option value="INSTAGRAM">Instagram</option>-->
+                                                            <!--                                                    <option value="WHATSAPP">Whatsapp</option>-->
+                                                            <!--                                                    <option value="WALLPAINTING">Wall Painting</option>-->
+                                                            <!--                                                    <option value="NEWSPAPER">News Paper</option>-->
+                                                            <!--                                                    <option value="OTHER">Other</option>-->
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="col-lg-2">
+                                                        <label>Veg</label>
+                                                        <input type="radio" checked name="veg-non-veg" value="0">
+                                                        <label>Non-Veg</label>
+                                                        <input type="radio" name="veg-non-veg" value="1">
+                                                    </div>
+                                                    <div class="col-lg-8">
+                                                        <div class="row">
+                                                            <div class="col-lg-2">
+                                                                <label for="tobacco">Tobacco</label>
+                                                                <input type="checkbox" name="tobacco" id="tobacco">
+                                                            </div>
+                                                            <div class="col-lg-2">
+                                                                <label for="alcohol">Alcohol</label>
+                                                                <input type="checkbox" name="alcohol" id="alcohol">
+                                                            </div>
+                                                            <div class="col-lg-2">
+                                                                <label for="smoking">Smoking</label>
+                                                                <input type="checkbox" name="smoking" id="smoking">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div><!-- /.box-body -->
+                                            <div class="box-footer">
+                                                <button type="submit" class="btn btn-success">Submit</button>
+                                                <button type="button" id="tab2continues_btn" class="hidden">Continue
+                                                </button>
+                                            </div>
+                                        </form>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                            <!-- /.box-body -->
+                        </div><!-- /.box -->
+                    </div><!-- /.col -->
+                </div><!-- /.row -->
+            </div><!-- /.row -->
+        </section><!-- /.content -->
+    </div><!-- /.content-wrapper -->
+
+</div><!-- ./wrapper -->
+
+{% endblock content %}
+
+{% block js %}
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+
+<script>
+
+    $(document).ready(function() {
+        $("input").attr("autocomplete", "off");
+    });
+
+    $('#tab1continues_btn').click(function(){
+        patient_id = $('#patient_id1').val();
+        if (patient_id != 0 || patient_id != ''){
+            window.location = '/procedure/create_procedure/'+patient_id+'/'
+        }
+    });
+
+    $('#tab2continues_btn').click(function(){
+        patient_id = $('#patient_id2').val();
+        if (patient_id != 0 || patient_id != ''){
+            window.location = '/procedure/create_procedure/'+patient_id+'/'
+        }
+    });
+
+    $('#selecttab1').click(function(){
+        $('#selecttab2').removeClass('active')
+        $(this).addClass('active')
+
+        $('#tab2').removeClass('active')
+        $('#tab1').addClass('active')
+    });
+
+    $('#selecttab2').click(function(){
+        $('#selecttab1').removeClass('active')
+        $(this).addClass('active')
+
+        $('#tab1').removeClass('active')
+        $('#tab2').addClass('active')
+    });
+</script>
+
+<script>
+    $('#tab1form').on('submit', function (e) {
+        $('#loader-overlay').show(); // Show overlay
+        $('#loader').show(); // Show loader
+
+        search_data = $('#search_data').val();
+        if(search_data == ''){
+            Swal.fire({
+                  title: 'Error',
+                  text: 'Please Fill customer ID / MOBILE / EMAIL ',
+                  icon: 'error',
+                  confirmButtonColor: '#3085d6',
+                  confirmButtonText: 'OK'
+             });
+            return false;
+        }
+
+        e.preventDefault();
+        var formData = $('#tab1form').serialize();
+        $.ajax({
+          url: '/patient/get_patient/',
+          type: 'POST',
+          data: formData,
+          success: function (response) {
+            $('#loader-overlay').hide(); // Show overlay
+            $('#loader').hide(); // Show loader
+            if(response.status == 'success'){
+                Swal.fire({
+                    title: 'Success',
+                    text: response.msg,
+                    icon: 'success',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'OK'
+                  }).then((result) => {
+                      $('#tab2continues_btn').removeClass('hidden')
+                      $('#tab1continues_btn').removeClass('hidden')
+                      $('#patient_id1').val(response.patient_id)
+                  });
+            }else{
+              Swal.fire({
+                  title: 'Error',
+                  text: response.msg,
+                  icon: 'error',
+                  confirmButtonColor: '#3085d6',
+                  confirmButtonText: 'OK'
+              });
+              return false;
+            }
+          },
+        });
+    });
+</script>
+
+<script>
+    $('#tab2form').on('submit', function (e) {
+        $('#loader-overlay').show(); // Show overlay
+        $('#loader').show(); // Show loader
+        e.preventDefault();
+        var formData = $('#tab2form').serialize();
+        $.ajax({
+          url: '/account/patient_registration/',
+          type: 'POST',
+          data: formData,
+          success: function (response) {
+            $('#loader-overlay').hide(); // Show overlay
+            $('#loader').hide(); // Show loader
+            if(response.status == 'success'){
+              Swal.fire({
+                title: 'Success',
+                text: response.msg,
+                icon: 'success',
+                showCancelButton: false,
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'OK'
+              }).then((result) => {
+                  $('#tab2continues_btn').removeClass('hidden')
+                  $('#patient_id2').val(response.patient_id)
+              });
+            }else{
+              Swal.fire({
+                  title: 'Error',
+                  text: response.msg,
+                  icon: 'error',
+                  confirmButtonColor: '#3085d6',
+                  confirmButtonText: 'OK'
+              });
+              $('#password').val('');
+              return false;
+            }
+          },
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function(){
+        change_country()
+    })
+
+    function change_country(){
+        country_id = $('#country').val();
+        $('#loader-overlay').show(); // Show overlay
+        $('#loader').show(); // Show loader
+        $.ajax({
+          url: '/address_place/get_state/',
+          type: 'GET',
+          data: {'country_id': country_id},
+          success: function (response) {
+            $('#loader-overlay').hide(); // Show overlay
+            $('#loader').hide(); // Show loader
+            var html = ''
+            $.each(response.state, function(index, item){
+                html += '<option value="'+item.id+'">'+item.name+'</option>'
+            })
+            $('#state').html(html)
+          }
+        })
+    }
+</script>
+
+<script>
+    $('#patient_search').on('input', function() {
+        var query = $(this).val();
+        if (query.length > 0) {
+            $.ajax({
+                url: '/patient/search_patient/',
+                data: {
+                    'term': query
+                },
+                dataType: 'json',
+                success: function(data) {
+                    $('#patient_select').empty().show();
+                    $.each(data.data_list, function(index, item) {
+                        $('#patient_select').append('<option value="' + item.id + '">' + item.name + ' ' + '('+ item.code+ ')' + '</option>');
+                    });
+                    selectedOptionIndex = -1;
+                }
+            });
+        } else {
+            $('#patient_select').empty().hide();
+        }
+    });
+
+    $('#patient_search').on('keydown', function(e) {
+        var options = $('#patient_select option');
+        if (options.length > 0) {
+            if (e.key === "ArrowDown") {
+                e.preventDefault();
+                selectedOptionIndex = (selectedOptionIndex + 1) % options.length;
+                options.removeClass('selected').eq(selectedOptionIndex).addClass('selected');
+            } else if (e.key === "ArrowUp") {
+                e.preventDefault();
+                selectedOptionIndex = (selectedOptionIndex - 1 + options.length) % options.length;
+                options.removeClass('selected').eq(selectedOptionIndex).addClass('selected');
+            } else if (e.key === "Enter") {
+                e.preventDefault();
+                if (selectedOptionIndex >= 0) {
+                    var selectedText = options.eq(selectedOptionIndex).text();
+                    var selected_id = options.eq(selectedOptionIndex).val()
+                    $('#patient_search_id').val(selected_id);
+                    $('#patient_search').val(selectedText);
+                    $('#patient_select').empty().hide();
+                }
+            }
+        }
+    });
+
+    $(document).on('click', function(event) {
+        if (!$(event.target).closest('#patient_search, #patient_select').length) {
+            $('#patient_select').empty().hide();
+        }
+    });
+
+    $('#patient_select').on('change', function() {
+        var selectedText = $('#patient_select option:selected').text();
+        var selected_id = $('#patient_select option:selected').val()
+        $('#patient_search_id').val(selected_id);
+        $('#patient_search').val(selectedText);
+        $('#patient_select').empty().hide();
+    });
+</script>
+
+<script>
+    $('#add_other_reference_form').on('submit', function (e) {
+        $('#loader-overlay').show(); // Show overlay
+        $('#loader').show(); // Show loader
+        reference_name = $('#reference_name').val();
+        if(reference_name == ''){
+            Swal.fire({
+                  title: 'Error',
+                  text: 'Please enter name',
+                  icon: 'error',
+                  confirmButtonColor: '#3085d6',
+                  confirmButtonText: 'OK'
+             });
+            return false;
+        }
+
+        reference_mobile = $('#reference_mobile').val();
+        if(reference_mobile == ''){
+            Swal.fire({
+                  title: 'Error',
+                  text: 'Please enter mobile',
+                  icon: 'error',
+                  confirmButtonColor: '#3085d6',
+                  confirmButtonText: 'OK'
+             });
+            return false;
+        }
+
+        reference_address = $('#reference_address').val();
+        if(reference_address == ''){
+            Swal.fire({
+                  title: 'Error',
+                  text: 'Please enter address',
+                  icon: 'error',
+                  confirmButtonColor: '#3085d6',
+                  confirmButtonText: 'OK'
+             });
+            return false;
+        }
+
+        e.preventDefault();
+        var formData = $('#add_other_reference_form').serialize();
+        $.ajax({
+          url: '/patient/add_other_reference/',
+          type: 'POST',
+          data: formData,
+          success: function (response) {
+            $('#loader-overlay').hide(); // Show overlay
+            $('#loader').hide(); // Show loader
+            if(response.status == 'success'){
+                console.log(response.patient_obj)
+                var html = '';
+                html += '<option value="'+response.patient_obj.id+'">'+response.patient_obj.name+'</option>';
+                $('#reference_by_other').append(html)
+                $('#exampleModalCenter').modal('hide');
+            }else{
+              Swal.fire({
+                  title: 'Error',
+                  text: response.msg,
+                  icon: 'error',
+                  confirmButtonColor: '#3085d6',
+                  confirmButtonText: 'OK'
+              });
+              $('#password').val('');
+              return false;
+            }
+          },
+        });
+    });
+</script>
+
+<script>
+  $('#tobacco, #alcohol, #smoking').change(function() {
+    let id = $(this).attr('id');
+    if ($(this).is(':checked')) {
+      alert(id.charAt(0).toUpperCase() + id.slice(1) + ' is checked');
+    } else {
+      alert(id.charAt(0).toUpperCase() + id.slice(1) + ' is unchecked');
+    }
+  });
+</script>
+{% endblock js %}
