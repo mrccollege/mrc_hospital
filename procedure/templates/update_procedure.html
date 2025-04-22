@@ -38,20 +38,20 @@
                                                        value="{{store_id}}">
                                                 <label class="form-label">Patient Name</label>
                                                 <input type="hidden" name="patient_id" id="patient_id"
-                                                       value="{{patient_id}}">
+                                                       value="{{user.patient.id}}">
                                                 <input type="text" class="form-control" id="name" name="name"
-                                                       value="{{patient.user.first_name}}">
+                                                       value="{{user.patient.user.first_name}}">
                                             </div>
 
                                             <div class="col-lg-3 form-group">
                                                 <label class="form-label">Mobile Number</label>
                                                 <input type="text" class="form-control" id="mobile"
-                                                       name="mobile" value="{{patient.user.mobile}}"
+                                                       name="mobile" value="{{user.patient.user.mobile}}"
                                                        placeholder="Enter patient address: " maxlength="10">
                                             </div>
                                             <div class="col-lg-3 form-group">
                                                 <label class="form-label">House/Flat</label>
-                                                <input type="text" value="{{patient.user.house_flat}}"
+                                                <input type="text" value="{{user.patient.user.house_flat}}"
                                                        class="form-control"
                                                        id="house_flat"
                                                        name="house_flat" placeholder="Enter patient address: ">
@@ -59,7 +59,7 @@
 
                                             <div class="col-lg-3 form-group">
                                                 <label class="form-label">street_colony</label>
-                                                <input type="text" value="{{patient.user.street_colony}}"
+                                                <input type="text" value="{{user.patient.user.street_colony}}"
                                                        class="form-control"
                                                        id="street_colony"
                                                        name="street_colony" placeholder="Enter patient address: ">
@@ -67,14 +67,14 @@
 
                                             <div class="col-lg-3 form-group">
                                                 <label class="form-label">City</label>
-                                                <input type="text" value="{{patient.user.city}}" class="form-control"
+                                                <input type="text" value="{{user.patient.user.city}}" class="form-control"
                                                        id="city"
                                                        name="city" placeholder="Enter patient address: ">
                                             </div>
 
                                             <div class="col-lg-3 form-group">
                                                 <label class="form-label">district</label>
-                                                <input type="text" value="{{patient.user.district}}"
+                                                <input type="text" value="{{user.patient.user.district}}"
                                                        class="form-control"
                                                        id="district"
                                                        name="district" placeholder="Enter patient address: ">
@@ -82,21 +82,21 @@
 
                                             <div class="col-lg-3 form-group">
                                                 <label class="form-label">pin</label>
-                                                <input type="text" value="{{patient.user.pin}}" class="form-control"
+                                                <input type="text" value="{{user.patient.user.pin}}" class="form-control"
                                                        id="pin"
                                                        name="pin" placeholder="Enter patient address: ">
                                             </div>
 
                                             <div class="col-lg-3 form-group">
                                                 <label class="form-label">state</label>
-                                                <input type="text" value="{{patient.user.state}}" class="form-control"
+                                                <input type="text" value="{{user.patient.user.state.name}}" class="form-control"
                                                        id="state"
                                                        name="state" placeholder="Enter patient address: " readonly>
                                             </div>
 
                                             <div class="col-lg-3 form-group">
                                                 <label class="form-label">country</label>
-                                                <input type="text" value="{{patient.user.country}}" class="form-control"
+                                                <input type="text" value="{{user.patient.user.country}}" class="form-control"
                                                        id="country"
                                                        name="country" placeholder="Enter patient address: " readonly>
                                             </div>
@@ -356,7 +356,7 @@
 
         if (selectedMedicines.length > 0) {
             $.ajax({
-                url: '/procedure/create_procedure/{{patient_id}}/',
+                url: '/procedure/update_procedure/{{id}}/',
                 type: 'POST',
                 data: formData,
                 success: function (response) {
@@ -416,7 +416,38 @@
     var index = 1;
 
     $(document).ready(function(){
-        add_medicine()
+        {% for i in procedure %}
+            var html = '';
+            html += '<tr id="medicine_tr'+index+'">';
+            html += '<td>'+index+'</td>';
+            html += '<td><input style="width: 200px;" value="{{i.procedure.name}}" onkeyup="get_procedure('+index+');" type="text" id="medicine'+index+'" name="medicine" class="form-control" autocomplete="off" placeholder="Search medicine: " required></td>';
+            html += '<input type="hidden" value="{{i.procedure.id}}" name="medicine_id" class="form-control" id="medicine_id'+index+'" required>';
+
+            html += '<td><input style="width: 90px;" value="{{ i.from_date|date:"d-m-Y" }}" type="text" id="from_date'+index+'" name="from_date" class="form-control" required></td>';
+            html += '<td><input style="width: 90px;" value="{{ i.to_date|date:"d-m-Y" }}" type="text" id="to_date'+index+'" name="to_date" class="form-control" required></td>';
+
+            html += '<td><input style="width: 90px;" value={{i.code}} value="000" type="text" id="code'+index+'" name="code" class="form-control"></td>';
+
+            html += '<td><input value="1" style="width: 90px;" value="{{i.sell_qty.}}" id="sell_qty'+index+'" name="sell_qty" type="text" class="form-control" onkeyup="sell_qty_function('+index+')" onkeypress="return isNumberKey(event)" placeholder="Sell quantity" autocomplete="off" required></td>';
+
+            html += '<td><input style="width: 90px;" value="{{i.rate}}" type="text" id="mrp'+index+'" name="mrp" class="form-control" value="0" required></td>';
+
+            html += '<td><input style="width: 90px;" value="0" type="text" id="amount'+index+'" name="amount" class="total form-control" readonly></td>';
+
+            html += '<td><button onclick="remove_row('+index+')"><i class="fa fa-remove" style="font-size:24px"></i></button></td>';
+            html += '</tr>';
+
+            // Append the new row to the table body
+            $('table tbody').append(html);
+
+            sub_total_function()
+            sell_qty_function(index)
+            discount_function(index)
+            cash_online_function()
+
+            index +=1;
+
+        {% endfor %}
     });
 
     function add_medicine(){

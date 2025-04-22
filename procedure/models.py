@@ -35,6 +35,7 @@ class Procedure(models.Model):
 
 
 class ProcedureBillHead(models.Model):
+    invoice_number = models.CharField(max_length=100, null=True, blank=True)
     store = models.ForeignKey(Store, on_delete=models.CASCADE, null=True)
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, null=True)
     subtotal = models.DecimalField(max_digits=10, decimal_places=2, null=True)
