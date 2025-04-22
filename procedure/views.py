@@ -29,7 +29,6 @@ def get_procedure(request):
         form = request.GET
         search_value = form.get('search_value', '').strip()
         procedure_ids = form.getlist('procedure_ids[]')
-        print(procedure_ids, '=======procedure_ids')
         query = ~Q(id__in=procedure_ids)
         if search_value:
             search_terms = search_value.split()
