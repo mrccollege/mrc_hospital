@@ -1315,7 +1315,23 @@ def update_estimate_detail(request, order_type, id):
                                                               )
         if obj:
             MedicineOrderHead.objects.filter(id=id).update(status=1)
+            record = DirectEstimateDetail.objects.filter(head_id=id).exclude(medicine_id__in=medicine_ids)
+
+            for i in record:
+                selll_qty = i.sell_qty
+                record_qty = MedicineStore.objects.filter(to_store_id=store_id, medicine_id=i.medicine_id,
+                                                          batch_no=i.batch_no)
+
+                if record_qty:
+                    pre_qty = record_qty[0].qty
+                    updated_qty = pre_qty + selll_qty
+
+                    MedicineStore.objects.filter(to_store_id=store_id, medicine_id=i.medicine_id,
+                                                 batch_no=i.batch_no).update(qty=updated_qty)
+
             DirectEstimateDetail.objects.filter(head_id=id).exclude(medicine_id__in=medicine_ids).delete()
+
+
             status = 'success'
             msg = 'Bill creation Successfully.'
 
@@ -1685,6 +1701,20 @@ def update_estimate_medicine_order_bill(request, order_type, id):
                                                                          )
         if obj:
             EstimateMedicineOrderBillHead.objects.filter(id=id).update(status=1)
+            record = EstimateMedicineOrderBillDetail.objects.filter(head_id=id).exclude(medicine_id__in=medicine_ids)
+
+            for i in record:
+                selll_qty = i.sell_qty
+                record_qty = MedicineStore.objects.filter(to_store_id=store_id, medicine_id=i.medicine_id,
+                                                          batch_no=i.batch_no)
+
+                if record_qty:
+                    pre_qty = record_qty[0].qty
+                    updated_qty = pre_qty + selll_qty
+
+                    MedicineStore.objects.filter(to_store_id=store_id, medicine_id=i.medicine_id,
+                                                 batch_no=i.batch_no).update(qty=updated_qty)
+
             EstimateMedicineOrderBillDetail.objects.filter(head_id=id).exclude(medicine_id__in=medicine_ids).delete()
             status = 'success'
             msg = 'Estimated Bill updated Successfully.'
