@@ -1855,9 +1855,9 @@ def update_direct_estimate_bill(request, order_type, id):
                                                                                   amount=amount,
                                                                                   )
 
-                    MedicineStore.objects.filter(to_store_id=store_id, medicine_id=medicine_id,
-                                                 batch_no=batch_no).update(
-                        qty=record_qty)
+                    MedicineStore.objects.filter(to_store_id=store_id,
+                                                 medicine_id=medicine_id,
+                                                 batch_no=batch_no).update(qty=record_qty)
             else:
                 store_record = MedicineStore.objects.filter(to_store_id=store_id, medicine_id=medicine_id,
                                                             batch_no=batch_no)
@@ -1898,7 +1898,19 @@ def update_direct_estimate_bill(request, order_type, id):
                                                               )
         if obj:
             DirectEstimateHead.objects.filter(id=id).update(status=1)
-            DirectEstimateDetail.objects.filter(head_id=id).exclude(medicine_id__in=medicine_ids).delete()
+            record = DirectEstimateDetail.objects.filter(head_id=id).exclude(medicine_id__in=medicine_ids)
+            for i in record:
+                selll_qty = i.sell_qty
+                record_qty = MedicineStore.objects.filter(to_store_id=store_id, medicine_id=i.medicine_id,
+                                                          batch_no=i.batch_no)
+
+                if record_qty:
+                    pre_qty = record_qty[0].qty
+                    updated_qty = pre_qty + selll_qty
+
+                    MedicineStore.objects.filter(to_store_id=store_id, medicine_id=i.medicine_id,
+                                                 batch_no=i.batch_no).update(qty=updated_qty)
+
             status = 'success'
             msg = 'Bill creation Successfully.'
 

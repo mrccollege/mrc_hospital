@@ -331,7 +331,6 @@
 
 <script>
     function search_medicine(indexID) {
-
         $('#medicine'+indexID).on('keydown', function(event) {
             if (event.key === 'Backspace' || event.key === 'Delete') {
                 $('#record_id' + indexID).val('');
@@ -339,6 +338,7 @@
                 $('#batch_no' + indexID).val('');
                 $('#mrp' + indexID).val('');
                 $('#record_qty' + indexID).val('');
+                $('#sale_rate' + indexID).val(0);
                 $('#amount' + indexID).val(0);
             }
         });
@@ -396,9 +396,19 @@
                 $('#medicine_id' + indexID).val(ui.item.medicine_id);
                 $('#mrp' + indexID).val(ui.item.price);
                 $('#record_qty' + indexID).val(ui.item.record_qty);
+                $('#batch_no' + indexID).val(ui.item.batch_no);
                 //add_medicine()
+
+                sub_total_function()
+                sell_qty_function(indexID)
+                discount_function(indexID)
+                cash_online_function()
             }
+
+
         })
+
+
     }
 </script>
 
@@ -519,7 +529,7 @@
             var html = '';
             html += '<tr id="medicine_tr'+index+'">';
             html += '<td>'+index+'</td>';
-            html += '<td><input style="width: 200px;" value="{{i.medicine_name}}" type="text" id="medicine'+index+'" name="medicine" class="form-control" autocomplete="off" placeholder="Search medicine: " required></td>';
+            html += '<td><input style="width: 200px;" value="{{i.medicine_name}}" onkeyup="search_medicine('+index+');" type="text" id="medicine'+index+'" name="medicine" class="form-control" autocomplete="off" placeholder="Search medicine: " required></td>';
             html += '<input type="hidden" name="record_id" class="form-control" id="record_id'+index+'" required>';
             html += '<input value="{{i.medicine_id}}" type="hidden" name="medicine_id" class="form-control" id="medicine_id'+index+'" required>';
             html += '<input value="{{i.batch_no}}" type="hidden" name="batch_no" class="form-control" id="batch_no'+index+'" required>';
@@ -603,9 +613,6 @@
         var record_qty = parseInt($('#record_qty' + index).val()) || 0;
         var pre_sell_qty = parseInt($('#pre_sell_qty' + index).val()) || 0;
 
-<!--        if (sell_qty > record_qty){-->
-<!--            $('#sell_qty' + index).val(0)-->
-<!--        }-->
         var sell_qty = parseInt($('#sell_qty' + index).val()) || 0;
 
         var mrp = Number($('#mrp' + index).val()) || 0;
