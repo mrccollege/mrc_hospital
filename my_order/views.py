@@ -1085,13 +1085,13 @@ def update_medicine_order_bill(request, order_type, id):
             MedicineOrderHead.objects.filter(id=id).update(status=1)
             record = MedicineOrderBillDetail.objects.filter(head_id=id).exclude(medicine_id__in=medicine_ids)
             for i in record:
-                selll_qty = i.sell_qty
+                sell_qty = i.sell_qty
                 record_qty = MedicineStore.objects.filter(to_store_id=store_id, medicine_id=i.medicine_id,
                                                           batch_no=i.batch_no)
 
                 if record_qty:
                     pre_qty = record_qty[0].qty
-                    updated_qty = pre_qty + selll_qty
+                    updated_qty = pre_qty + sell_qty
 
                     MedicineStore.objects.filter(to_store_id=store_id, medicine_id=i.medicine_id,
                                                  batch_no=i.batch_no).update(qty=updated_qty)
@@ -1318,13 +1318,13 @@ def update_estimate_detail(request, order_type, id):
             record = DirectEstimateDetail.objects.filter(head_id=id).exclude(medicine_id__in=medicine_ids)
 
             for i in record:
-                selll_qty = i.sell_qty
+                sell_qty = i.sell_qty
                 record_qty = MedicineStore.objects.filter(to_store_id=store_id, medicine_id=i.medicine_id,
                                                           batch_no=i.batch_no)
 
                 if record_qty:
                     pre_qty = record_qty[0].qty
-                    updated_qty = pre_qty + selll_qty
+                    updated_qty = pre_qty + sell_qty
 
                     MedicineStore.objects.filter(to_store_id=store_id, medicine_id=i.medicine_id,
                                                  batch_no=i.batch_no).update(qty=updated_qty)
@@ -1704,13 +1704,13 @@ def update_estimate_medicine_order_bill(request, order_type, id):
             record = EstimateMedicineOrderBillDetail.objects.filter(head_id=id).exclude(medicine_id__in=medicine_ids)
 
             for i in record:
-                selll_qty = i.sell_qty
+                sell_qty = i.sell_qty
                 record_qty = MedicineStore.objects.filter(to_store_id=store_id, medicine_id=i.medicine_id,
                                                           batch_no=i.batch_no)
 
                 if record_qty:
                     pre_qty = record_qty[0].qty
-                    updated_qty = pre_qty + selll_qty
+                    updated_qty = pre_qty + sell_qty
 
                     MedicineStore.objects.filter(to_store_id=store_id, medicine_id=i.medicine_id,
                                                  batch_no=i.batch_no).update(qty=updated_qty)
