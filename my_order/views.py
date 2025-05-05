@@ -1083,7 +1083,22 @@ def update_medicine_order_bill(request, order_type, id):
                                                                  )
         if obj:
             MedicineOrderHead.objects.filter(id=id).update(status=1)
+            record = MedicineOrderBillDetail.objects.filter(head_id=id).exclude(medicine_id__in=medicine_ids)
+            for i in record:
+                selll_qty = i.sell_qty
+                record_qty = MedicineStore.objects.filter(to_store_id=store_id, medicine_id=i.medicine_id,
+                                                          batch_no=i.batch_no)
+
+                if record_qty:
+                    pre_qty = record_qty[0].qty
+                    updated_qty = pre_qty + selll_qty
+
+                    MedicineStore.objects.filter(to_store_id=store_id, medicine_id=i.medicine_id,
+                                                 batch_no=i.batch_no).update(qty=updated_qty)
+
             MedicineOrderBillDetail.objects.filter(head_id=id).exclude(medicine_id__in=medicine_ids).delete()
+
+
             status = 'success'
             msg = 'Bill creation Successfully.'
 
@@ -1898,6 +1913,7 @@ def update_direct_estimate_bill(request, order_type, id):
                                                               )
         if obj:
             DirectEstimateHead.objects.filter(id=id).update(status=1)
+
             record = DirectEstimateDetail.objects.filter(head_id=id).exclude(medicine_id__in=medicine_ids)
             for i in record:
                 selll_qty = i.sell_qty
@@ -1910,6 +1926,8 @@ def update_direct_estimate_bill(request, order_type, id):
 
                     MedicineStore.objects.filter(to_store_id=store_id, medicine_id=i.medicine_id,
                                                  batch_no=i.batch_no).update(qty=updated_qty)
+
+            DirectEstimateDetail.objects.filter(head_id=id).exclude(medicine_id__in=medicine_ids).delete()
 
             status = 'success'
             msg = 'Bill creation Successfully.'
