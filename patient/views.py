@@ -234,9 +234,6 @@ def get_patient(request):
     return render(request, 'customer_bill/create_customer_bill.html')
 
 
-import requests
-
-
 def send_sms(mobile, message):
     url = "http://msg.msgclub.net/rest/services/sendSMS/sendGroupSms"
     params = {
@@ -249,7 +246,6 @@ def send_sms(mobile, message):
     }
 
     response = requests.get(url, params=params)
-    print(response, '================response')
     if response.status_code == 200:
         print("SMS sent successfully!")
     else:

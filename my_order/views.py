@@ -34,6 +34,7 @@ from django.db.models import DecimalField
 from my_order.models import DirectEstimateHead, DirectEstimateDetail
 
 from my_order.models import DirectEstimateInvoiceTracker
+from common_function.send_message import send_sms
 
 
 # Create your views here.
@@ -286,9 +287,12 @@ def direct_estimate_bill(request, order_type, id):
         status = 'failed'
         msg = 'Bill Creation failed.'
 
+        mobile = float(form.get('mobile'))
+
         medicines = json.loads(request.POST.get('medicines'))
         invoice_number = direct_estimate_InvoiceTracker()
         doctor_id = form.get('doctor_id')
+
 
         subtotal = float(form.get('sub_total'))
         discount = int(form.get('total_discount'))
@@ -379,8 +383,14 @@ def direct_estimate_bill(request, order_type, id):
                         DirectEstimateDetail.objects.filter(id=obj.id).update(record_qty=remaining_qty)
 
                 l_counter += 1
-            print(l_counter, '============l_counter')
             MedicineOrderHead.objects.filter(id=id).update(status=1)
+            message = f'Thank you.We have received a payment of Rs Cash {cash}, online {online},old pending 100, total pending  {after_dis_amount}... Against Bill rs .. on Date at time. Thanks for visiting Mrc Ayurveda'
+            try:
+                send_sms(mobile, message)
+                send_sms(9267678888, message)
+            except:
+                pass
+
             status = 'success'
             msg = 'Bill creation Successfully.'
 
@@ -475,9 +485,12 @@ def create_bill(request, order_type, id):
         status = 'failed'
         msg = 'Bill Creation failed.'
 
+        mobile = float(form.get('mobile'))
+
         medicines = json.loads(request.POST.get('medicines'))
         invoice_number = normal_generate_invoice_number()
         doctor_id = form.get('doctor_id')
+
 
         subtotal = float(form.get('sub_total'))
         discount = int(form.get('total_discount'))
@@ -567,6 +580,14 @@ def create_bill(request, order_type, id):
                         MedicineStore.objects.filter(query_set).update(qty=remaining_qty)
                         MedicineOrderBillDetail.objects.filter(id=obj.id).update(record_qty=remaining_qty)
             MedicineOrderHead.objects.filter(id=id).update(status=1)
+
+            message = f'Thank you.We have received a payment of Rs Cash {cash}, online {online},old pending 100, total pending  {after_dis_amount}... Against Bill rs .. on Date at time. Thanks for visiting Mrc Ayurveda'
+            try:
+                send_sms(mobile, message)
+                send_sms(9267678888, message)
+            except:
+                pass
+
             status = 'success'
             msg = 'Bill creation Successfully.'
 
@@ -1098,7 +1119,6 @@ def update_medicine_order_bill(request, order_type, id):
 
             MedicineOrderBillDetail.objects.filter(head_id=id).exclude(medicine_id__in=medicine_ids).delete()
 
-
             status = 'success'
             msg = 'Bill creation Successfully.'
 
@@ -1330,7 +1350,6 @@ def update_estimate_detail(request, order_type, id):
                                                  batch_no=i.batch_no).update(qty=updated_qty)
 
             DirectEstimateDetail.objects.filter(head_id=id).exclude(medicine_id__in=medicine_ids).delete()
-
 
             status = 'success'
             msg = 'Bill creation Successfully.'
