@@ -4,6 +4,8 @@ from doctor.models import Doctor
 
 from patient.models import Patient
 
+from account.models import User
+
 
 # Create your models here.
 class AppointmentWard(models.Model):
@@ -11,6 +13,9 @@ class AppointmentWard(models.Model):
     price = models.IntegerField(null=True)
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(null=True, blank=True)
+
+    def __str__(self):
+        return self.type
 
     class Meta:
         db_table = 'hospital_Appointment_visit'
@@ -37,11 +42,12 @@ class PatientAppointment(models.Model):
     appoint_status = models.CharField(max_length=10, default='unchecked')
     appointment_date = models.DateField(null=True, blank=True, default=None)
     appointment_time = models.TimeField(null=True, blank=True, default=None)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 
-    class Meta:
-        db_table = 'patient_appointment'
-
     def __str__(self):
         return str(self.patient)
+
+    class Meta:
+        db_table = 'patient_appointment'

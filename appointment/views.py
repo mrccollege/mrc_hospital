@@ -26,6 +26,7 @@ from diagnosis.models import DiagnosisDiseaseName, DiagnosisType, DiagnosisPosit
 def add_appointment(request):
     if request.method == 'POST':
         form = request.POST
+        user_id = request.session.get('user_id')
         appointment_slot = form.get('appointment_slot')
         patient_search_id = form.get('patient_search_id')
         doctor_id = form.get('doctor_id')
@@ -68,6 +69,7 @@ def add_appointment(request):
                                                             online=online,
                                                             appointment_date=appointment_date,
                                                             appointment_time=appointment_time,
+                                                            user_id=user_id,
                                                             )
             if appoint_obj:
                 status = 'success'
@@ -93,14 +95,17 @@ def add_appointment(request):
 
 @login_required(login_url='/account/user_login/')
 def all_appointment(request):
-    all_app = PatientAppointment.objects.all()
     user_id = request.session.get('user_id')
-    is_admin = User.objects.get(id=user_id)
-    if is_admin.user_type != None:
-        if is_admin.user_type.upper() == 'ADMIN':
+    is_user = User.objects.get(id=user_id)
+    query = Q()
+    if is_user.user_type != None:
+        if is_user.user_type.upper() == 'ADMIN':
             query = Q()
-    else:
-        query = Q(doctor__user__id=user_id, appoint_status='unchecked')
+        elif is_user.user_type.upper() == 'STORE':
+            query = Q(user_id=user_id, appoint_status='unchecked')
+        elif is_user.user_type.upper() == 'DOCTOR':
+            query = Q(doctor__user__id=user_id, appoint_status='unchecked')
+
     appointment = PatientAppointment.objects.filter(query)
     context = {
         'appointment': appointment,

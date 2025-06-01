@@ -256,18 +256,15 @@
                                                 <div class="row">
                                                     <div class="col-lg-2">
                                                         <label for="tobacco">Tobacco</label>
-                                                        <input type="checkbox" id="tobacco" onclick="get_value()">
-                                                        <input type="text" id="hide_tobacco" name="tobacco">
+                                                        <input type="checkbox" id="tobacco" name="tobacco" {% if patient.tobacco == 1 %} checked {% endif %}>
                                                     </div>
                                                     <div class="col-lg-2">
                                                         <label for="alcohol">Alcohol</label>
-                                                        <input type="checkbox" id="alcohol">
-                                                        <input type="text" id="hide_alcohol" name="alcohol">
+                                                        <input type="checkbox" id="alcohol" name="alcohol" {% if patient.alcohol == 1 %} checked {% endif %}>
                                                     </div>
                                                     <div class="col-lg-2">
                                                         <label for="smoking">Smoking</label>
-                                                        <input type="checkbox" id="smoking">
-                                                        <input type="text" id="hide_smoking" name="smoking">
+                                                        <input type="checkbox" id="smoking" name="smoking" {% if patient.smoking == 1 %} checked {% endif %}>
                                                     </div>
                                                 </div>
                                             </div>

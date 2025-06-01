@@ -73,7 +73,9 @@ def store_registration(request):
                                                 email=email,
                                                 password=password,
                                                 mobile=mobile,
-                                                phone=phone, )
+                                                phone=phone,
+                                                user_type='STORE',
+                                                )
             if user_obj:
                 store_id = user_obj.id
                 is_main_store = Store.objects.filter(type='MAIN')
@@ -143,6 +145,7 @@ def doctor_registration(request):
                                                 pin=pincode,
                                                 state_id=state,
                                                 country_id=country,
+                                                user_type='DOCTOR',
                                                 )
             if user_obj:
                 doctor_id = user_obj.id
@@ -234,6 +237,7 @@ def patient_registration(request):
                                                 pin=pincode,
                                                 state_id=state,
                                                 country_id=country,
+                                                user_type='PATIENT',
                                                 )
             if user_obj:
                 if social_media:

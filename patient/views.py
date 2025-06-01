@@ -68,6 +68,25 @@ def patient_detail(request, id):
         social_media = form.get('social_media')
         email = mobile + '@yopmail.com'
         phone = form.get('phone')
+
+        tobacco = form.get('tobacco')
+        alcohol = form.get('alcohol')
+        smoking = form.get('smoking')
+        if tobacco is not None:
+            tobacco = 1
+        else:
+            tobacco = 0
+
+        if alcohol is not None:
+            alcohol = 1
+        else:
+            alcohol = 0
+
+        if smoking is not None:
+            smoking = 1
+        else:
+            smoking = 0
+
         status = 'failed'
         msg = 'Patient Registration failed.'
         try:
@@ -104,6 +123,9 @@ def patient_detail(request, id):
                 Patient.objects.filter(id=id).update(social_media_id=social_media,
                                                      other_reference_id=reference_by_other,
                                                      reference_by_patient_id=reference_by_patient,
+                                                     tobacco=tobacco,
+                                                     alcohol=alcohol,
+                                                     smoking=smoking,
                                                      )
                 status = 'success'
                 msg = 'Patient updated successfully.'

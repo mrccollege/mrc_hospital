@@ -64,6 +64,8 @@
                                                         <!--                            <option money="250" value="OPD 09:00 AM TO 01:00 PM">OPD 09:00 AM TO 01:00 PM</option>-->
                                                         <!--                            <option money="350" value="OPD 01:00 AM TO 05:00 PM">OPD 01:00 AM TO 05:00 PM</option>-->
                                                         <!--                            <option money="500" value="EMERGENCY Above 05:00 PM">EMERGENCY Above 05 PM</option>-->
+
+                                                        <option amt="0" value="{{ward.id}}">Select Slot</option>
                                                         {% for ward in appointment_slot %}
                                                         <option amt="{{ward.price}}" value="{{ward.id}}">{{ward.type}}
                                                         </option>
@@ -398,9 +400,6 @@
             var selectedValue = selectedOption.val();
             var amtValue = selectedOption.attr('amt');
             $('#appointment_slot_fees').val(parseInt(amtValue))
-
-            //console.log('Selected Value:', selectedValue);
-            //console.log('Amount:', amtValue);
 
         });
     });
