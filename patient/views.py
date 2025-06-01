@@ -261,32 +261,34 @@ def create_patient_bill(request, patient_id=0):
         email = form.get('email')
         patient_age = form.get('age')
         sex = form.get('gender')
-
+        tobacco = form.get('tobacco')
+        alcohol = form.get('alcohol')
+        smoking = form.get('smoking')
         patient_code = datetime.now().strftime("%Y%d%H%M%S")
         status = 'failed'
         msg = 'Patient Registration failed.'
-        try:
-            user_obj = User.objects.create_user(username=mobile,
-                                                first_name=first_name,
-                                                email=email,
-                                                password='12345',
-                                                mobile=mobile,
-                                                sex=sex,
-                                                age=patient_age,
-                                                )
-            if user_obj:
-                patient_id = user_obj.id
-                patient_obj = Patient.objects.create(user_id=patient_id,
-                                                     patient_code=patient_code,
-                                                     )
-                if patient_obj:
-                    patient_id = patient_obj.id
-                    status = 'success'
-                    msg = 'Patient Registration successfully.'
-
-        except Exception as e:
-            status = status
-            msg = str(e)
+        # try:
+        #     user_obj = User.objects.create_user(username=mobile,
+        #                                         first_name=first_name,
+        #                                         email=email,
+        #                                         password='12345',
+        #                                         mobile=mobile,
+        #                                         sex=sex,
+        #                                         age=patient_age,
+        #                                         )
+        #     if user_obj:
+        #         patient_id = user_obj.id
+        #         patient_obj = Patient.objects.create(user_id=patient_id,
+        #                                              patient_code=patient_code,
+        #                                              )
+        #         if patient_obj:
+        #             patient_id = patient_obj.id
+        #             status = 'success'
+        #             msg = 'Patient Registration successfully.'
+        #
+        # except Exception as e:
+        #     status = status
+        #     msg = str(e)
 
         context = {
             'status': status,

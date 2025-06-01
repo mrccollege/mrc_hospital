@@ -40,6 +40,9 @@ class Patient(models.Model):
     other_reference = models.ForeignKey(OtherReference, on_delete=models.CASCADE, null=True, blank=True)
     patient_code = models.CharField(max_length=20, null=True, blank=True)
     reference_by_patient = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True)
+    tobacco = models.IntegerField(default=0, null=True, blank=True)
+    alcohol = models.IntegerField(default=0, null=True, blank=True)
+    smoking = models.IntegerField(default=0, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 

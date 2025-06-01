@@ -192,6 +192,24 @@ def patient_registration(request):
         email = mobile + '@yopmail.com'
         phone = form.get('phone')
 
+        tobacco = form.get('tobacco')
+        alcohol = form.get('alcohol')
+        smoking = form.get('smoking')
+        if tobacco is not None:
+            tobacco = 1
+        else:
+            tobacco = 0
+
+        if alcohol is not None:
+            alcohol = 1
+        else:
+            alcohol = 0
+
+        if smoking is not None:
+            smoking = 1
+        else:
+            smoking = 0
+
         patient_code = datetime.now().strftime("%Y%d%H%M%S")
         status = 'failed'
         msg = 'Patient Registration failed.'
@@ -230,6 +248,9 @@ def patient_registration(request):
                                                      social_media_id=social_media,
                                                      other_reference_id=reference_by_other,
                                                      reference_by_patient_id=reference_by_patient,
+                                                     tobacco=tobacco,
+                                                     alcohol=alcohol,
+                                                     smoking=smoking,
                                                      )
                 if patient_obj:
                     try:
