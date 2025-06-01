@@ -37,12 +37,17 @@ def add_appointment(request):
         temperature = form.get('temperature')
         respiration = form.get('respiration')
         weight = form.get('weight')
+
+
+        ward_fees = form.get('appointment_slot_fees')
         extra_fees = form.get('extra_fees')
-        ward_fees = form.get('ward_fees')
+        discount = int(form.get('discount'))
+        pay_amt = form.get('pay_amt')
         cash = int(form.get('cash'))
         online = int(form.get('online'))
         remaining = int(form.get('remaining'))
-        discount = int(form.get('discount'))
+
+
         appointment_date = form.get('appoint_date')
         appointment_date = convert_date_format(appointment_date)
         appointment_time = form.get('appoint_time')
@@ -63,7 +68,7 @@ def add_appointment(request):
                                                             extra_fees=extra_fees,
                                                             discount=discount,
                                                             fees=ward_fees,
-                                                            pay_amount=cash + online,
+                                                            pay_amount=pay_amt,
                                                             remaining=remaining,
                                                             cash=cash,
                                                             online=online,

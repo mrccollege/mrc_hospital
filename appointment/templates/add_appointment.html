@@ -210,7 +210,7 @@
                                                 <div class="form-group">
                                                     <label for="extra_fee" class="form-label">
                                                         Extra Fee</label>
-                                                    <input type="text" class="form-control" id="extra_fee" name="extra_fees" value="0">
+                                                    <input type="text" class="form-control" id="extra_fee" name="extra_fees" value="0" onkeyup="calcu_function()">
                                                 </div>
                                             </div>
                                         </div>
@@ -220,7 +220,7 @@
                                                 <div class="form-group">
                                                     <label class="form-label">Previous Amount</label>
                                                     <input type="text" class="form-control" id="pre_amount"
-                                                           placeholder="Search Patient" readonly>
+                                                           placeholder="Search Patient" readonly value="0">
                                                 </div>
                                             </div>
                                             <div class="col-lg-3">
@@ -235,7 +235,7 @@
                                                 <div class="form-group">
                                                     <label class="form-label">Flat - Discount</label>
                                                     <input type="text" class="form-control" id="discount"
-                                                           name="discount" value="0" readonly>
+                                                           name="discount" value="0" onkeyup="calcu_function()">
                                                 </div>
                                             </div>
 
@@ -251,7 +251,7 @@
                                                 <div class="form-group">
                                                     <label class="form-label">Cash</label>
                                                     <input type="text" class="form-control" id="cash"
-                                                           name="cash" value="0" onkeypress="return isNumberKey(event)">
+                                                           name="cash" value="0" onkeypress="return isNumberKey(event)" onkeyup="calcu_function()">
                                                 </div>
                                             </div>
                                             <div class="col-lg-3">
@@ -259,7 +259,7 @@
                                                     <label class="form-label">Online</label>
                                                     <input type="text" class="form-control" id="online"
                                                            name="online" value="0"
-                                                           onkeypress="return isNumberKey(event)">
+                                                           onkeypress="return isNumberKey(event)" onkeyup="calcu_function()">
                                                 </div>
                                             </div>
 
@@ -401,6 +401,7 @@
             var amtValue = selectedOption.attr('amt');
             $('#appointment_slot_fees').val(parseInt(amtValue))
 
+            calcu_function()
         });
     });
 
@@ -430,7 +431,29 @@
 <!--            scrollbar: true-->
 <!--        });-->
     });
+</script>
+
+<script>
+    function calcu_function(){
+        var appointment_slot_fees = Number($('#appointment_slot_fees').val() | 0)
+
+        var extra_fee = Number($('#extra_fee').val()| 0)
+        var pre_amount = Number($('#pre_amount').val()| 0)
+        var discount = Number($('#discount').val()| 0)
+        var cash = Number($('#cash').val()| 0)
+        var online = Number($('#online').val()| 0)
+
+        pay_amt = total_amt = appointment_slot_fees + extra_fee + pre_amount
+        pay_amt = pay_amt - discount
+
+        var pay_amt = $('#pay_amt').val(pay_amt)
+
+        var pay_amt = Number($('#pay_amt').val() | 0)
+        var cash_online = cash + online
 
 
+        remain = pay_amt - cash_online
+        $('#remaining').val(remain)
+    }
 </script>
 {% endblock js %}
