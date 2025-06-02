@@ -478,8 +478,9 @@ def create_bill(request, order_type, patient_id):
                         PatientMedicineBillDetail.objects.filter(id=obj.id).update(record_qty=remaining_qty)
             PatientMedicineBillHead.objects.filter(id=head_id).update(status=1, invoice_number=invoice_number, )
 
-            message = f'Thank you.We have received a payment of Rs Cash {cash}, online {online},old pending {100}, total pending  {after_dis_amount}... Against Bill No. {invoice_number} .. on Date at time {created_at}. Thanks for visiting Mrc Ayurveda'
+            # message = f'Thank you.We have received a payment of Rs Cash {cash}, online {online},old pending {100}, total pending  {after_dis_amount}... Against Bill No. {invoice_number} .. on Date at time {created_at}. Thanks for visiting Mrc Ayurveda'
             message = f'Thank you.We have received a payment of Rs {after_dis_amount} Against Bill no.{invoice_number}, on Date at time. Thanks for visiting Mrc Ayurveda'
+
             try:
                 send_sms(mobile, message)
                 send_sms(9267678888, message)
