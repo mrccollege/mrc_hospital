@@ -16,49 +16,45 @@
 
     <!-- Main content -->
     <section class="content">
+        <div class="row">
+            <h3 class="text-center">Medicine Order details</h3>
+
+            <div class="col-lg-3 col-xs-6">
+                <div class="small-box bg-green" onclick="new_medicine_order()">
+                    <div class="inner">
+                        <h4 class="text-center">Create order</h4>
+                        <p class="text-center"></p>
+                    </div><div class="icon">
+                    <i class="ion ion-stats-bars"></i>
+                </div>
+                    <a href="/my_order/medicine_order/" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+
+
+            <div class="col-lg-3 col-xs-6">
+                <div class="small-box bg-green" onclick="all_medicine_order_list()">
+                    <div class="inner">
+                        <h4 class="text-center">Order History</h4>
+                        <p class="text-center"></p>
+                    </div><div class="icon">
+                    <i class="ion ion-stats-bars"></i>
+                </div>
+                    <a href="/my_order/my_medicine_ordered_list/" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+
+            <div class="col-lg-6 col-xs-6">
+                <img src="static/doctor_dashboard_add/VIRAL.png" height="85" width="600">
+            </div><!-- ./col -->
+            <!-- ./col -->
+        </div>
+
         <!-- Small boxes (Stat box) -->
         <div class="row" id="menu-container">
-
-            <div class="col-lg-3 col-xs-6">
-                <div class="small-box bg-green">
-                    <div class="inner">
-                        <h4 class="text-center">My Store Medicine</h4>
-                        <p class="text-center"></p>
-                    </div>
-                    <div class="icon">
-                        <i class="ion ion-stats-bars"></i>
-                    </div>
-                    {% if store_type == 'MAIN' %}
-                    <a href="/store/main_store/" class="small-box-footer">More info <i
-                            class="fa fa-arrow-circle-right"></i></a>
-                    {% endif %}
-
-                    {% if store_type == 'MINI' %}
-                    <a href="/store/mini_store/" class="small-box-footer">More info <i
-                            class="fa fa-arrow-circle-right"></i></a>
-                    {% endif %}
-                </div>
-            </div>
-
-
-            {% if store_type == 'MAIN' %}
-            <div class="col-lg-3 col-xs-6">
-                <div class="small-box bg-green">
-                    <div class="inner">
-                        <h4 class="text-center">All Mini Store Details</h4>
-                        <p class="text-center"></p>
-                    </div>
-                    <div class="icon">
-                        <i class="ion ion-stats-bars"></i>
-                    </div>
-                    <a href="/store/mini_store/" class="small-box-footer">More info <i
-                            class="fa fa-arrow-circle-right"></i></a>
-                </div>
-            </div>
-
-            {% endif %}
-
         </div>
+
+
 
     </section>
     <!-- /.content -->
