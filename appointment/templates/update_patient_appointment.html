@@ -2,6 +2,7 @@
 
 {% block css %}
 <style>
+
     #patient_search {
         width: 100%;
     }
@@ -57,14 +58,14 @@
                                         <div class="row">
                                             <div class="col-lg-4">
                                                 <div class="form-group">
-                                                    <label for="appointment_ward">Ward Type</label>
-                                                    <select name="appointment_ward" id="appointment_ward"
+                                                    <label for="appointment_slot">Appointment Slot</label>
+                                                    <select name="appointment_slot" id="appointment_slot"
                                                             class="form-control">
-                                                        <option value="0">Select ward</option>
                                                         <!--                            <option money="250" value="OPD 09:00 AM TO 01:00 PM">OPD 09:00 AM TO 01:00 PM</option>-->
                                                         <!--                            <option money="350" value="OPD 01:00 AM TO 05:00 PM">OPD 01:00 AM TO 05:00 PM</option>-->
                                                         <!--                            <option money="500" value="EMERGENCY Above 05:00 PM">EMERGENCY Above 05 PM</option>-->
-                                                        {% for ward in appointment_ward %}
+
+                                                        {% for ward in appointment_slot %}
                                                         <option amt="{{ward.price}}" value="{{ward.id}}">{{ward.type}}
                                                         </option>
                                                         {% endfor %}
@@ -76,9 +77,9 @@
                                                 <div class="form-group">
                                                     <label class="form-label">Patient</label>
                                                     <input type="text" class="form-control" id="patient_search"
-                                                           placeholder="Search Patient">
+                                                           placeholder="Search Patient" value="{{appoint.patient}} ({{appoint.patient.patient_code}})">
                                                     <input type="hidden" class="form-control" id="patient_search_id"
-                                                           name="patient_search_id" placeholder="Search Patient id">
+                                                           name="patient_search_id" value="{{appoint.patient.id}}" placeholder="Search Patient id">
                                                     <select id="patient_select" name="patient" size="5">
                                                         <option value="0"></option>
                                                     </select>
@@ -88,8 +89,7 @@
                                             <div class="col-lg-4">
                                                 <div class="form-group">
                                                     <label class="form-label">Doctor</label>
-                                                    <select name="doctor" id="doctor" class="form-control">
-                                                        <option value="0">Select Doctor</option>
+                                                    <select name="doctor_id" id="doctor" class="form-control">
                                                         {% for i in doctor %}
                                                         <option value="{{i.id}}">{{i.user.username}}</option>
                                                         {% endfor %}
@@ -103,7 +103,7 @@
                                             <label for="diseases" class="form-label">Diseases</label>
                                             <textarea class="form-control" id="diseases" name="diseases" rows="3"
                                                       required
-                                                      placeholder="Diseases Like : Acute cholecystitis, Bipolar disorder"></textarea>
+                                                      placeholder="Diseases Like : Acute cholecystitis, Bipolar disorder">{{appoint.patient_diseases}}</textarea>
                                         </div>
 
                                         <div class="row">
@@ -111,55 +111,104 @@
                                                 <div class="row">
                                                     <div class="col-lg-6">
                                                         <div class="form-group">
-                                                            <label for="patient_bp_min" class="form-label">Patient BP
-                                                                Min</label>
-                                                            <input type="text" class="form-control" id="patient_bp_min"
-                                                                   name="patient_bp_min"
-                                                                   onkeypress="return isNumberKey(event)"
-                                                                   required maxlength="3"
-                                                                   placeholder="Enter BP Like : 80">
+                                                            <label for="patient_bp" class="form-label">Blood
+                                                                Pressure</label>
+                                                            <input type="text" class="form-control" id="patient_bp"
+                                                                   name="patient_bp"
+                                                                   required
+                                                                   placeholder="Enter BP Like : 120" value="{{appoint.patient_bp}}">
                                                         </div>
                                                     </div>
                                                     <div class="col-lg-6">
                                                         <div class="form-group">
-                                                            <label for="patient_bp_max" class="form-label">Patient BP
-                                                                Max</label>
-                                                            <input type="text" class="form-control" id="patient_bp_max"
-                                                                   name="patient_bp_max"
+                                                            <label for="pulse" class="form-label">Pulse</label>
+                                                            <input type="text" class="form-control" id="pulse"
+                                                                   name="pulse"
                                                                    onkeypress="return isNumberKey(event)"
-                                                                   required maxlength="3"
-                                                                   placeholder="Enter BP Like : 120">
+                                                                   required value="{{appoint.pulse}}">
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
+                                            <div class="col-lg-8">
+                                                <div class="row">
+                                                    <div class="col-lg-3">
+                                                        <div class="form-group">
+                                                            <label for="oxygen"
+                                                                   class="form-label">Oxygen </label>
+                                                            <input type="text" class="form-control" id="oxygen"
+                                                                   name="oxygen"
+                                                                   onkeypress="return isNumberKey(event)"
+                                                                   required maxlength="3"
+                                                                   placeholder="Enter Patient Weight: " value="{{appoint.oxygen}}">
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-lg-3">
+                                                        <div class="form-group">
+                                                            <label for="temperature"
+                                                                   class="form-label">Temperature <sup>o</sup> F </label>
+                                                            <input type="text" class="form-control" id="temperature"
+                                                                   name="temperature"
+                                                                   onkeypress="return isNumberKey(event)"
+                                                                   required maxlength="3"
+                                                                   placeholder="Enter Patient Weight: " value="{{appoint.temperature}}">
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-lg-3">
+                                                        <div class="form-group">
+                                                            <label for="respiration"
+                                                                   class="form-label">Respiration </label>
+                                                            <input type="text" class="form-control" id="respiration"
+                                                                   name="respiration"
+                                                                   onkeypress="return isNumberKey(event)"
+                                                                   required maxlength="3"
+                                                                   placeholder="Enter Patient Weight: " value="{{appoint.respiration}}">
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-lg-3">
+                                                        <div class="form-group">
+                                                            <label for="weight" class="form-label">
+                                                                Weight in Kg</label>
+                                                            <input type="text" class="form-control" id="weight"
+                                                                   name="weight"
+                                                                   onkeypress="return isNumberKey(event)"
+                                                                   required maxlength="3"
+                                                                   placeholder="Enter Patient Weight: " value="{{appoint.patient_weight}}">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
                                             <div class="col-lg-3">
                                                 <div class="form-group">
-                                                    <label for="patient_weight" class="form-label">Patient
-                                                        Weight</label>
-                                                    <input type="text" class="form-control" id="patient_weight"
-                                                           name="patient_weight"
+                                                    <label for="appoint_date" class="form-label">Appointment
+                                                        Date</label>
+                                                    <input type="text" class="form-control" id="appoint_date"
+                                                           name="appoint_date"
                                                            onkeypress="return isNumberKey(event)"
-                                                           required maxlength="3" placeholder="Enter Patient Weight: ">
+                                                           required maxlength="3" placeholder="Enter Patient Weight: " value="{{appoint.appointment_date|date:'d/m/Y'}}">
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <div class="form-group">
+                                                    <label for="appoint_time" class="form-label">Appointment
+                                                        Time</label>
+                                                    <input type="text" class="form-control timepicker" id="appoint_time"
+                                                           name="appoint_time"
+                                                           onkeypress="return isNumberKey(event)"
+                                                           required maxlength="3" placeholder="Enter Patient Weight: " value="{{appoint.appointment_time}}">
                                                 </div>
                                             </div>
 
                                             <div class="col-lg-3">
                                                 <div class="form-group">
-                                                    <label for="patient_weight" class="form-label">Appointment Date</label>
-                                                    <input type="text" class="form-control" id="appoint_date"
-                                                           name="appoint_date"
-                                                           onkeypress="return isNumberKey(event)"
-                                                           required maxlength="3" placeholder="Enter Patient Weight: ">
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-3">
-                                                <div class="form-group">
-                                                    <label for="patient_weight" class="form-label">Appointment Time</label>
-                                                    <input type="text" class="form-control timepicker" id="appoint_time"
-                                                           name="appoint_time"
-                                                           onkeypress="return isNumberKey(event)"
-                                                           required maxlength="3" placeholder="Enter Patient Weight: ">
+                                                    <label for="extra_fee" class="form-label">
+                                                        Extra Fee</label>
+                                                    <input type="text" class="form-control" id="extra_fee" name="extra_fees" value="{{appoint.extra_fees}}" onkeyup="calcu_function()" >
                                                 </div>
                                             </div>
                                         </div>
@@ -169,35 +218,53 @@
                                                 <div class="form-group">
                                                     <label class="form-label">Previous Amount</label>
                                                     <input type="text" class="form-control" id="pre_amount"
-                                                           placeholder="Search Patient" readonly>
+                                                           placeholder="Search Patient" readonly value="{{appoint.patient_bp}}">
                                                 </div>
                                             </div>
                                             <div class="col-lg-3">
                                                 <div class="form-group">
                                                     <label class="form-label">Appointment Fees</label>
-                                                    <input type="text" class="form-control" id="ward_fees"
-                                                           name="ward_fees" value="0" readonly>
+                                                    <input type="text" class="form-control" id="appointment_slot_fees"
+                                                           name="appointment_slot_fees" value="{{appoint.fees}}" readonly>
                                                 </div>
                                             </div>
+
+                                            <div class="col-lg-3">
+                                                <div class="form-group">
+                                                    <label class="form-label">Flat - Discount</label>
+                                                    <input type="text" class="form-control" id="discount"
+                                                           name="discount" value="{{appoint.discount}}" onkeyup="calcu_function()">
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg-3">
+                                                <div class="form-group">
+                                                    <label class="form-label">pay amount</label>
+                                                    <input type="text" class="form-control" id="pay_amt"
+                                                           name="pay_amt" value="{{appoint.pay_amount}}" readonly>
+                                                </div>
+                                            </div>
+
                                             <div class="col-lg-3">
                                                 <div class="form-group">
                                                     <label class="form-label">Cash</label>
                                                     <input type="text" class="form-control" id="cash"
-                                                           name="cash" value="0" onkeypress="return isNumberKey(event)">
+                                                           name="cash" value="{{appoint.cash}}" onkeypress="return isNumberKey(event)" onkeyup="calcu_function()">
                                                 </div>
                                             </div>
                                             <div class="col-lg-3">
                                                 <div class="form-group">
                                                     <label class="form-label">Online</label>
                                                     <input type="text" class="form-control" id="online"
-                                                           name="online" value="0" onkeypress="return isNumberKey(event)">
+                                                           name="online" value="{{appoint.online}}"
+                                                           onkeypress="return isNumberKey(event)" onkeyup="calcu_function()">
                                                 </div>
                                             </div>
 
                                             <div class="col-lg-3">
                                                 <div class="form-group">
                                                     <label class="form-label">Remaining</label>
-                                                    <input type="text" class="form-control" id="remaining" value="0"
+                                                    <input type="text" class="form-control" id="remaining" value="{{appoint.remaining}}"
                                                            name="remaining" readonly>
                                                 </div>
                                             </div>
@@ -229,7 +296,7 @@
             e.preventDefault();
             var formData = $('#store_form').serialize();
             $.ajax({
-              url: '/appointment/add_appointment/',
+              url: '/appointment/update_appointment/{{id}}/',
               type: 'POST',
               data: formData,
               success: function (response) {
@@ -244,7 +311,7 @@
                     confirmButtonColor: '#3085d6',
                     confirmButtonText: 'OK'
                   }).then((result) => {
-                    window.location.href = '/appointment/add_appointment/';
+                    window.location.href = '/appointment/all_appointment/';
                   });
                 }else{
                   Swal.fire({
@@ -326,15 +393,13 @@
     });
 
     $(document).ready(function() {
-        $('#appointment_ward').change(function() {
+        $('#appointment_slot').change(function() {
             var selectedOption = $(this).find('option:selected');
             var selectedValue = selectedOption.val();
             var amtValue = selectedOption.attr('amt');
-            $('#ward_fees').val(parseInt(amtValue))
+            $('#appointment_slot_fees').val(parseInt(amtValue))
 
-            //console.log('Selected Value:', selectedValue);
-            //console.log('Amount:', amtValue);
-
+            calcu_function()
         });
     });
 
@@ -351,8 +416,42 @@
             dropdown: true,
             scrollbar: true
         });
+
+<!--        $('.timepicker').timepicker({-->
+<!--            timeFormat: 'h:mm p',-->
+<!--            interval: 60,-->
+<!--            minTime: '10',-->
+<!--            maxTime: '6:00pm',-->
+<!--            defaultTime: '11',-->
+<!--            startTime: '10:00',-->
+<!--            dynamic: false,-->
+<!--            dropdown: true,-->
+<!--            scrollbar: true-->
+<!--        });-->
     });
+</script>
+
+<script>
+    function calcu_function(){
+        var appointment_slot_fees = Number($('#appointment_slot_fees').val() | 0)
+
+        var extra_fee = Number($('#extra_fee').val()| 0)
+        var pre_amount = Number($('#pre_amount').val()| 0)
+        var discount = Number($('#discount').val()| 0)
+        var cash = Number($('#cash').val()| 0)
+        var online = Number($('#online').val()| 0)
+
+        pay_amt = total_amt = appointment_slot_fees + extra_fee + pre_amount
+        pay_amt = pay_amt - discount
+
+        var pay_amt = $('#pay_amt').val(pay_amt)
+
+        var pay_amt = Number($('#pay_amt').val() | 0)
+        var cash_online = cash + online
 
 
+        remain = pay_amt - cash_online
+        $('#remaining').val(remain)
+    }
 </script>
 {% endblock js %}

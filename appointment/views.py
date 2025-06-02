@@ -38,7 +38,6 @@ def add_appointment(request):
         respiration = form.get('respiration')
         weight = form.get('weight')
 
-
         ward_fees = form.get('appointment_slot_fees')
         extra_fees = form.get('extra_fees')
         discount = int(form.get('discount'))
@@ -46,7 +45,6 @@ def add_appointment(request):
         cash = int(form.get('cash'))
         online = int(form.get('online'))
         remaining = int(form.get('remaining'))
-
 
         appointment_date = form.get('appoint_date')
         appointment_date = convert_date_format(appointment_date)
@@ -97,6 +95,95 @@ def add_appointment(request):
         }
         return render(request, 'add_appointment.html', context)
 
+from django.db.models import Case, When, Value
+def update_appointment(request, id):
+    if request.method == 'POST':
+        form = request.POST
+        user_id = request.session.get('user_id')
+        appointment_slot = form.get('appointment_slot')
+        patient_search_id = form.get('patient_search_id')
+        doctor_id = form.get('doctor_id')
+        diseases = form.get('diseases')
+        patient_bp = form.get('patient_bp')
+        pulse = form.get('pulse')
+        oxygen = form.get('oxygen')
+        temperature = form.get('temperature')
+        respiration = form.get('respiration')
+        weight = form.get('weight')
+
+        ward_fees = form.get('appointment_slot_fees')
+        extra_fees = form.get('extra_fees')
+        discount = int(form.get('discount'))
+        pay_amt = form.get('pay_amt')
+        cash = int(form.get('cash'))
+        online = int(form.get('online'))
+        remaining = int(form.get('remaining'))
+
+        appointment_date = form.get('appoint_date')
+        appointment_date = convert_date_format(appointment_date)
+        appointment_time = form.get('appoint_time')
+        appointment_time = datetime.strptime(appointment_time, '%I:%M %p').time()
+        status = 'failed!'
+        msg = 'Appointment failed.'
+        try:
+            appoint_obj = PatientAppointment.objects.filter(id=id).update(appoint_ward_id=appointment_slot,
+                                                                          doctor_id=doctor_id,
+                                                                          patient_id=patient_search_id,
+                                                                          patient_diseases=diseases,
+                                                                          patient_bp=patient_bp,
+                                                                          pulse=pulse,
+                                                                          oxygen=oxygen,
+                                                                          temperature=temperature,
+                                                                          respiration=respiration,
+                                                                          patient_weight=weight,
+                                                                          extra_fees=extra_fees,
+                                                                          discount=discount,
+                                                                          fees=ward_fees,
+                                                                          pay_amount=pay_amt,
+                                                                          remaining=remaining,
+                                                                          cash=cash,
+                                                                          online=online,
+                                                                          appointment_date=appointment_date,
+                                                                          appointment_time=appointment_time,
+                                                                          user_id=user_id,
+                                                                          )
+            if appoint_obj:
+                status = 'success'
+                msg = 'Appointment successfully updated.'
+
+        except Exception as e:
+            msg = str(e)
+
+        context = {
+            'status': status,
+            'msg': msg,
+        }
+        return JsonResponse(context)
+    else:
+        appoint = PatientAppointment.objects.get(id=id)
+
+        doctor = Doctor.objects.annotate(
+            custom_value=Case(
+                When(id=appoint.doctor.id, then=Value(0)),
+                default=Value(1),
+            )
+        ).order_by('custom_value')
+
+        slot = AppointmentWard.objects.annotate(
+            custom_value=Case(
+                When(id=appoint.appoint_ward.id, then=Value(0)),
+                default=Value(1),
+            )
+        ).order_by('custom_value')
+
+        context = {
+            'id': id,
+            'doctor': doctor,
+            'appointment_slot': slot,
+            'appoint': appoint,
+        }
+        return render(request, 'update_patient_appointment.html', context)
+
 
 @login_required(login_url='/account/user_login/')
 def all_appointment(request):
@@ -114,6 +201,7 @@ def all_appointment(request):
     appointment = PatientAppointment.objects.filter(query)
     context = {
         'appointment': appointment,
+        'user_type': is_user.user_type,
     }
     return render(request, 'all_appointment.html', context)
 
@@ -124,7 +212,7 @@ def search_patient(request):
         if search_value:
             search_terms = search_value.split()
             for term in search_terms:
-                query = Q(user__username__icontains=term) | Q(patient_code__icontains=term)
+                query = Q(user__username__istartswith=term) | Q(patient_code__istartswith=term)
                 qs = Patient.objects.filter(query)
                 data_list = []
                 for i in qs:

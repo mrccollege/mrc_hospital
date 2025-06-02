@@ -40,13 +40,20 @@
                                 </tr>
                                 </thead>
                                 <tbody>
+
                                 {% for i in appointment %}
                                 <tr>
                                     <td>{{i.patient|title}}</td>
                                     <td>{{i.doctor|title}}</td>
                                     <td>{{i.appointment_date|date:"d-F-Y"}}</td>
                                     <td>{{i.appointment_time}}</td>
+                                    {% if user_type == 'STORE' or user_type == 'ADMIN' %}
+                                    <td><a href="/appointment/update_appointment/{{i.id}}/">Update</a></td>
+                                    {% endif %}
+
+                                    {% if user_type == 'DOCTOR' %}
                                     <td><a href="/appointment/patient_appointment_detail/{{i.id}}/">View</a></td>
+                                    {% endif %}
                                 </tr>
                                 {% endfor %}
 
