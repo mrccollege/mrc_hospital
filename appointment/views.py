@@ -230,6 +230,8 @@ def search_patient(request):
 
 @login_required(login_url='/account/user_login/')
 def patient_appointment_detail(request, id):
+    user_id = request.session.get('user_id')
+    is_user = User.objects.get(id=user_id)
     appointment = PatientAppointment.objects.get(id=id)
     since = Since.objects.all()
     severity = Severity.objects.all()
@@ -244,6 +246,7 @@ def patient_appointment_detail(request, id):
         'severity': severity,
         'bleeding': bleeding,
         'diagnosis_name': diagnosis_name,
+        'user_type': is_user.user_type,
     }
     # return render(request, 'kshar_shutra_patient_appointment_detail.html', context)
     return render(request, 'panch_karma_patient_appointment.html', context)

@@ -39,7 +39,7 @@ def dashboard(request):
         context = {
             'order_count': order_count,
         }
-        return render(request, 'doctor_dashboard.html', context)
+        return render(request, 'doctor_dashboard1.html', context)
     is_store = Store.objects.filter(user_id=user_id)
     if is_store:
         store_type = is_store[0].type
