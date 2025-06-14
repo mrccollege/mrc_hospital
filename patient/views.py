@@ -1778,8 +1778,8 @@ def export_today_patient_bills_excel(request):
     ws.title = "Today's Bills"
 
     headers = [
-        'Date', 'Invoice', 'Name', 'City', 'Subtotal', 'Discount %',
-        'Flat', 'Pay Amount', 'Old Credit', 'New Credit', 'Cash', 'Online',
+        'Date', 'Invoice', 'Name', 'City', 'Subtotal', 'Discount percent', 'Discount Amount',
+        'Flat Discount', 'Pay Amount', 'Old Credit', 'Cash', 'Online', 'New Credit',
         'Extra Cash Amount', 'Extra Online Amount', 'Store', 'Patient',
     ]
     ws.append(headers)
@@ -1787,13 +1787,14 @@ def export_today_patient_bills_excel(request):
     # Initialize total trackers
     total_fields = {
         'subtotal': 0,
+        'discount': 0,
         'discount_amount': 0,
         'flat_discount': 0,
         'pay_amount': 0,
         'old_credit': 0,
-        'new_credit': 0,
         'cash': 0,
         'online': 0,
+        'new_credit': 0,
         'extra_cash_amount': 0,
         'extra_online_amount': 0,
     }
@@ -1805,6 +1806,7 @@ def export_today_patient_bills_excel(request):
             bill.patient.user.first_name,
             bill.patient.user.city,
             bill.subtotal,
+            bill.discount,
             bill.discount_amount,
             bill.flat_discount,
             bill.pay_amount,
@@ -1826,11 +1828,11 @@ def export_today_patient_bills_excel(request):
             total_fields[key] += float(value)
 
     # Append total row
-    total_row = ['Grand Total', '']
+    total_row = ['Grand Total', '', '',  '']
     # Append totals in the correct position
     for key in [
-        'subtotal', 'discount_amount', 'flat_discount', 'pay_amount',
-        'old_credit', 'new_credit', 'cash', 'online', 'extra_cash_amount', 'extra_online_amount'
+        'subtotal', 'discount', 'discount_amount', 'flat_discount', 'pay_amount',
+        'old_credit','cash', 'online', 'new_credit', 'extra_cash_amount', 'extra_online_amount'
     ]:
         if key in total_fields:
             total_row.append(round(total_fields[key], 2))
