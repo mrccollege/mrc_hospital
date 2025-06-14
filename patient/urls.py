@@ -33,4 +33,5 @@ urlpatterns = [
 
     path('add_extra_amount/<int:id>/', views.add_extra_amount, name='add_extra_amount'),
     path('estimate_add_extra_amount/<int:id>/', views.estimate_add_extra_amount, name='estimate_add_extra_amount'),
+    path('export_today_patient_bills_excel/', views.export_today_patient_bills_excel, name='export_today_patient_bills_excel'),
 ]

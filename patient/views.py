@@ -20,6 +20,11 @@ from django.db.models import DecimalField
 from django.db.models import Sum, F, FloatField, ExpressionWrapper
 import requests
 
+from django.utils import timezone
+from django.http import HttpResponse
+from openpyxl import Workbook
+from .models import PatientMedicineBillHead
+
 
 # Create your views here.
 def normal_generate_invoice_number():
@@ -1749,3 +1754,103 @@ def estimate_add_extra_amount(request, id):
                 'msg': 'Extra amount added successfully.',
             }
             return JsonResponse(context)
+
+
+import datetime
+from django.utils import timezone
+
+
+def export_today_patient_bills_excel(request):
+    user_id = request.session['user_id']
+    try:
+        store = Store.objects.get(user_id=user_id)
+        store_id = store.id
+    except:
+        store_id = 0
+    today = timezone.now().date()
+    start_datetime = timezone.make_aware(datetime.datetime.combine(today, datetime.time.min))
+    end_datetime = timezone.make_aware(datetime.datetime.combine(today, datetime.time.max))
+
+    bills = PatientMedicineBillHead.objects.filter(store_id=store_id, created_at__range=(start_datetime, end_datetime))
+
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Today's Bills"
+
+    headers = [
+        'Invoice Number', 'Store', 'Patient', 'Subtotal', 'Discount', 'Discount Amount',
+        'Flat Discount', 'Pay Amount', 'Old Credit', 'New Credit', 'Cash', 'Online',
+        'Extra Cash Amount', 'Extra Online Amount', 'Created At'
+    ]
+    ws.append(headers)
+
+    # Initialize total trackers
+    total_fields = {
+        'subtotal': 0,
+        'discount_amount': 0,
+        'flat_discount': 0,
+        'pay_amount': 0,
+        'old_credit': 0,
+        'new_credit': 0,
+        'cash': 0,
+        'online': 0,
+        'extra_cash_amount': 0,
+        'extra_online_amount': 0,
+    }
+
+    for bill in bills:
+        row = [
+            bill.created_at.strftime('%d-%m-%Y %I:%M:%S %p') if bill.created_at else '',
+            bill.invoice_number,
+            bill.subtotal,
+            bill.discount,
+            bill.discount_amount,
+            bill.flat_discount,
+            bill.pay_amount,
+            bill.old_credit,
+            bill.new_credit,
+            bill.cash,
+            bill.online,
+            bill.extra_cash_amount,
+            bill.extra_online_amount,
+            str(bill.store) if bill.store else '',
+            str(bill.patient) if bill.patient else '',
+
+        ]
+        ws.append(row)
+
+        # Update totals
+        for key in total_fields.keys():
+            value = getattr(bill, key, 0) or 0
+            total_fields[key] += float(value)
+
+    # Append total row
+    total_row = ['Grand Total', '', '']
+    # Append totals in the correct position
+    for key in [
+        'subtotal', 'discount', 'discount_amount', 'flat_discount', 'pay_amount',
+        'old_credit', 'new_credit', 'cash', 'online', 'extra_cash_amount', 'extra_online_amount'
+    ]:
+        if key in total_fields:
+            total_row.append(round(total_fields[key], 2))
+        elif key == 'discount':  # Discount is an IntegerField, not summed above
+            total_row.append(sum([bill.discount or 0 for bill in bills]))
+        else:
+            total_row.append('')
+
+    # Fill remaining cells for alignment
+    while len(total_row) < len(headers):
+        total_row.append('')
+
+    ws.append([])
+    ws.append(total_row)
+
+    # Create response
+    response = HttpResponse(
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    filename = f"Today_Patient_Bills_{today.strftime('%Y%m%d')}.xlsx"
+    response['Content-Disposition'] = f'attachment; filename={filename}'
+
+    wb.save(response)
+    return response
