@@ -1,9 +1,7 @@
 import json
-from datetime import datetime
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q, Case, When
 from django.http import JsonResponse
-from django.shortcuts import render
 from django.db.models import Max
 from patient.models import Patient, OtherReference, SocialMediaReference
 from account.models import User
@@ -24,23 +22,29 @@ from django.http import HttpResponse
 from openpyxl import Workbook
 from .models import PatientMedicineBillHead
 from openpyxl.utils import get_column_letter
+
+from datetime import datetime, time
 from django.utils import timezone
+
 
 # Create your views here.
 def normal_generate_invoice_number():
-    obj, _ = NormalInvoiceTracker.objects.get_or_create(year=datetime.now().year)
+    current_year = datetime.now().year
+    obj, _ = NormalInvoiceTracker.objects.get_or_create(year=current_year)
     invoice_number = obj.get_next_invoice_number()
     return invoice_number
 
 
 def generate_invoice_number():
-    obj, _ = InvoiceTracker.objects.get_or_create(year=datetime.now().year)
+    current_year = datetime.now().year
+    obj, _ = InvoiceTracker.objects.get_or_create(year=current_year)
     invoice_number = obj.get_next_invoice_number()
     return invoice_number
 
 
 def estimate_generate_invoice_number():
-    obj, _ = EstimateInvoiceTracker.objects.get_or_create(year=datetime.now().year)
+    current_year = datetime.now().year
+    obj, _ = EstimateInvoiceTracker.objects.get_or_create(year=current_year)
     invoice_number = obj.get_next_invoice_number()
     return invoice_number
 
@@ -1756,9 +1760,6 @@ def estimate_add_extra_amount(request, id):
             return JsonResponse(context)
 
 
-import datetime
-
-
 def export_today_patient_bills_excel(request):
     user_id = request.session['user_id']
     try:
@@ -1767,8 +1768,8 @@ def export_today_patient_bills_excel(request):
     except:
         store_id = 0
     today = timezone.now().date()
-    start_datetime = timezone.make_aware(datetime.datetime.combine(today, datetime.time.min))
-    end_datetime = timezone.make_aware(datetime.datetime.combine(today, datetime.time.max))
+    start_datetime = timezone.make_aware(datetime.combine(today, time.min))
+    end_datetime = timezone.make_aware(datetime.combine(today, time.max))
 
     bills = PatientMedicineBillHead.objects.filter(store_id=store_id, created_at__range=(start_datetime, end_datetime))
 
@@ -1777,9 +1778,9 @@ def export_today_patient_bills_excel(request):
     ws.title = "Today's Bills"
 
     headers = [
-        'Date', 'Invoice', 'Subtotal', 'Discount %',
+        'Date', 'Invoice', 'Name', 'City', 'Subtotal', 'Discount %',
         'Flat', 'Pay Amount', 'Old Credit', 'New Credit', 'Cash', 'Online',
-        'Extra Cash Amount', 'Extra Online Amount','Store', 'Patient',
+        'Extra Cash Amount', 'Extra Online Amount', 'Store', 'Patient',
     ]
     ws.append(headers)
 
@@ -1801,6 +1802,8 @@ def export_today_patient_bills_excel(request):
         row = [
             bill.created_at.strftime('%d-%m-%Y %I:%M:%S %p') if bill.created_at else '',
             bill.invoice_number,
+            bill.patient.user.first_name,
+            bill.patient.user.city,
             bill.subtotal,
             bill.discount_amount,
             bill.flat_discount,
