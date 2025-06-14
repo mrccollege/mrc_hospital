@@ -20,11 +20,11 @@ from django.db.models import DecimalField
 from django.db.models import Sum, F, FloatField, ExpressionWrapper
 import requests
 
-from django.utils import timezone
 from django.http import HttpResponse
 from openpyxl import Workbook
 from .models import PatientMedicineBillHead
-
+from openpyxl.utils import get_column_letter
+from django.utils import timezone
 
 # Create your views here.
 def normal_generate_invoice_number():
@@ -1757,7 +1757,6 @@ def estimate_add_extra_amount(request, id):
 
 
 import datetime
-from django.utils import timezone
 
 
 def export_today_patient_bills_excel(request):
@@ -1778,9 +1777,9 @@ def export_today_patient_bills_excel(request):
     ws.title = "Today's Bills"
 
     headers = [
-        'Invoice Number', 'Store', 'Patient', 'Subtotal', 'Discount', 'Discount Amount',
-        'Flat Discount', 'Pay Amount', 'Old Credit', 'New Credit', 'Cash', 'Online',
-        'Extra Cash Amount', 'Extra Online Amount', 'Created At'
+        'Date', 'Invoice', 'Subtotal', 'Discount %',
+        'Flat', 'Pay Amount', 'Old Credit', 'New Credit', 'Cash', 'Online',
+        'Extra Cash Amount', 'Extra Online Amount','Store', 'Patient',
     ]
     ws.append(headers)
 
@@ -1803,7 +1802,6 @@ def export_today_patient_bills_excel(request):
             bill.created_at.strftime('%d-%m-%Y %I:%M:%S %p') if bill.created_at else '',
             bill.invoice_number,
             bill.subtotal,
-            bill.discount,
             bill.discount_amount,
             bill.flat_discount,
             bill.pay_amount,
@@ -1825,10 +1823,10 @@ def export_today_patient_bills_excel(request):
             total_fields[key] += float(value)
 
     # Append total row
-    total_row = ['Grand Total', '', '']
+    total_row = ['Grand Total', '']
     # Append totals in the correct position
     for key in [
-        'subtotal', 'discount', 'discount_amount', 'flat_discount', 'pay_amount',
+        'subtotal', 'discount_amount', 'flat_discount', 'pay_amount',
         'old_credit', 'new_credit', 'cash', 'online', 'extra_cash_amount', 'extra_online_amount'
     ]:
         if key in total_fields:
@@ -1844,6 +1842,19 @@ def export_today_patient_bills_excel(request):
 
     ws.append([])
     ws.append(total_row)
+
+    # # ✅ Auto-adjust column widths
+    for column_cells in ws.columns:
+        max_length = 0
+        column = column_cells[0].column
+        column_letter = get_column_letter(column)
+        for cell in column_cells:
+            try:
+                if cell.value:
+                    max_length = max(max_length, len(str(cell.value)))
+            except:
+                pass
+        ws.column_dimensions[column_letter].width = max_length + 2
 
     # Create response
     response = HttpResponse(
