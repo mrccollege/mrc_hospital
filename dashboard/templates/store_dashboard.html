@@ -40,19 +40,12 @@
                 </div>
             </div>
 
-            <div class="col-lg-3 col-xs-6">
-                <div class="small-box bg-green">
-                    <div class="inner">
-                        <h4 class="text-center">Today Patient Bill Report</h4>
-                        <p class="text-center"></p>
-                    </div>
-                    <div class="icon">
-                        <i class="ion ion-stats-bars"></i>
-                    </div>
-                    <a href="/patient/export_today_patient_bills_excel/" class="small-box-footer">More info <i
-                            class="fa fa-arrow-circle-right"></i></a>
-                </div>
-            </div>
+
+            <form id="exportForm">
+                <input type="text" id="start_date" name="start_date" placeholder="Start Date">
+                <input type="text" id="end_date" name="end_date" placeholder="End Date">
+                <button type="submit">Export</button>
+            </form>
 
 
             {% if store_type == 'MAIN' %}
@@ -80,7 +73,81 @@
 {% endblock content %}
 
 {% block js %}
+
 <script>
+  $(function () {
+    // Initialize datepickers with dd-mm-yy format
+    $("#start_date, #end_date").datepicker({
+      dateFormat: 'dd-mm-yy',
+      changeMonth: true,
+      changeYear: true
+    });
+
+    // Set default today date only if fields are empty
+    const today = new Date();
+    const dd = String(today.getDate()).padStart(2, '0');
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const yyyy = today.getFullYear();
+    const formattedToday = `${dd}-${mm}-${yyyy}`;
+
+    if (!$('#start_date').val()) {
+      $('#start_date').val(formattedToday);
+    }
+    if (!$('#end_date').val()) {
+      $('#end_date').val(formattedToday);
+    }
+
+    // Handle form submit via AJAX
+    $('#exportForm').on('submit', function (e) {
+      e.preventDefault();
+
+      const startDate = $('#start_date').val();
+      const endDate = $('#end_date').val();
+
+      console.log("Start:", startDate, "End:", endDate); // Debugging
+
+      $('#loader-overlay').show();
+      $('#loader').show();
+
+      $.ajax({
+        url: '/patient/export_today_patient_bills_excel/',
+        type: 'GET',
+        data: {
+          start_date: startDate,
+          end_date: endDate
+        },
+        xhrFields: {
+          responseType: 'blob'
+        },
+        success: function (response, status, xhr) {
+          const filename = xhr.getResponseHeader('Content-Disposition')?.split('filename=')[1] || 'export.xlsx';
+          const link = document.createElement('a');
+          const url = window.URL.createObjectURL(response);
+          link.href = url;
+          link.download = filename;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          window.URL.revokeObjectURL(url);
+
+          $('#loader-overlay').hide();
+          $('#loader').hide();
+        },
+        error: function () {
+          $('#loader-overlay').hide();
+          $('#loader').hide();
+          alert('Error occurred while exporting.');
+        }
+      });
+    });
+  });
+</script>
+
+
+
+
+<script>
+
     function add_new_medicine_to_store(){
         window.location = '/medicine/add_medicine_to_store/'
     }

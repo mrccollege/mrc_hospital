@@ -1767,11 +1767,29 @@ def export_today_patient_bills_excel(request):
         store_id = store.id
     except:
         store_id = 0
-    today = timezone.now().date()
-    start_datetime = timezone.make_aware(datetime.combine(today, time.min))
-    end_datetime = timezone.make_aware(datetime.combine(today, time.max))
+    start_date_str = request.GET.get('start_date')
+    end_date_str = request.GET.get('end_date')
+    if start_date_str and end_date_str:
+        try:
+            start_date = datetime.strptime(start_date_str, "%d-%m-%Y").date()
+            end_date = datetime.strptime(end_date_str, "%d-%m-%Y").date()
 
-    bills = PatientMedicineBillHead.objects.filter(store_id=store_id, created_at__range=(start_datetime, end_datetime))
+            start_datetime = timezone.make_aware(datetime.combine(start_date, time.min))
+            end_datetime = timezone.make_aware(datetime.combine(end_date, time.max))
+        except ValueError:
+            # Fallback to today if parsing fails
+            today = timezone.now().date()
+            start_datetime = timezone.make_aware(datetime.combine(today, time.min))
+            end_datetime = timezone.make_aware(datetime.combine(today, time.max))
+    else:
+        # Fallback to today if dates not provided
+        today = timezone.now().date()
+        start_datetime = timezone.make_aware(datetime.combine(today, time.min))
+        end_datetime = timezone.make_aware(datetime.combine(today, time.max))
+
+    bills = PatientMedicineBillHead.objects.filter(
+        created_at__range=(start_datetime, end_datetime)
+    )
 
     wb = Workbook()
     ws = wb.active
@@ -1828,11 +1846,11 @@ def export_today_patient_bills_excel(request):
             total_fields[key] += float(value)
 
     # Append total row
-    total_row = ['Grand Total', '', '',  '']
+    total_row = ['Grand Total', '', '', '']
     # Append totals in the correct position
     for key in [
         'subtotal', 'discount', 'discount_amount', 'flat_discount', 'pay_amount',
-        'old_credit','cash', 'online', 'new_credit', 'extra_cash_amount', 'extra_online_amount'
+        'old_credit', 'cash', 'online', 'new_credit', 'extra_cash_amount', 'extra_online_amount'
     ]:
         if key in total_fields:
             total_row.append(round(total_fields[key], 2))
@@ -1865,7 +1883,7 @@ def export_today_patient_bills_excel(request):
     response = HttpResponse(
         content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     )
-    filename = f"Today_Patient_Bills_{today.strftime('%Y%m%d')}.xlsx"
+    filename = f"Today_Patient_Bills_{start_date_str}.xlsx"
     response['Content-Disposition'] = f'attachment; filename={filename}'
 
     wb.save(response)
